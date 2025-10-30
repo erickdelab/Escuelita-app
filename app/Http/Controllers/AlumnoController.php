@@ -21,15 +21,18 @@ class AlumnoController extends Controller
     public function index(Request $request): View
     {
         $search = $request->search;
-        $situacionFilter = $request->situacion_filter;
-        $carreraFilter = $request->carrera_filter;
+        $situacionFilter = $request->situacion_filter ?? [];
+        $carreraFilter = $request->carrera_filter ?? [];
+        $semestreFilter = $request->semestre_filter ?? [];
+        $generoFilter = $request->genero_filter;
+        $promedioFilter = $request->promedio_filter;
         $sort = $request->sort ?? 'n_control';
         $direction = $request->direction ?? 'asc';
 
         // Cargar carreras para el filtro
         $carreras = Carrera::pluck('nombre_carrera', 'id_carrera');
 
-        // ✅ OPTIMIZADO: Búsqueda con agrupación correcta y ordenamiento
+        // ✅ OPTIMIZADO: Búsqueda con filtros múltiples
         $alumnos = Alumno::with('carrera')
             ->when($search, function ($query, $search) {
                 // Agrupación CRÍTICA para evitar resultados incorrectos
@@ -44,11 +47,36 @@ class AlumnoController extends Controller
                       });
                 });
             })
-            ->when($situacionFilter, function ($query, $situacionFilter) {
-                $query->where('situacion', $situacionFilter);
+            ->when(!empty($situacionFilter), function ($query) use ($situacionFilter) {
+                $query->whereIn('situacion', $situacionFilter);
             })
-            ->when($carreraFilter, function ($query, $carreraFilter) {
-                $query->where('FKid_carrera', $carreraFilter);
+            ->when(!empty($carreraFilter), function ($query) use ($carreraFilter) {
+                $query->whereIn('FKid_carrera', $carreraFilter);
+            })
+            ->when(!empty($semestreFilter), function ($query) use ($semestreFilter) {
+                $query->whereIn('semestre', $semestreFilter);
+            })
+            ->when($generoFilter, function ($query, $generoFilter) {
+                $query->where('genero', $generoFilter);
+            })
+            ->when($promedioFilter, function ($query, $promedioFilter) {
+                switch ($promedioFilter) {
+                    case '90-100':
+                        $query->where('promedio_general', '>=', 90);
+                        break;
+                    case '80-89':
+                        $query->whereBetween('promedio_general', [80, 89.99]);
+                        break;
+                    case '70-79':
+                        $query->whereBetween('promedio_general', [70, 79.99]);
+                        break;
+                    case '0-69':
+                        $query->where('promedio_general', '<', 70);
+                        break;
+                    case 'sin_promedio':
+                        $query->whereNull('promedio_general');
+                        break;
+                }
             })
             ->when($sort == 'carrera', function ($query) use ($direction) {
                 $query->join('carreras', 'alumnos.FKid_carrera', '=', 'carreras.id_carrera')
@@ -279,5 +307,19 @@ class AlumnoController extends Controller
 
         return redirect()->route('alumnos.show', $n_control)
             ->with('success', 'Alumno desinscrito del grupo exitosamente.');
+    }
+
+    /**
+     * ✅ NUEVO: Verificar si hay filtros activos para mostrar en la vista
+     */
+    public function hasActiveFilters(): bool
+    {
+        $request = request();
+        return !empty($request->search) || 
+               !empty($request->situacion_filter) || 
+               !empty($request->carrera_filter) || 
+               !empty($request->semestre_filter) || 
+               !empty($request->genero_filter) || 
+               !empty($request->promedio_filter);
     }
 }

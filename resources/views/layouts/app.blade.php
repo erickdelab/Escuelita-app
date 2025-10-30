@@ -45,11 +45,11 @@
 
         /* Dropdown */
         .dropdown-item.text-primary {
-            color: #660700ec !important; /* Azul rey */
-            font-weight: bold;
+            color: #002D72 !important;
+            font-weight: 500;
         }
         .dropdown-item.text-primary:hover {
-            color: #0055cc !important; /* Azul más claro al pasar cursor */
+            color: #001f52 !important;
             background-color: #e6f0ff !important;
         }
 
@@ -69,7 +69,7 @@
         /* Cards */
         .card {
             border: none;
-            box-shadow: 0 4px 10px rgba(255, 0, 0, 0.1);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             border-radius: 12px;
         }
         .card-header {
@@ -82,7 +82,7 @@
         /* Tables */
         table th {
             background-color: #002D72 !important;
-            color: white !important; /* CORRECCIÓN: Texto blanco para los títulos de columna */
+            color: white !important;
             text-align: center;
         }
         table td {
@@ -99,12 +99,34 @@
             text-decoration: none;
         }
 
-        /* Mejoras para iconos de ordenamiento */
-        .table th a:hover {
-            text-decoration: underline !important;
+        /* Navbar items con iconos */
+        .nav-item .nav-link {
+            padding: 0.5rem 1rem;
+            transition: all 0.3s ease;
         }
-        .table th i {
-            font-size: 0.8em;
+        
+        .nav-item .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+
+        /* Dropdown menus */
+        .dropdown-menu {
+            border: none;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        .dropdown-header {
+            color: #002D72;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .dropdown-divider {
+            margin: 0.3rem 0;
         }
     </style>
 </head>
@@ -125,8 +147,99 @@
                 </button>
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav me-auto"></ul>
+                    <!-- Menú de Navegación -->
+                    <ul class="navbar-nav me-auto">
+                        @auth
+                        <!-- Gestión Académica -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button"
+                               data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-book-open me-1"></i>Académico
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><span class="dropdown-header">Gestión Académica</span></li>
+                                <li><a class="dropdown-item text-primary" href="{{ url('/materias') }}">
+                                    <i class="bi bi-journal-text me-2"></i>Materias
+                                </a></li>
+                                <li><a class="dropdown-item text-primary" href="{{ url('/carreras') }}">
+                                    <i class="bi bi-mortarboard me-2"></i>Carreras
+                                </a></li>
+                                <li><a class="dropdown-item text-primary" href="{{ url('/periodos') }}">
+                                    <i class="bi bi-calendar-event me-2"></i>Períodos
+                                </a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item text-primary" href="{{ url('/grupos') }}">
+                                    <i class="bi bi-collection me-2"></i>Grupos
+                                </a></li>
+                            </ul>
+                        </li>
 
+                        <!-- Gestión de Personal -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button"
+                               data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-people me-1"></i>Personal
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><span class="dropdown-header">Gestión de Personal</span></li>
+                                <li><a class="dropdown-item text-primary" href="{{ url('/profesores') }}">
+                                    <i class="bi bi-person-badge me-2"></i>Profesores
+                                </a></li>
+                                <li><a class="dropdown-item text-primary" href="{{ url('/areas') }}">
+                                    <i class="bi bi-building me-2"></i>Áreas
+                                </a></li>
+                            </ul>
+                        </li>
+
+                        <!-- Gestión Estudiantil -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button"
+                               data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-person-standing me-1"></i>Estudiantes
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><span class="dropdown-header">Gestión Estudiantil</span></li>
+                                <li><a class="dropdown-item text-primary" href="{{ url('/alumnos') }}">
+                                    <i class="bi bi-people me-2"></i>Alumnos
+                                </a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item text-primary" href="{{ url('/historials') }}">
+                                    <i class="bi bi-clock-history me-2"></i>Historial Académico
+                                </a></li>
+                            </ul>
+                        </li>
+
+                        <!-- Reportes -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button"
+                               data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-graph-up me-1"></i>Reportes
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><span class="dropdown-header">Reportes y Análisis</span></li>
+                                <li><a class="dropdown-item text-primary" href="{{ url('/reportes/alumnos-especial-tics') }}">
+                                    <i class="bi bi-bar-chart me-2"></i>Alumnos Especial TICS
+                                </a></li>
+                            </ul>
+                        </li>
+
+                        <!-- Administración -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button"
+                               data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-gear me-1"></i>Sistema
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><span class="dropdown-header">Administración</span></li>
+                                <li><a class="dropdown-item text-primary" href="{{ url('/tablas') }}">
+                                    <i class="bi bi-table me-2"></i>Tablas del Sistema
+                                </a></li>
+                            </ul>
+                        </li>
+                        @endauth
+                    </ul>
+
+                    <!-- Menú de Usuario -->
                     <ul class="navbar-nav ms-auto">
                         @guest
                             @if (Route::has('login'))
@@ -143,6 +256,7 @@
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                    <span class="dropdown-header">Sesión de Usuario</span>
                                     <a class="dropdown-item text-primary" 
                                          href="{{ route('logout') }}"
                                          onclick="event.preventDefault();

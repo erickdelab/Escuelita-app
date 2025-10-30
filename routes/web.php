@@ -13,7 +13,7 @@ use App\Http\Controllers\ProfesoreController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AlumnoGrupoController; 
 use App\Http\Controllers\ReporteController;
-
+use App\Http\Controllers\PeriodoController;
 // 🏠 Página principal (index.html público)
 Route::get('/', function () {
     return File::get(public_path('index.html'));
@@ -38,6 +38,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/tabla/{nombre}', [TablaController::class, 'mostrar'])->name('tabla.mostrar');
 
     // Recursos de cada tabla
+    // Agregar esta línea con las demás rutas resource
+    
     Route::resource('profesores', ProfesoreController::class);
     Route::resource('materias', MateriaController::class);
     Route::resource('historials', HistorialController::class);
@@ -45,6 +47,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('alumnos', AlumnoController::class);
     Route::resource('carreras', CarreraController::class);
     Route::resource('areas', AreaController::class);
+    Route::resource('periodos', PeriodoController::class);
 
     // ==================================================
     // === RUTA PARA DETALLES DE GRUPOS ===

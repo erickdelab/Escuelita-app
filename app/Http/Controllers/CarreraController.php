@@ -16,7 +16,7 @@ class CarreraController extends Controller
      */
     public function index(Request $request): View
     {
-        $carreras = Carrera::paginate(10);
+        $carreras = Carrera::paginate(30);
 
         return view('carrera.index', compact('carreras'))
             ->with('i', ($request->input('page', 1) - 1) * $carreras->perPage());
