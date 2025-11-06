@@ -1,38 +1,94 @@
 <?php
+// app/Http/Controllers/ReporteController.php
 
 namespace App\Http\Controllers;
 
+use App\Models\Alumno;
+use App\Models\Profesor;
+use App\Models\Grupo;
+use App\Models\Carrera;
+use App\Models\Area;
+use App\Models\Periodo;
+use App\Models\Profesore;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB; // ¡Importante importar DB!
-use Illuminate\View\View;
 
 class ReporteController extends Controller
 {
-    /**
-     * Muestra los alumnos de TICS en oportunidad Especial.
-     */
-    public function alumnosEspecialTICS(): View
+    public function index(Request $request)
     {
-        // 1. Ejecutar la consulta SQL usando el facade DB
-        $alumnosEspecial = DB::table('alumnos as a')
-            ->join('historials as h', 'a.n_control', '=', 'h.FKn_control')
-            ->join('carreras as c', 'a.FKid_carrera', '=', 'c.id_carrera')
-            ->select('a.nombre', 'a.semestre', 'c.nombre_carrera as carrera', DB::raw('COUNT(h.id) as materias_en_especial'))
-            ->where('c.nombre_carrera', '=', 'TICS')
-            ->where('h.oportunidad', '=', 'Especial')
-            ->groupBy('a.nombre', 'a.semestre', 'c.nombre_carrera')
-            ->get(); // Obtenemos los resultados como una colección
+        // Obtener datos para los filtros
+        $periodos = Periodo::orderBy('anio', 'desc')->orderBy('id')->get();
+        $carreras = Carrera::all();
 
-        // 2. Pasar los resultados a la vista
-        return view('reportes.alumnos_especial_tics', compact('alumnosEspecial'));
+        // Estadísticas generales
+        $totalAlumnos = Alumno::count();
+        $alumnosVigentes = Alumno::where('situacion', 'Vigente')->count();
+        $alumnosBaja = Alumno::where('situacion', 'Baja')->count();
+        $alumnosEgresados = Alumno::where('situacion', 'Egresado')->count();
+
+        $totalProfesores = Profesore::count();
+        $profesoresVigentes = Profesore::where('situacion', 'Vigente')->count();
+
+        $totalGrupos = Grupo::count();
+        $gruposActivos = Grupo::whereHas('periodo', function($query) {
+            $query->where('activo', true);
+        })->count();
+
+        $totalCarreras = Carrera::count();
+        $carrerasActivas = Carrera::count(); // Asumiendo que todas están activas
+
+        // Distribuciones para gráficos
+        $distribucionCarreras = Carrera::withCount(['alumnos as total' => function($query) {
+            $query->where('situacion', 'Vigente');
+        }])->get();
+
+        $distribucionAreas = Area::withCount('profesores as total')->get();
+
+        $distribucionSemestres = Grupo::selectRaw('semestre, COUNT(*) as total')
+            ->groupBy('semestre')
+            ->orderBy('semestre')
+            ->get();
+
+        return view('reportes.index', compact(
+            'periodos',
+            'carreras',
+            'totalAlumnos',
+            'alumnosVigentes',
+            'alumnosBaja',
+            'alumnosEgresados',
+            'totalProfesores',
+            'profesoresVigentes',
+            'totalGrupos',
+            'gruposActivos',
+            'totalCarreras',
+            'carrerasActivas',
+            'distribucionCarreras',
+            'distribucionAreas',
+            'distribucionSemestres'
+        ));
     }
 
-    // --- Puedes añadir aquí otros métodos para más reportes ---
-    /*
-    public function otroReporte(): View
+    public function reporteAlumnos()
     {
-        $resultados = DB::select('TU OTRA CONSULTA SQL AQUÍ');
-        return view('reportes.otro_reporte', compact('resultados'));
+        // Lógica para reporte detallado de alumnos
+        return view('reportes.alumnos');
     }
-    */
+
+    public function reporteGrupos()
+    {
+        // Lógica para reporte detallado de grupos
+        return view('reportes.grupos');
+    }
+
+    public function reporteProfesores()
+    {
+        // Lógica para reporte detallado de profesores
+        return view('reportes.profesores');
+    }
+
+    public function reporteEstadisticas()
+    {
+        // Lógica para estadísticas generales
+        return view('reportes.estadisticas');
+    }
 }

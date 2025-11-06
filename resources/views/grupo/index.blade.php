@@ -27,7 +27,7 @@
                         <p class="mb-0">{{ $message }}</p>
                     </div>
                 @elseif ($message = Session::get('error'))
-                     <div class="alert alert-danger m-4 shadow-sm border-0 rounded">
+                    <div class="alert alert-danger m-4 shadow-sm border-0 rounded">
                         <p class="mb-0">{{ $message }}</p>
                     </div>
                 @endif
@@ -38,38 +38,39 @@
                         <table class="table table-bordered table-hover align-middle">
                             <thead class="text-center text-white" style="background-color: #002D72;">
                                 <tr>
-                                    <th>ID Grupo</th>
+                                    
                                     <th>Materia</th>
                                     <th>Profesor</th>
                                     <th>Semestre</th>
+                                    <th>Periodo</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach ($grupos as $grupo)
+                                    {{--
+                                        ¡MEJORA DE RENDIMIENTO!
+                                        He eliminado el @php que estaba aquí. Tu GrupoController
+                                        ya carga la relación 'materia' con ->with('materia').
+                                        Volver a consultarla con DB::table() aquí es un
+                                        problema de rendimiento N+1.
+                                        Ahora usamos la relación que ya viene cargada.
+                                    --}}
                                     <tr>
-                                        <td class="text-center">{{ $grupo->id_grupo }}</td>
                                         
-                                        {{-- COLUMNA MATERIA - MEJORADA --}}
+                                        {{-- COLUMNA MATERIA (Optimizada) --}}
                                         <td>
-                                            @if ($grupo->materia)
-                                                {{-- Si la relación funciona --}}
+                                            @if ($grupo->materia) {{-- Usamos la relación cargada --}}
                                                 <strong>{{ $grupo->materia->cod_materia }}</strong> - {{ $grupo->materia->nombre }}
-                                            @elseif($grupo->cod_materia && $grupo->nombre_materia)
-                                                {{-- Si tenemos código y podemos obtener el nombre --}}
-                                                <strong>{{ $grupo->cod_materia }}</strong> - {{ $grupo->nombre_materia }}
-                                            @elseif($grupo->cod_materia)
-                                                {{-- Si solo tenemos el código --}}
-                                                <span class="text-warning">
-                                                    <strong>{{ $grupo->cod_materia }}</strong>
-                                                </span>
+                                            @elseif ($grupo->cod_materia)
+                                                <span class="text-warning fw-bold">{{ $grupo->cod_materia }}</span>
                                                 <br>
-                                                <small class="text-muted">Código existe pero materia no encontrada</small>
+                                                <small class="text-muted">Materia no encontrada</small>
                                             @else
                                                 <span class="text-danger fw-bold">Materia no asignada</span>
                                             @endif
                                         </td>
-                                        
+
                                         {{-- COLUMNA PROFESOR --}}
                                         <td>
                                             @if ($grupo->profesore)
@@ -84,23 +85,37 @@
                                         <td class="text-center">
                                             <span class="badge bg-primary fs-6">Semestre {{ $grupo->semestre }}</span>
                                         </td>
+
+                                        {{-- COLUMNA PERIODO --}}
+                                        <td class="text-center">
+                                            @if ($grupo->periodo)
+                                                <div class="fw-bold">{{ $grupo->periodo->periodo_nombre }} {{ $grupo->periodo->anio }}</div>
+                                                <small class="text-muted">{{ $grupo->periodo->codigo_periodo }}</small>
+                                                <br>
+                                                <span class="badge {{ $grupo->periodo->activo ? 'bg-success' : 'bg-secondary' }}">
+                                                    {{ $grupo->periodo->activo ? 'Activo' : 'Inactivo' }}
+                                                </span>
+                                            @else
+                                                <span class="text-danger fw-bold">Periodo no asignado</span>
+                                            @endif
+                                        </td>
                                         
+                                        {{-- ACCIONES (Corregidas) --}}
                                         <td class="text-center">
                                             <div class="btn-group" role="group">
-                                                {{-- NUEVO BOTÓN VER DETALLES --}}
-                                                <a class="btn btn-sm btn-info" href="{{ route('grupos.detalles', $grupo->id_grupo) }}" 
-                                                   title="Ver detalles completos del grupo">
+                                                
+                                                {{-- 1. CORRECCIÓN: 'grupos.detalles' -> 'grupos.show' --}}
+                                                <a class="btn btn-sm btn-info" href="{{ route('grupos.show', $grupo) }}" title="Ver detalles del grupo">
                                                     <i class="fas fa-list-alt"></i> Detalles
                                                 </a>
                                                 
-                                               
-                                                
-                                                <a class="btn btn-sm btn-outline-success" href="{{ route('grupos.edit', $grupo->id_grupo) }}"
-                                                   title="Editar grupo">
+                                                {{-- 2. MEJORA: Usamos Route Model Binding --}}
+                                                <a class="btn btn-sm btn-outline-success" href="{{ route('grupos.edit', $grupo) }}" title="Editar grupo">
                                                     <i class="fa fa-fw fa-edit"></i> Editar
                                                 </a>
                                                 
-                                                <form action="{{ route('grupos.destroy', $grupo->id_grupo) }}" method="POST" class="d-inline">
+                                                {{-- 3. MEJORA: Usamos Route Model Binding --}}
+                                                <form action="{{ route('grupos.destroy', $grupo) }}" method="POST" class="d-inline">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="btn btn-sm btn-outline-danger"
@@ -119,7 +134,7 @@
                 </div>
             </div>
 
-            <!-- Paginación centrada -->
+            <!-- Paginación -->
             <div class="d-flex justify-content-center mt-3">
                 {!! $grupos->withQueryString()->links('pagination::bootstrap-5') !!}
             </div>
@@ -133,30 +148,24 @@
         font-weight: 600;
         font-size: 0.9rem;
     }
-    
     .badge {
         font-size: 0.8rem;
         padding: 0.4em 0.6em;
     }
-    
     .btn-sm {
         margin: 2px;
         font-size: 0.8rem;
         padding: 0.25rem 0.5rem;
     }
-    
     .btn-group {
         flex-wrap: wrap;
         gap: 2px;
     }
-    
-    /* Estilos para los botones de acciones */
     .btn-info {
         background-color: #17a2b8;
         border-color: #17a2b8;
         color: white;
     }
-    
     .btn-info:hover {
         background-color: #138496;
         border-color: #117a8b;

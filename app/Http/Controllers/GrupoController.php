@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Grupo;
-use App\Models\Materia;
-use App\Models\Profesore;
+use App\Models\Materia; // [cite: 50-51]
+use App\Models\Profesore; // [cite: 52-55]
+use App\Models\Periodo;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use App\Http\Requests\GrupoRequest;
@@ -18,43 +19,38 @@ class GrupoController extends Controller
      */
     public function index(Request $request): View
     {
-        // Cargar relaciones con nombres correctos
-        $grupos = Grupo::with(['materia', 'profesore'])->paginate(10); 
+        $grupos = Grupo::with(['materia', 'profesore', 'periodo'])->paginate(30);
 
         return view('grupo.index', compact('grupos'))
             ->with('i', ($request->input('page', 1) - 1) * $grupos->perPage());
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Muestra el formulario de creación.
      */
     public function create(): View
     {
         $grupo = new Grupo();
-        
-        $materias = Materia::where('materia_estado', 'Activa')
-                          ->pluck('nombre', 'cod_materia');
-        
-        $profesores = Profesore::where('situacion', 'Vigente')
-                              ->selectRaw("CONCAT(nombre, ' ', ap_paterno, ' ', ap_materno) as full_name, n_trabajador")
-                              ->pluck('full_name', 'n_trabajador'); 
 
-        return view('grupo.create', compact('grupo', 'materias', 'profesores'));
+        $materias = Materia::where('materia_estado', 'Activa')
+            ->pluck('nombre', 'cod_materia');
+
+        $profesores = Profesore::where('situacion', 'Vigente')
+            ->selectRaw("CONCAT(nombre, ' ', ap_paterno, ' ', ap_materno) as full_name, n_trabajador")
+            ->pluck('full_name', 'n_trabajador');
+
+        $periodos = Periodo::where('activo', true)
+            ->selectRaw("CONCAT(periodo_nombre, ' ', anio, ' (', codigo_periodo, ')') as periodo_full, id")
+            ->pluck('periodo_full', 'id');
+
+        return view('grupo.create', compact('grupo', 'materias', 'profesores', 'periodos'));
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Guarda un nuevo grupo en la base de datos.
      */
     public function store(GrupoRequest $request): RedirectResponse
     {
-        // Validar que el ID del grupo no exista
-        $exists = Grupo::where('id_grupo', $request->id_grupo)->exists();
-        if ($exists) {
-            return Redirect::back()
-                ->withInput()
-                ->with('error', 'El ID del grupo ya existe. Por favor, use un ID diferente.');
-        }
-
         Grupo::create($request->validated());
 
         return Redirect::route('grupos.index')
@@ -62,52 +58,78 @@ class GrupoController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * --- MÉTODO ACTUALIZADO ---
+     * Muestra los detalles de un grupo, incluyendo su horario.
      */
-    public function show($id_grupo): View
+    public function show(Grupo $grupo): View
     {
-        // Cargar relaciones explícitamente
-        $grupo = Grupo::with(['materia', 'profesore'])->findOrFail($id_grupo);
+        // 1. Carga optimizada de todas las relaciones
+        $grupo->load([
+            'materia',      // Relación que ya tenías
+            'profesore',    // Relación que ya tenías
+            'periodo',      // Relación que ya tenías
+            'alumnos',      // Relación que ya tenías
+            
+            // --- Nueva Lógica de Horarios ---
+            'horarios' => function ($query) {
+                // Ordenamos los bloques por día y luego por hora
+                $query->orderBy('dia_semana', 'asc')
+                      ->orderBy('hora_inicio', 'asc');
+            },
+            'horarios.materia',    // Materia del bloque de horario
+            'horarios.profesore',  // Profesor del bloque de horario
+            'horarios.aula'        // Aula del bloque de horario
+        ]);
 
-        // DEBUG: Verificar datos
-        // dd($grupo->materia, $grupo->profesore);
+        // 2. Agrupamos la colección de horarios por el 'dia_semana' (1, 2, 3...)
+        $horariosAgrupados = $grupo->horarios->groupBy('dia_semana');
 
-        return view('grupo.show', compact('grupo'));
+        // 3. Un array simple para "traducir" los números de día
+        $diasSemana = [
+            1 => 'Lunes',
+            2 => 'Martes',
+            3 => 'Miércoles',
+            4 => 'Jueves',
+            5 => 'Viernes',
+            // 6 => 'Sábado' (si lo llegas a usar)
+        ];
+
+        // 4. Pasamos todo a la vista (la misma vista 'grupo.show' que ya tenías)
+        // La vista `grupos.show.blade.php` que te di antes
+        // funcionará con estas variables.
+        return view('grupo.show', compact(
+            'grupo', 
+            'horariosAgrupados', 
+            'diasSemana'
+        ));
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Muestra el formulario de edición de un grupo.
      */
-    public function edit($id_grupo): View
+    public function edit(Grupo $grupo): View
     {
-        $grupo = Grupo::with(['materia', 'profesore'])->findOrFail($id_grupo);
-        
+        $grupo->load(['materia', 'profesore', 'periodo']);
+
         $materias = Materia::where('materia_estado', 'Activa')
-                          ->pluck('nombre', 'cod_materia');
-        
-        $profesores = Profesore::where('situacion', 'Vigente')
-                              ->selectRaw("CONCAT(nombre, ' ', ap_paterno, ' ', ap_materno) as full_name, n_trabajador")
-                              ->pluck('full_name', 'n_trabajador'); 
+            ->pluck('nombre', 'cod_materia');
 
-        return view('grupo.edit', compact('grupo', 'materias', 'profesores'));
+        $profesores = Profesore::where('situacion', 'Vigente')
+            ->selectRaw("CONCAT(nombre, ' ', ap_paterno, ' ', ap_materno) as full_name, n_trabajador")
+            ->pluck('full_name', 'n_trabajador');
+
+        $periodos = Periodo::where('activo', true)
+            ->selectRaw("CONCAT(periodo_nombre, ' ', anio, ' (', codigo_periodo, ')') as periodo_full, id")
+            ->pluck('periodo_full', 'id');
+
+        return view('grupo.edit', compact('grupo', 'materias', 'profesores', 'periodos'));
     }
 
     /**
-     * Update the specified resource in storage.
+     * Actualiza la información de un grupo.
      */
     public function update(GrupoRequest $request, Grupo $grupo): RedirectResponse
     {
-        // Validar que el ID del grupo no exista (excepto para el actual)
-        $exists = Grupo::where('id_grupo', $request->id_grupo)
-                      ->where('id_grupo', '!=', $grupo->id_grupo)
-                      ->exists();
-        
-        if ($exists) {
-            return Redirect::back()
-                ->withInput()
-                ->with('error', 'El ID del grupo ya existe. Por favor, use un ID diferente.');
-        }
-
         $grupo->update($request->validated());
 
         return Redirect::route('grupos.index')
@@ -115,11 +137,11 @@ class GrupoController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Elimina un grupo si no tiene alumnos asignados.
      */
-    public function destroy($id_grupo): RedirectResponse
+    public function destroy(Grupo $grupo): RedirectResponse
     {
-        $grupo = Grupo::withCount('alumnos')->findOrFail($id_grupo);
+        $grupo->loadCount('alumnos');
 
         if ($grupo->alumnos_count > 0) {
             return Redirect::route('grupos.index')
@@ -137,16 +159,17 @@ class GrupoController extends Controller
     }
 
     /**
-     * Muestra los detalles completos del grupo con profesor y alumnos.
+     * Muestra detalles completos del grupo con profesor y alumnos.
      */
-    public function detalles($id)
+    public function detalles(Grupo $grupo): View
     {
-        $grupo = Grupo::with([
-            'materia', 
-            'profesore.area', // CORREGIDO: Cambiado de 'profesor' a 'profesore'
-            'alumnos.carrera' // Cargar los alumnos del grupo
-        ])->findOrFail($id);
-        
+        $grupo->load([
+            'materia',
+            'profesore.area',
+            'alumnos.carrera',
+            'periodo'
+        ]);
+
         return view('grupo.detalles', compact('grupo'));
     }
 }

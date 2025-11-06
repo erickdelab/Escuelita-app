@@ -37,9 +37,24 @@
                                         <strong class="text-primary d-block">ID Grupo:</strong>
                                         <span class="badge bg-primary fs-6">{{ $grupo->id_grupo }}</span>
                                     </div>
-                                    <div>
+                                    <div class="mb-3">
                                         <strong class="text-primary d-block">Semestre:</strong>
                                         <span class="fw-bold" style="color: #002D72;">{{ $grupo->semestre }}</span>
+                                    </div>
+                                    <!-- NUEVA INFORMACIÓN DEL PERIODO -->
+                                    <div>
+                                        <strong class="text-primary d-block">Periodo:</strong>
+                                        @if($grupo->periodo)
+                                            <span class="fw-bold" style="color: #002D72;">{{ $grupo->periodo->periodo_nombre }} {{ $grupo->periodo->anio }}</span>
+                                            <br>
+                                            <small class="text-muted">{{ $grupo->periodo->codigo_periodo }}</small>
+                                            <br>
+                                            <span class="badge {{ $grupo->periodo->activo ? 'bg-success' : 'bg-secondary' }}">
+                                                {{ $grupo->periodo->activo ? 'Activo' : 'Inactivo' }}
+                                            </span>
+                                        @else
+                                            <span class="text-danger fw-bold">Periodo no asignado</span>
+                                        @endif
                                     </div>
                                 </div>
                             </div>

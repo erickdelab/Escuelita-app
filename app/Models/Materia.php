@@ -4,23 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-/**
- * Class Materia
- *
- * @property $cod_materia
- * @property $nombre
- * @property $credito
- * @property $cadena
- * @property $materia_estado
- *
- * @property Grupo[] $grupos
- * @property Historial[] $historials
- * @package App
- * @mixin \Illuminate\Database\Eloquent\Builder
- */
 class Materia extends Model
 {
-    protected $primaryKey = 'cod_materia'; // ← Usa cod_area como PK
+    protected $primaryKey = 'cod_materia';
+    public $incrementing = false; // ← AGREGAR ESTO
+    protected $keyType = 'string'; // ← AGREGAR ESTO (si cod_materia es string)
 
     protected $perPage = 20;
 
@@ -30,7 +18,6 @@ class Materia extends Model
      * @var array<int, string>
      */
     protected $fillable = ['cod_materia', 'nombre', 'credito', 'cadena', 'materia_estado'];
-
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
@@ -47,5 +34,4 @@ class Materia extends Model
     {
         return $this->hasMany(\App\Models\Historial::class, 'cod_materia', 'FK_materia');
     }
-    
 }

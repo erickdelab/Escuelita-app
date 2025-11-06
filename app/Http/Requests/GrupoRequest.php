@@ -3,69 +3,50 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class GrupoRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
-        $grupoId = $this->route('grupo') ? $this->route('grupo')->id_grupo : null;
-
         return [
-            'id_grupo' => 'required|string|max:10',
+            // 'id_grupo' => [...] // ❌ ELIMINADO: No se valida, es autoincremental
+            
             'cod_materia' => 'required|string|exists:materias,cod_materia',
             'n_trabajador' => 'required|string|exists:profesores,n_trabajador',
-            'semestre' => 'required|integer|min:1|max:12'
+            'semestre' => 'required|integer|min:1|max:12',
+            'periodo_id' => 'required|integer|exists:periodos,id', // Asegúrate que la tabla 'periodos' y 'id' sean correctos
         ];
     }
 
-    /**
-     * Get custom messages for validator errors.
-     */
     public function messages(): array
     {
         return [
-            'id_grupo.required' => 'El ID del grupo es obligatorio',
-            'id_grupo.string' => 'El ID del grupo debe ser texto',
-            'id_grupo.max' => 'El ID del grupo no puede tener más de 10 caracteres',
-            
-            'cod_materia.required' => 'La materia es obligatoria',
-            'cod_materia.string' => 'La materia debe ser texto',
-            'cod_materia.exists' => 'La materia seleccionada no existe',
-            
-            'n_trabajador.required' => 'El profesor es obligatorio',
-            'n_trabajador.string' => 'El profesor debe ser texto',
-            'n_trabajador.exists' => 'El profesor seleccionado no existe',
-            
-            'semestre.required' => 'El semestre es obligatorio',
-            'semestre.integer' => 'El semestre debe ser un número entero',
-            'semestre.min' => 'El semestre debe ser al menos 1',
-            'semestre.max' => 'El semestre no puede ser mayor a 12'
+            // 'id_grupo.required' => 'El ID del grupo es obligatorio.', // ELIMINADO
+            // 'id_grupo.unique' => 'El ID del grupo ya existe.', // ELIMINADO
+            'cod_materia.required' => 'La materia es obligatoria.',
+            'cod_materia.exists' => 'La materia seleccionada no existe.',
+            'n_trabajador.required' => 'El profesor es obligatorio.',
+            'n_trabajador.exists' => 'El profesor seleccionado no existe.',
+            'semestre.required' => 'El semestre es obligatorio.',
+            'periodo_id.required' => 'El periodo es obligatorio.',
+            'periodo_id.exists' => 'El periodo seleccionado no existe.',
         ];
     }
 
-    /**
-     * Get custom attributes for validator errors.
-     */
     public function attributes(): array
     {
         return [
-            'id_grupo' => 'ID Grupo',
+            // 'id_grupo' => 'ID Grupo', // ELIMINADO
             'cod_materia' => 'Materia',
             'n_trabajador' => 'Profesor',
-            'semestre' => 'Semestre'
+            'semestre' => 'Semestre',
+            'periodo_id' => 'Periodo',
         ];
     }
 }

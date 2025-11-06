@@ -3,65 +3,92 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+// Añadimos los 'use' para las nuevas relaciones
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\Horario; // Asegúrate de que este modelo exista
 
 class Grupo extends Model
 {
+    // 🔹 Nombre de la tabla
     protected $table = 'grupos';
+
+    // 🔹 Clave primaria personalizada
     protected $primaryKey = 'id_grupo';
     public $incrementing = true;
     protected $keyType = 'int';
 
+    // 🔹 Control de timestamps
+    public $timestamps = true;
+
+    // 🔹 Campos permitidos para asignación masiva
     protected $fillable = [
-        'id_grupo',
         'cod_materia',
         'n_trabajador',
-        'semestre'
+        'semestre',
+        'periodo_id',
     ];
 
+    /* -------------------------------------------------------------------------- */
+    /*                               🔹 ROUTE BINDING                             */
+    /* -------------------------------------------------------------------------- */
     /**
-     * Relación con la tabla materias - CORREGIDA
+     * Laravel usará `id_grupo` para resolver el modelo automáticamente
+     * en las rutas tipo:
+     *   Route::get('/grupos/{grupo}/edit', [GrupoController::class, 'edit']);
      */
+    public function getRouteKeyName()
+    {
+        return 'id_grupo';
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /*                               🔹 RELACIONES                                */
+    /* -------------------------------------------------------------------------- */
+
+    // Relación con la tabla materias
     public function materia()
     {
         return $this->belongsTo(Materia::class, 'cod_materia', 'cod_materia');
     }
 
-    /**
-     * Relación con la tabla profesores
-     */
+    // Relación con la tabla profesores
     public function profesore()
     {
         return $this->belongsTo(Profesore::class, 'n_trabajador', 'n_trabajador');
     }
 
-    /**
-     * Relación con alumnos a través de la tabla pivote
-     */
+    // Relación con la tabla periodos
+    public function periodo()
+    {
+        return $this->belongsTo(Periodo::class, 'periodo_id', 'id');
+    }
+
+    // Relación muchos a muchos con alumnos
     public function alumnos()
     {
         return $this->belongsToMany(Alumno::class, 'alumno_grupo', 'id_grupo', 'n_control');
     }
 
     /**
-     * Accessor para obtener el nombre de la materia
+     * --- 🔹 NUEVA RELACIÓN AÑADIDA 🔹 ---
+     * Un Grupo tiene muchas entradas de horario.
+     *
+     * Se conecta a la tabla 'horarios' usando:
+     * - Llave Foránea en 'horarios': 'grupo_id'
+     * - Llave Local en 'grupos': 'id_grupo' (tu Primary Key)
      */
-    public function getNombreMateriaAttribute()
+    public function horarios(): HasMany
     {
-        // Si la relación está cargada, usarla
-        if ($this->relationLoaded('materia') && $this->materia) {
-            return $this->materia->nombre;
-        }
-        
-        // Si no, buscar directamente
-        $materia = Materia::where('cod_materia', $this->cod_materia)->first();
-        return $materia ? $materia->nombre : null;
+        return $this->hasMany(Horario::class, 'grupo_id', 'id_grupo');
     }
 
-    /**
-     * Accessor para verificar si tiene materia asignada
-     */
-    public function getTieneMateriaAttribute()
+
+    /* -------------------------------------------------------------------------- */
+    /*                               🔹 ACCESSORS                                 */
+    /* -------------------------------------------------------------------------- */
+
+    public function getNombreMateriaAttribute()
     {
-        return !empty($this->cod_materia) && $this->nombre_materia;
+        return $this->materia ? $this->materia->nombre : 'Sin materia asignada';
     }
 }

@@ -34,8 +34,9 @@
                         <table class="table table-bordered table-hover align-middle">
                             <thead class="text-center text-white" style="background-color: #002D72;">
                                 <tr>
+                                    <th>Código</th>
                                     <th>Nombre</th>
-                                    <th>Crédito</th>
+                                    <th>Créditos</th>
                                     <th>Estado</th>
                                     <th>Acciones</th>
                                 </tr>
@@ -43,24 +44,42 @@
                             <tbody>
                                 @foreach ($materias as $materia)
                                     <tr>
+                                        <td class="text-center"><strong>{{ $materia->cod_materia }}</strong></td>
                                         <td>{{ $materia->nombre }}</td>
                                         <td class="text-center">{{ $materia->credito }}</td>
-                                        <td>{{ $materia->materia_estado }}</td>
                                         <td class="text-center">
-                                            <form action="{{ route('materias.destroy', $materia->cod_materia) }}" method="POST">
+                                            <span class="badge {{ $materia->materia_estado == 'Activa' ? 'bg-success' : 'bg-danger' }}">
+                                                {{ $materia->materia_estado }}
+                                            </span>
+                                        </td>
+                                        <td class="text-center">
+                                            <div class="btn-group" role="group">
                                                 <a class="btn btn-sm btn-outline-primary" href="{{ route('materias.show', $materia->cod_materia) }}">
                                                     <i class="fa fa-fw fa-eye"></i> Ver
                                                 </a>
                                                 <a class="btn btn-sm btn-outline-success" href="{{ route('materias.edit', $materia->cod_materia) }}">
                                                     <i class="fa fa-fw fa-edit"></i> Editar
                                                 </a>
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-outline-danger"
-                                                    onclick="event.preventDefault(); confirm('¿Seguro que deseas eliminar esta materia?') ? this.closest('form').submit() : false;">
-                                                    <i class="fa fa-fw fa-trash"></i> Eliminar
-                                                </button>
-                                            </form>
+                                                
+                                                @if($materia->materia_estado == 'Activa')
+                                                    <form action="{{ route('materias.destroy', $materia->cod_materia) }}" method="POST" class="d-inline">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-sm btn-outline-warning"
+                                                            onclick="event.preventDefault(); confirm('¿Seguro que deseas dar de baja esta materia?') ? this.closest('form').submit() : false;">
+                                                            <i class="fa fa-fw fa-arrow-down"></i> Dar de Baja
+                                                        </button>
+                                                    </form>
+                                                @else
+                                                    <form action="{{ route('materias.reactivar', $materia->cod_materia) }}" method="POST" class="d-inline">
+                                                        @csrf
+                                                        <button type="submit" class="btn btn-sm btn-outline-info"
+                                                            onclick="event.preventDefault(); confirm('¿Seguro que deseas reactivar esta materia?') ? this.closest('form').submit() : false;">
+                                                            <i class="fa fa-fw fa-arrow-up"></i> Reactivar
+                                                        </button>
+                                                    </form>
+                                                @endif
+                                            </div>
                                         </td>
                                     </tr>
                                 @endforeach

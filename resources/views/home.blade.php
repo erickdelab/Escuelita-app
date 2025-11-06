@@ -111,8 +111,8 @@
                                 Accede a reportes especializados y análisis académicos
                             </p>
                             <div class="d-grid gap-2">
-                                <a href="{{ url('/reportes/alumnos-especial-tics') }}" class="btn btn-outline-primary btn-hover">
-                                    <i class="fas fa-chart-line me-2"></i>Reporte Alumnos Especial
+                                <a href="{{ url('/reportes') }}" class="btn btn-outline-primary btn-hover">
+                                    <i class="fas fa-chart-line me-2"></i>Reportes Generales
                                 </a>
                                 <a href="{{ url('/historials') }}" class="btn btn-outline-primary btn-hover">
                                     <i class="fas fa-history me-2"></i>Historial Académico

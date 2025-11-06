@@ -112,9 +112,9 @@
                                                         </span>
                                                     </small>
                                                 </div>
-                                                <a href="{{ route('grupos.detalles', $grupo->id_grupo) }}" class="btn btn-outline-primary btn-sm">
-                                                    Ver Grupo
-                                                </a>
+                                                <a href="{{ route('grupos.show', $grupo) }}" class="btn btn-outline-primary btn-sm">
+    Ver Grupo
+</a>
                                             </div>
                                         @endforeach
                                     @else

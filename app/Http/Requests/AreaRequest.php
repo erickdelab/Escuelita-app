@@ -3,7 +3,6 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class AreaRequest extends FormRequest
 {
@@ -20,36 +19,38 @@ class AreaRequest extends FormRequest
      */
     public function rules(): array
     {
-        // === Lógica para Edición y Unicidad ===
-        // Obtenemos la clave primaria del área actual para ignorarla en las validaciones unique
-        $areaCodArea = $this->route('area'); 
-        
-        // Regla para el nombre del área (debe ser único, ignorando el área actual si edita)
-        $area_unique_rule = Rule::unique('areas', 'area')
-                                  ->ignore($areaCodArea, 'cod_area');
+        $area = $this->route('area');
+        $cod_area = $area ? $area->cod_area : null;
 
         return [
-            // CÓDIGO DE ÁREA: Solo se valida si está presente (edición)
-            'cod_area' => 'nullable', 
-            
-            // NOMBRE DE ÁREA: Requerido, string, y único
-            'area' => ['required', 'string', 'max:255', $area_unique_rule],
-            
-            // JEFE DE ÁREA (Clave Foránea): Debe existir en profesores.n_trabajador
+            'area' => 'required|string|max:255|unique:areas,area,' . $cod_area . ',cod_area',
             'jefe_area' => 'nullable|string|exists:profesores,n_trabajador',
         ];
     }
 
     /**
-     * Get the error messages for the defined validation rules.
+     * Get custom messages for validator errors.
      */
     public function messages(): array
     {
         return [
-            'area.required' => 'El nombre del área es obligatorio.',
-            'area.unique' => 'Ya existe un área registrada con este nombre.',
+            'area.required' => 'El nombre del área es obligatorio',
+            'area.string' => 'El nombre del área debe ser texto',
+            'area.max' => 'El nombre del área no puede tener más de 255 caracteres',
+            'area.unique' => 'El nombre del área ya existe',
             
-            'jefe_area.exists' => 'El profesor seleccionado como Jefe de Área no existe.',
+            'jefe_area.exists' => 'El profesor seleccionado no existe',
+        ];
+    }
+
+    /**
+     * Get custom attributes for validator errors.
+     */
+    public function attributes(): array
+    {
+        return [
+            'area' => 'Nombre del Área',
+            'jefe_area' => 'Jefe de Área',
         ];
     }
 }

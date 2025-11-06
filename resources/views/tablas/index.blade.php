@@ -14,7 +14,6 @@
                     <th>Tipo</th>
                     <th>Cotejamiento</th>
                     <th>Tamaño</th>
-                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -51,12 +50,6 @@
                     <td>{{ $tabla['type'] }}</td>
                     <td>{{ $tabla['collation'] }}</td>
                     <td>{{ $tabla['size'] }}</td>
-                    <td>
-                        <a href="{{ route('tabla.mostrar', $tabla['name']) }}" class="btn btn-sm btn-secondary mb-1">Examinar</a>
-                        <a href="#" class="btn btn-sm btn-success mb-1">Insertar</a>
-                        <a href="#" class="btn btn-sm btn-warning mb-1">Vaciar</a>
-                        <a href="#" class="btn btn-sm btn-danger mb-1">Eliminar</a>
-                    </td>
                 </tr>
                 @endforeach
             </tbody>

@@ -217,8 +217,8 @@
                             </a>
                             <ul class="dropdown-menu">
                                 <li><span class="dropdown-header">Reportes y Análisis</span></li>
-                                <li><a class="dropdown-item text-primary" href="{{ url('/reportes/alumnos-especial-tics') }}">
-                                    <i class="bi bi-bar-chart me-2"></i>Alumnos Especial TICS
+                                <li><a class="dropdown-item text-primary" href="{{ url('/reportes') }}">
+                                    <i class="bi bi-bar-chart me-2"></i>Reportes Generales
                                 </a></li>
                             </ul>
                         </li>

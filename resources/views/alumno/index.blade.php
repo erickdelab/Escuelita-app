@@ -34,8 +34,8 @@
                 <div class="card-body bg-light">
                     <form method="GET" action="{{ route('alumnos.index') }}" id="filterForm">
                         <div class="row g-3">
-                            <!-- Búsqueda General -->
-                            <div class="col-md-4">
+                            <!-- Búsqueda General (Siempre visible) -->
+                            <div class="col-md-8">
                                 <label class="form-label fw-bold text-primary">Búsqueda General</label>
                                 <div class="input-group">
                                     <input type="text" 
@@ -49,45 +49,81 @@
                                 </div>
                             </div>
 
-                            <!-- Filtro de Situación (Múltiple) -->
+                            <!-- Botón para mostrar/ocultar filtros avanzados -->
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold text-primary">&nbsp;</label>
+                                <div class="d-grid gap-2">
+                                    <button type="button" class="btn btn-outline-primary" id="toggleFiltersBtn">
+                                        <i class="bi bi-funnel me-1"></i>Filtros Avanzados
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Filtros Avanzados (Ocultos por defecto) -->
+                        <div id="advancedFilters" class="row g-3 mt-2" style="display: none;">
+                            <!-- Filtro de Situación (Checkboxes) -->
                             <div class="col-md-4">
                                 <label class="form-label fw-bold text-primary">Situación Académica</label>
-                                <select name="situacion_filter[]" class="form-select" multiple size="3">
-                                    <option value="Vigente" {{ in_array('Vigente', request('situacion_filter', [])) ? 'selected' : '' }}>Vigente</option>
-                                    <option value="Baja" {{ in_array('Baja', request('situacion_filter', [])) ? 'selected' : '' }}>Baja</option>
-                                    <option value="Egresado" {{ in_array('Egresado', request('situacion_filter', [])) ? 'selected' : '' }}>Egresado</option>
-                                </select>
-                                <small class="form-text text-muted">Mantén Ctrl para seleccionar múltiples</small>
+                                <div class="border rounded p-3 bg-white">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="situacion_filter[]" value="Vigente" 
+                                               id="situacion_vigente" {{ in_array('Vigente', request('situacion_filter', [])) ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="situacion_vigente">
+                                            Vigente
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="situacion_filter[]" value="Baja" 
+                                               id="situacion_baja" {{ in_array('Baja', request('situacion_filter', [])) ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="situacion_baja">
+                                            Baja
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="situacion_filter[]" value="Egresado" 
+                                               id="situacion_egresado" {{ in_array('Egresado', request('situacion_filter', [])) ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="situacion_egresado">
+                                            Egresado
+                                        </label>
+                                    </div>
+                                </div>
                             </div>
 
-                            <!-- Filtro de Carrera (Múltiple) -->
+                            <!-- Filtro de Carrera (Checkboxes) -->
                             <div class="col-md-4">
                                 <label class="form-label fw-bold text-primary">Carrera(s)</label>
-                                <select name="carrera_filter[]" class="form-select" multiple size="3">
+                                <div class="border rounded p-3 bg-white" style="max-height: 150px; overflow-y: auto;">
                                     @foreach($carreras as $id => $nombre)
-                                        <option value="{{ $id }}" {{ in_array($id, request('carrera_filter', [])) ? 'selected' : '' }}>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="carrera_filter[]" value="{{ $id }}" 
+                                               id="carrera_{{ $id }}" {{ in_array($id, request('carrera_filter', [])) ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="carrera_{{ $id }}">
                                             {{ $nombre }}
-                                        </option>
+                                        </label>
+                                    </div>
                                     @endforeach
-                                </select>
-                                <small class="form-text text-muted">Mantén Ctrl para seleccionar múltiples</small>
+                                </div>
                             </div>
 
-                            <!-- Filtro de Semestre (Múltiple) -->
-                            <div class="col-md-3">
+                            <!-- Filtro de Semestre (Checkboxes) -->
+                            <div class="col-md-4">
                                 <label class="form-label fw-bold text-primary">Semestre(s)</label>
-                                <select name="semestre_filter[]" class="form-select" multiple size="4">
+                                <div class="border rounded p-3 bg-white" style="max-height: 200px; overflow-y: auto;">
                                     @for($i = 1; $i <= 12; $i++)
-                                        <option value="{{ $i }}" {{ in_array($i, request('semestre_filter', [])) ? 'selected' : '' }}>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="semestre_filter[]" value="{{ $i }}" 
+                                               id="semestre_{{ $i }}" {{ in_array($i, request('semestre_filter', [])) ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="semestre_{{ $i }}">
                                             Semestre {{ $i }}
-                                        </option>
+                                        </label>
+                                    </div>
                                     @endfor
-                                </select>
-                                <small class="form-text text-muted">Selecciona uno o más semestres</small>
+                                </div>
                             </div>
 
                             <!-- Filtro de Género -->
-                            <div class="col-md-3">
+                            <div class="col-md-6">
                                 <label class="form-label fw-bold text-primary">Género</label>
                                 <select name="genero_filter" class="form-select">
                                     <option value="">Todos los géneros</option>
@@ -97,7 +133,7 @@
                             </div>
 
                             <!-- Filtro de Promedio -->
-                            <div class="col-md-3">
+                            <div class="col-md-6">
                                 <label class="form-label fw-bold text-primary">Rango de Promedio</label>
                                 <select name="promedio_filter" class="form-select">
                                     <option value="">Todos los promedios</option>
@@ -109,10 +145,9 @@
                                 </select>
                             </div>
 
-                            <!-- Botones de Acción -->
-                            <div class="col-md-3">
-                                <label class="form-label fw-bold text-primary">&nbsp;</label>
-                                <div class="d-grid gap-2">
+                            <!-- Botones de Acción para filtros avanzados -->
+                            <div class="col-12">
+                                <div class="d-flex gap-2 justify-content-end">
                                     <button type="submit" class="btn btn-primary">
                                         <i class="bi bi-funnel-fill me-1"></i>Aplicar Filtros
                                     </button>
@@ -204,15 +239,11 @@
                                         <!-- Promedio General -->
                                         <td class="text-center">
                                             @if($alumno->promedio_general !== null)
-                                                <span class="badge 
-                                                    @if($alumno->promedio_general >= 90) bg-success
-                                                    @elseif($alumno->promedio_general >= 80) bg-info
-                                                    @elseif($alumno->promedio_general >= 70) bg-warning
-                                                    @else bg-danger @endif">
+                                                <span class="text-dark fw-bold">
                                                     {{ number_format($alumno->promedio_general, 1) }}
                                                 </span>
                                             @else
-                                                <span class="badge bg-secondary">N/A</span>
+                                                <span class="text-muted">N/A</span>
                                             @endif
                                         </td>
                                         
@@ -224,10 +255,9 @@
                                             <small class="text-muted">{{ $alumno->ap_pat }} {{ $alumno->ap_mat }}</small>
                                         </td>
                                         
+                                        <!-- Género (sin color) -->
                                         <td class="text-center">
-                                            <span class="badge {{ $alumno->genero == 'M' ? 'bg-primary' : 'bg-pink' }}">
-                                                {{ $alumno->genero == 'M' ? '♂ Masculino' : '♀ Femenino' }}
-                                            </span>
+                                            {{ $alumno->genero == 'M' ? ' Masculino' : ' Femenino' }}
                                         </td>
                                         
                                         <!-- Carrera -->
@@ -246,9 +276,9 @@
                                             </span>
                                         </td>
                                         
-                                        <!-- Semestre -->
+                                        <!-- Semestre (solo número) -->
                                         <td class="text-center">
-                                            <span class="badge bg-dark fs-6">S{{ $alumno->semestre }}</span>
+                                            <span class="fw-bold">{{ $alumno->semestre }}</span>
                                         </td>
                                         
                                         <!-- Acciones -->
@@ -308,10 +338,6 @@
 </div>
 
 <style>
-    .bg-pink {
-        background-color: #e83e8c !important;
-    }
-    
     .form-select[multiple] {
         height: auto;
         min-height: 80px;
@@ -324,6 +350,15 @@
     .btn-group-sm > .btn {
         padding: 0.25rem 0.5rem;
     }
+    
+    #advancedFilters {
+        transition: all 0.3s ease;
+    }
+    
+    .form-check-input:checked {
+        background-color: #002D72;
+        border-color: #002D72;
+    }
 </style>
 
 <script>
@@ -332,6 +367,36 @@
         select.addEventListener('change', function() {
             document.getElementById('filterForm').submit();
         });
+    });
+
+    // Mostrar/ocultar filtros avanzados
+    document.getElementById('toggleFiltersBtn').addEventListener('click', function() {
+        const filters = document.getElementById('advancedFilters');
+        const isVisible = filters.style.display === 'block';
+        
+        filters.style.display = isVisible ? 'none' : 'block';
+        this.innerHTML = isVisible 
+            ? '<i class="bi bi-funnel me-1"></i>Filtros Avanzados' 
+            : '<i class="bi bi-funnel-fill me-1"></i>Ocultar Filtros';
+        
+        // Cambiar estilo del botón
+        this.classList.toggle('btn-outline-primary');
+        this.classList.toggle('btn-primary');
+    });
+
+    // Mostrar filtros automáticamente si hay algún filtro avanzado activo
+    document.addEventListener('DOMContentLoaded', function() {
+        const hasAdvancedFilters = {{ request()->anyFilled(['situacion_filter', 'carrera_filter', 'semestre_filter', 'genero_filter', 'promedio_filter']) ? 'true' : 'false' }};
+        
+        if (hasAdvancedFilters) {
+            const filters = document.getElementById('advancedFilters');
+            const toggleBtn = document.getElementById('toggleFiltersBtn');
+            
+            filters.style.display = 'block';
+            toggleBtn.innerHTML = '<i class="bi bi-funnel-fill me-1"></i>Ocultar Filtros';
+            toggleBtn.classList.remove('btn-outline-primary');
+            toggleBtn.classList.add('btn-primary');
+        }
     });
 </script>
 @endsection

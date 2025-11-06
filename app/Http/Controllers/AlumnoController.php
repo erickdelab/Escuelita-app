@@ -86,7 +86,7 @@ class AlumnoController extends Controller
             ->when($sort != 'carrera', function ($query) use ($sort, $direction) {
                 $query->orderBy($sort, $direction);
             })
-            ->paginate(20)
+            ->paginate(50)
             ->withQueryString();
 
         return view('alumno.index', compact('alumnos', 'carreras'))
