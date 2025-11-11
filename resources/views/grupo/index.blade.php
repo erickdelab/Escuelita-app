@@ -100,27 +100,32 @@
                                             @endif
                                         </td>
                                         
-                                        {{-- ACCIONES (Corregidas) --}}
+                                        {{-- ACCIONES --}}
                                         <td class="text-center">
                                             <div class="btn-group" role="group">
-                                                
-                                                {{-- 1. CORRECCIÓN: 'grupos.detalles' -> 'grupos.show' --}}
+                                        
                                                 <a class="btn btn-sm btn-info" href="{{ route('grupos.show', $grupo) }}" title="Ver detalles del grupo">
                                                     <i class="fas fa-list-alt"></i> Detalles
                                                 </a>
                                                 
-                                                {{-- 2. MEJORA: Usamos Route Model Binding --}}
+                                                @if($grupo->horarios_count > 0)
+                                                    <a class="btn btn-sm btn-warning" href="{{ route('grupos.horario.show', $grupo) }}" title="Modificar Horario">
+                                                        <i class="bi bi-calendar-check"></i> Horario
+                                                    </a>
+                                                @else
+                                                    <a class="btn btn-sm btn-outline-warning" href="{{ route('grupos.horario.show', $grupo) }}" title="Asignar Horario">
+                                                        <i class="bi bi-calendar-plus"></i> Horario
+                                                    </a>
+                                                @endif
+                                                
                                                 <a class="btn btn-sm btn-outline-success" href="{{ route('grupos.edit', $grupo) }}" title="Editar grupo">
                                                     <i class="fa fa-fw fa-edit"></i> Editar
                                                 </a>
                                                 
-                                                {{-- 3. MEJORA: Usamos Route Model Binding --}}
                                                 <form action="{{ route('grupos.destroy', $grupo) }}" method="POST" class="d-inline">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="btn btn-sm btn-outline-danger"
-                                                        onclick="event.preventDefault(); confirm('¿Seguro que deseas eliminar este grupo?') ? this.closest('form').submit() : false;"
-                                                        title="Eliminar grupo">
+                                                    <button type... (botón eliminar) ...>
                                                         <i class="fa fa-fw fa-trash"></i> Eliminar
                                                     </button>
                                                 </form>

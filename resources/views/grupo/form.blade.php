@@ -6,6 +6,7 @@
             <label for="cod_materia" class="form-label">{{ __('Materia') }}</label>
             <select name="cod_materia" class="form-select @error('cod_materia') is-invalid @enderror" id="cod_materia">
                 <option value="">-- Seleccionar Materia --</option>
+                {{-- ✅ Bucle para rellenar las materias --}}
                 @foreach($materias as $cod_materia => $nombre)
                     <option value="{{ $cod_materia }}" 
                         {{ old('cod_materia', $grupo?->cod_materia) == $cod_materia ? 'selected' : '' }}>
@@ -23,6 +24,7 @@
             <label for="n_trabajador" class="form-label">{{ __('Profesor') }}</label>
             <select name="n_trabajador" class="form-select @error('n_trabajador') is-invalid @enderror" id="n_trabajador">
                 <option value="">-- Seleccionar Profesor --</option>
+                {{-- ✅ Bucle para rellenar los profesores --}}
                 @foreach($profesores as $n_trabajador => $full_name)
                     <option value="{{ $n_trabajador }}" 
                         {{ old('n_trabajador', $grupo?->n_trabajador) == $n_trabajador ? 'selected' : '' }}>
@@ -40,6 +42,7 @@
             <label for="semestre" class="form-label">{{ __('Semestre') }}</label>
             <select name="semestre" class="form-select @error('semestre') is-invalid @enderror" id="semestre">
                 <option value="">-- Seleccionar Semestre --</option>
+                {{-- ✅ Bucle para rellenar los semestres --}}
                 @for($i = 1; $i <= 12; $i++)
                     <option value="{{ $i }}" 
                         {{ old('semestre', $grupo?->semestre) == $i ? 'selected' : '' }}>
@@ -57,6 +60,7 @@
             <label for="periodo_id" class="form-label">{{ __('Periodo') }}</label>
             <select name="periodo_id" class="form-select @error('periodo_id') is-invalid @enderror" id="periodo_id">
                 <option value="">-- Seleccionar Periodo --</option>
+                {{-- ✅ Bucle para rellenar los periodos --}}
                 @foreach($periodos as $id => $periodo_full)
                     <option value="{{ $id }}" 
                         {{ old('periodo_id', $grupo?->periodo_id) == $id ? 'selected' : '' }}>
@@ -69,8 +73,7 @@
             @enderror
         </div>
 
-    </div>
+        {{-- Los campos de horario (Aula, Patrón, Hora) ya no van aquí --}}
 
-    {{-- BOTÓN PRINCIPAL --}}
-    
+    </div>
 </div>

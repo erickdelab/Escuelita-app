@@ -15,7 +15,8 @@ use App\Http\Controllers\{
     AlumnoGrupoController,
     ReporteController,
     PeriodoController,
-    HorarioController
+    HorarioController,
+    AulaController
 };
 
 // 🏠 Página principal pública (index.html)
@@ -45,19 +46,13 @@ Route::middleware(['auth'])->group(function () {
         'carreras'   => CarreraController::class,
         'areas'      => AreaController::class,
         'periodos'   => PeriodoController::class,
+        'aulas'      => AulaController::class,
     ]);
 
     // ==================================================
     // === GRUPOS (con Route Model Binding personalizado) ===
     // ==================================================
-    // Route::resource('grupos', ...) crea automáticamente:
-    // - ...
-    // - GET /grupos/{grupo} -> (Apunta a GrupoController@show)
-    // - ...
     Route::resource('grupos', GrupoController::class);
-    // [AJUSTE]: Se eliminó la ruta 'grupos.detalles' duplicada.
-    // Usaremos 'grupos.show' (de Route::resource) para ver el horario.
-
 
     // ==================================================
     // === MATERIAS - RUTAS ADICIONALES ===
@@ -86,11 +81,21 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // ==================================================
-    // === ASIGNACIÓN DE HORARIOS ===
+    // === ASIGNACIÓN DE HORARIOS (MODIFICADO) ===
     // ==================================================
-    // [AJUSTE]: Movido dentro del 'auth' middleware group por seguridad.
-    Route::resource('horarios', HorarioController::class)->only([
-        'create', 'store'
-    ]);
+    
+    // Rutas para gestionar el horario de UN grupo
+    Route::get('/grupos/{grupo}/horario', [GrupoController::class, 'showHorarioForm'])
+        ->name('grupos.horario.show');
+    Route::post('/grupos/{grupo}/horario', [GrupoController::class, 'storeHorario'])
+        ->name('grupos.horario.store');
+    Route::delete('/grupos/{grupo}/horario', [GrupoController::class, 'destroyHorario'])
+        ->name('grupos.horario.destroy');
+        
+    // Ruta de AJAX para verificar aulas
+    Route::post('/grupos/verificar-aulas', [GrupoController::class, 'verificarAulas'])
+           ->name('grupos.verificarAulas');
+           
+    // (La ruta resource('horarios') que tenías antes ya no es necesaria)
 
 });
