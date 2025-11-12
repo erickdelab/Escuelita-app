@@ -15,7 +15,6 @@ use App\Http\Controllers\{
     AlumnoGrupoController,
     ReporteController,
     PeriodoController,
-    HorarioController,
     AulaController
 };
 
@@ -31,13 +30,15 @@ Route::get('/home', [HomeController::class, 'index'])->name('home');
 // 📊 Vista general de tablas (solo autenticados)
 Route::middleware(['auth'])->group(function () {
 
-    // Vista general de todas las tablas
+    // ==================================================
+    // === VISTA GENERAL DE TABLAS ===
+    // ==================================================
     Route::view('/tablas', 'tablas.index')->name('tablas.index');
-
-    // Mostrar registros según el nombre de la tabla
     Route::get('/tabla/{nombre}', [TablaController::class, 'mostrar'])->name('tabla.mostrar');
 
-    // Recursos REST principales
+    // ==================================================
+    // === RECURSOS REST PRINCIPALES ===
+    // ==================================================
     Route::resources([
         'profesores' => ProfesoreController::class,
         'materias'   => MateriaController::class,
@@ -47,17 +48,38 @@ Route::middleware(['auth'])->group(function () {
         'areas'      => AreaController::class,
         'periodos'   => PeriodoController::class,
         'aulas'      => AulaController::class,
+        'grupos'     => GrupoController::class,
     ]);
 
     // ==================================================
-    // === GRUPOS (con Route Model Binding personalizado) ===
+    // === GRUPOS: ASIGNACIÓN DE HORARIO EN 2 PASOS ===
     // ==================================================
-    Route::resource('grupos', GrupoController::class);
+
+    // Paso 1️⃣: Asignar patrón (L-M / M-J) y hora de inicio
+    Route::get('/grupos/{grupo}/asignar-hora', [GrupoController::class, 'showHoraForm'])
+        ->name('grupos.hora.show');
+    Route::post('/grupos/{grupo}/asignar-hora', [GrupoController::class, 'storeHora'])
+        ->name('grupos.hora.store');
+
+    // Paso 2️⃣: Asignar aula según el horario guardado
+    Route::get('/grupos/{grupo}/asignar-aula', [GrupoController::class, 'showAulaForm'])
+        ->name('grupos.aula.show');
+    Route::post('/grupos/{grupo}/asignar-aula', [GrupoController::class, 'storeAula'])
+        ->name('grupos.aula.store');
+
+    // ✅ Ruta AJAX para verificar aulas disponibles según patrón y hora
+    Route::post('/grupos/verificar-aulas', [GrupoController::class, 'verificarAulas'])
+        ->name('grupos.verificarAulas');
+
+    // ✅ Ruta para eliminar el horario desde la vista de detalles
+    Route::delete('/grupos/{grupo}/eliminar-horario', [GrupoController::class, 'destroyHorario'])
+        ->name('grupos.horario.destroy');
 
     // ==================================================
     // === MATERIAS - RUTAS ADICIONALES ===
     // ==================================================
-    Route::post('materias/{cod_materia}/reactivar', [MateriaController::class, 'reactivar'])->name('materias.reactivar');
+    Route::post('materias/{cod_materia}/reactivar', [MateriaController::class, 'reactivar'])
+        ->name('materias.reactivar');
 
     // ==================================================
     // === INSCRIPCIÓN DE ALUMNOS A GRUPOS ===
@@ -79,23 +101,4 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/estadisticas', [ReporteController::class, 'reporteEstadisticas'])->name('estadisticas');
         Route::get('/alumnos-especial-tics', [ReporteController::class, 'alumnosEspecialTICS'])->name('alumnos_especial_tics');
     });
-
-    // ==================================================
-    // === ASIGNACIÓN DE HORARIOS (MODIFICADO) ===
-    // ==================================================
-    
-    // Rutas para gestionar el horario de UN grupo
-    Route::get('/grupos/{grupo}/horario', [GrupoController::class, 'showHorarioForm'])
-        ->name('grupos.horario.show');
-    Route::post('/grupos/{grupo}/horario', [GrupoController::class, 'storeHorario'])
-        ->name('grupos.horario.store');
-    Route::delete('/grupos/{grupo}/horario', [GrupoController::class, 'destroyHorario'])
-        ->name('grupos.horario.destroy');
-        
-    // Ruta de AJAX para verificar aulas
-    Route::post('/grupos/verificar-aulas', [GrupoController::class, 'verificarAulas'])
-           ->name('grupos.verificarAulas');
-           
-    // (La ruta resource('horarios') que tenías antes ya no es necesaria)
-
 });

@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Horario;
 use App\Models\Materia;
+use App\Models\Aula;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -25,7 +26,8 @@ class ScheduleService
         // 1. Obtenemos la materia (usa el PK cod_materia)
         $materia = Materia::findOrFail($materiaId);
 
-        $creditos = $materia->creditos ?? 5;
+        // ✅ CORREGIDO: 'credito' en singular
+        $creditos = $materia->credito ?? 5;
 
         // 2. Generar los bloques tentativos según reglas de créditos y patrón
         $bloques = $this->generateBlocks($creditos, $patron, $horaInicioBloque);
@@ -54,7 +56,7 @@ class ScheduleService
     /**
      * Genera los bloques de horario según créditos y patrón.
      */
-    private function generateBlocks(int $creditos, string $patron, string $horaInicioStr): array
+    public function generateBlocks(int $creditos, string $patron, string $horaInicioStr): array
     {
         $bloques = [];
         $horaInicio = Carbon::parse($horaInicioStr);
@@ -123,4 +125,30 @@ class ScheduleService
             }
         }
     }
+
+    /**
+     * 🔹 NUEVO MÉTODO:
+     * Verifica la disponibilidad de aulas según patrón y hora seleccionada.
+     * Devuelve dos listas: disponibles y ocupadas.
+     */
+   public function verificarDisponibilidad(string $cod_materia, string $patron, string $hora_inicio): array
+{
+    // 1️⃣ Obtener todas las aulas
+    $aulas = \App\Models\Aula::all();
+
+    // 2️⃣ Buscar las aulas ocupadas en ese patrón y hora
+    $aulasOcupadasIds = \App\Models\Horario::where('patron', $patron)
+        ->where('hora_inicio', $hora_inicio)
+        ->pluck('aula_id')
+        ->toArray();
+
+    // 3️⃣ Clasificar (usa 'id' porque así se llama el campo en tu tabla)
+    $disponibles = $aulas->whereNotIn('id', $aulasOcupadasIds)->values();
+    $ocupadas = $aulas->whereIn('id', $aulasOcupadasIds)->values();
+
+    return [
+        'disponibles' => $disponibles,
+        'ocupadas' => $ocupadas,
+    ];
+}
 }

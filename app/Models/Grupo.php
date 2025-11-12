@@ -22,10 +22,12 @@ class Grupo extends Model
 
     // 🔹 Campos permitidos para asignación masiva
     protected $fillable = [
+        'id_grupo',
         'cod_materia',
         'n_trabajador',
         'semestre',
-        'periodo_id',
+        'patron',
+        'hora_inicio'
     ];
 
     /* -------------------------------------------------------------------------- */

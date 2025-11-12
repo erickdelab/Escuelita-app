@@ -37,12 +37,14 @@
                         <div class="col-md-4">
                             <strong>Materia:</strong>
                             <p class="fs-5">{{ $grupo->materia->nombre ?? 'N/A' }} 
-                                <span class="text-muted">({{ $grupo->materia->creditos ?? 'N/A' }} créd.)</span>
+                                <!-- ✅ CORRECCIÓN 1: 'credito' en singular -->
+                                <span class="text-muted">({{ $grupo->materia->credito ?? 'N/A' }} créd.)</span>
                             </p>
                         </div>
                         <div class="col-md-4">
                             <strong>Profesor:</strong>
-                            <p class="fs-5">{{ $grupo->profesore->nombre ?? 'N/A' }} {{ $grupo->profesore->ap_paterno ?? '' }}</p>
+                            <!-- ✅ CORRECCIÓN 2: Añadido ap_materno -->
+                            <p class="fs-5">{{ $grupo->profesore->nombre ?? 'N/A' }} {{ $grupo->profesore->ap_paterno ?? '' }} {{ $grupo->profesore->ap_materno ?? '' }}</p>
                         </div>
                         <div class="col-md-4">
                             <strong>Semestre/Periodo:</strong>
@@ -53,6 +55,7 @@
 
                 <div class="card-body">
                     <div class="row">
+                        <!-- Columna de Asignación -->
                         <div class="col-md-6">
                             <h5 class="text-primary">Asignar Nuevo Horario</h5>
                             <p class="text-muted">
@@ -63,7 +66,8 @@
                                 @csrf
                                 
                                 <div class="alert alert-info py-2">
-                                    <small><i class="bi bi-info-circle-fill"></i> La materia tiene <strong>{{ $grupo->materia->creditos ?? 'N/A' }} créditos</strong>. El sistema asignará los bloques correspondientes (L-M + V o M-J + V) automáticamente si son 5 créditos.</small>
+                                    <!-- ✅ CORRECCIÓN 1 (aquí también): 'credito' en singular -->
+                                    <small><i class="bi bi-info-circle-fill"></i> La materia tiene <strong>{{ $grupo->materia->credito ?? 'N/A' }} créditos</strong>. El sistema asignará los bloques correspondientes (L-M + V o M-J + V) automáticamente si son 5 créditos.</small>
                                 </div>
                                 
                                 <div class="form-group mb-3">
@@ -111,6 +115,7 @@
                             </form>
                         </div>
 
+                        <!-- Columna de Horario Actual -->
                         <div class="col-md-6 border-start">
                             <h5 class="text-primary">Horario Actual Asignado</h5>
                             
@@ -208,8 +213,6 @@
                 resetAulaSelect('Error al cargar aulas', true);
             }
         }
-
-        // ... (Las funciones resetAulaSelect y populateAulaSelect son idénticas a la respuesta anterior) ...
         
         function resetAulaSelect(message, isError = false) {
             aulaSelect.innerHTML = '';

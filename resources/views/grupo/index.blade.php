@@ -38,7 +38,6 @@
                         <table class="table table-bordered table-hover align-middle">
                             <thead class="text-center text-white" style="background-color: #002D72;">
                                 <tr>
-                                    
                                     <th>Materia</th>
                                     <th>Profesor</th>
                                     <th>Semestre</th>
@@ -48,24 +47,14 @@
                             </thead>
                             <tbody>
                                 @foreach ($grupos as $grupo)
-                                    {{--
-                                        ¡MEJORA DE RENDIMIENTO!
-                                        He eliminado el @php que estaba aquí. Tu GrupoController
-                                        ya carga la relación 'materia' con ->with('materia').
-                                        Volver a consultarla con DB::table() aquí es un
-                                        problema de rendimiento N+1.
-                                        Ahora usamos la relación que ya viene cargada.
-                                    --}}
                                     <tr>
-                                        
-                                        {{-- COLUMNA MATERIA (Optimizada) --}}
+                                        {{-- COLUMNA MATERIA --}}
                                         <td>
-                                            @if ($grupo->materia) {{-- Usamos la relación cargada --}}
+                                            @if ($grupo->materia)
                                                 <strong>{{ $grupo->materia->cod_materia }}</strong> - {{ $grupo->materia->nombre }}
                                             @elseif ($grupo->cod_materia)
                                                 <span class="text-warning fw-bold">{{ $grupo->cod_materia }}</span>
-                                                <br>
-                                                <small class="text-muted">Materia no encontrada</small>
+                                                <br><small class="text-muted">Materia no encontrada</small>
                                             @else
                                                 <span class="text-danger fw-bold">Materia no asignada</span>
                                             @endif
@@ -82,6 +71,7 @@
                                             @endif
                                         </td>
                                         
+                                        {{-- COLUMNA SEMESTRE --}}
                                         <td class="text-center">
                                             <span class="badge bg-primary fs-6">Semestre {{ $grupo->semestre }}</span>
                                         </td>
@@ -104,28 +94,39 @@
                                         <td class="text-center">
                                             <div class="btn-group" role="group">
                                         
+                                                {{-- 🔍 Ver detalles --}}
                                                 <a class="btn btn-sm btn-info" href="{{ route('grupos.show', $grupo) }}" title="Ver detalles del grupo">
                                                     <i class="fas fa-list-alt"></i> Detalles
                                                 </a>
-                                                
-                                                @if($grupo->horarios_count > 0)
-                                                    <a class="btn btn-sm btn-warning" href="{{ route('grupos.horario.show', $grupo) }}" title="Modificar Horario">
-                                                        <i class="bi bi-calendar-check"></i> Horario
+
+                                                {{-- 🕒 Asignar horario --}}
+                                                @if (!$grupo->patron || !$grupo->hora_inicio)
+                                                    {{-- Paso 1: Asignar hora --}}
+                                                    <a class="btn btn-sm btn-outline-warning" href="{{ route('grupos.hora.show', $grupo) }}" title="Asignar patrón y hora">
+                                                        <i class="bi bi-calendar-plus"></i> Asignar Hora
+                                                    </a>
+                                                @elseif(!$grupo->horarios_count)
+                                                    {{-- Paso 2: Asignar aula --}}
+                                                    <a class="btn btn-sm btn-warning" href="{{ route('grupos.aula.show', $grupo) }}" title="Asignar aula al horario">
+                                                        <i class="bi bi-door-open"></i> Asignar Aula
                                                     </a>
                                                 @else
-                                                    <a class="btn btn-sm btn-outline-warning" href="{{ route('grupos.horario.show', $grupo) }}" title="Asignar Horario">
-                                                        <i class="bi bi-calendar-plus"></i> Horario
+                                                    {{-- 👁️ Ver horario completo --}}
+                                                    <a class="btn btn-sm btn-secondary" href="{{ route('grupos.show', $grupo) }}" title="Ver horario asignado">
+                                                        <i class="bi bi-calendar-week"></i> Ver Horario
                                                     </a>
                                                 @endif
                                                 
+                                                {{-- ✏️ Editar grupo --}}
                                                 <a class="btn btn-sm btn-outline-success" href="{{ route('grupos.edit', $grupo) }}" title="Editar grupo">
                                                     <i class="fa fa-fw fa-edit"></i> Editar
                                                 </a>
                                                 
+                                                {{-- 🗑️ Eliminar grupo --}}
                                                 <form action="{{ route('grupos.destroy', $grupo) }}" method="POST" class="d-inline">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type... (botón eliminar) ...>
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('¿Seguro que deseas eliminar este grupo?')">
                                                         <i class="fa fa-fw fa-trash"></i> Eliminar
                                                     </button>
                                                 </form>
