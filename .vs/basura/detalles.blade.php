@@ -1,6 +1,5 @@
 @extends('layouts.app')
 
-{{-- MODIFICADO: Usamos el título del grupo --}}
 @section('template_title')
     Detalles del Grupo #{{ $grupo->id_grupo }}
 @endsection
@@ -42,7 +41,7 @@
                     <div class="row mb-4">
                         <div class="col-md-3 mb-3">
                             <div class="card h-100 border-0 shadow-sm">
-                                <div class="card-header text-white fw-bold" style="background-color: #002D72;">
+                                <div class="card-header text-white fw-bold bg-primary-dark">
                                     <i class="fas fa-info-circle me-2"></i>Información del Grupo
                                 </div>
                                 <div class="card-body">
@@ -52,12 +51,12 @@
                                     </div>
                                     <div class="mb-3">
                                         <strong class="text-primary d-block">Semestre:</strong>
-                                        <span class="fw-bold" style="color: #002D72;">{{ $grupo->semestre }}</span>
+                                        <span class="fw-bold text-primary">{{ $grupo->semestre }}</span>
                                     </div>
                                     <div>
                                         <strong class="text-primary d-block">Periodo:</strong>
                                         @if($grupo->periodo)
-                                            <span class="fw-bold" style="color: #002D72;">{{ $grupo->periodo->periodo_nombre }} {{ $grupo->periodo->anio }}</span>
+                                            <span class="fw-bold text-primary">{{ $grupo->periodo->periodo_nombre }} {{ $grupo->periodo->anio }}</span>
                                             <br>
                                             <small class="text-muted">{{ $grupo->periodo->codigo_periodo }}</small>
                                             <br>
@@ -74,22 +73,22 @@
 
                         <div class="col-md-3 mb-3">
                             <div class="card h-100 border-0 shadow-sm">
-                                <div class="card-header text-white fw-bold" style="background-color: #002D72;">
+                                <div class="card-header text-white fw-bold bg-primary-dark">
                                     <i class="fas fa-book me-2"></i>Materia
                                 </div>
                                 <div class="card-body">
                                     @if($grupo->materia)
                                         <div class="mb-3">
                                             <strong class="text-primary d-block">Código:</strong>
-                                            <span class="fw-bold fs-6" style="color: #002D72;">{{ $grupo->materia->cod_materia }}</span>
+                                            <span class="fw-bold fs-6 text-primary">{{ $grupo->materia->cod_materia }}</span>
                                         </div>
                                         <div class="mb-3">
                                             <strong class="text-primary d-block">Nombre:</strong>
-                                            <span style="color: #002D72;">{{ $grupo->materia->nombre }}</span>
+                                            <span class="text-primary">{{ $grupo->materia->nombre }}</span>
                                         </div>
                                         <div class="mb-3">
                                             <strong class="text-primary d-block">Créditos:</strong>
-                                            <span style="color: #002D72;">{{ $grupo->materia->credito }}</span>
+                                            <span class="text-primary">{{ $grupo->materia->credito }}</span>
                                         </div>
                                         <div>
                                             <strong class="text-primary d-block">Estado:</strong>
@@ -109,24 +108,24 @@
 
                         <div class="col-md-3 mb-3">
                             <div class="card h-100 border-0 shadow-sm">
-                                <div class="card-header text-white fw-bold" style="background-color: #002D72;">
+                                <div class="card-header text-white fw-bold bg-primary-dark">
                                     <i class="fas fa-chalkboard-teacher me-2"></i>Profesor
                                 </div>
                                 <div class="card-body">
                                     @if($grupo->profesore)
                                         <div class="mb-2">
                                             <strong class="text-primary d-block">N° Trabajador:</strong>
-                                            <span style="color: #002D72;">{{ $grupo->profesore->n_trabajador }}</span>
+                                            <span class="text-primary">{{ $grupo->profesore->n_trabajador }}</span>
                                         </div>
                                         <div class="mb-2">
                                             <strong class="text-primary d-block">Nombre:</strong>
-                                            <span style="color: #002D72;">
+                                            <span class="text-primary">
                                                 {{ $grupo->profesore->nombre }} {{ $grupo->profesore->s_nombre ?? '' }} {{ $grupo->profesore->ap_paterno }} {{ $grupo->profesore->ap_materno }}
                                             </span>
                                         </div>
                                         <div class="mb-2">
                                             <strong class="text-primary d-block">Correo:</strong>
-                                            <span style="color: #002D72;">{{ $grupo->profesore->correo_institucional ?? 'N/A' }}</span>
+                                            <span class="text-primary">{{ $grupo->profesore->correo_institucional ?? 'N/A' }}</span>
                                         </div>
                                         <div>
                                             <strong class="text-primary d-block">Situación:</strong>
@@ -146,18 +145,18 @@
 
                         <div class="col-md-3 mb-3">
                             <div class="card h-100 border-0 shadow-sm">
-                                <div class="card-header text-white fw-bold" style="background-color: #002D72;">
+                                <div class="card-header text-white fw-bold bg-primary-dark">
                                     <i class="fas fa-building me-2"></i>Área del Profesor
                                 </div>
                                 <div class="card-body">
                                     @if($grupo->profesore && $grupo->profesore->area)
                                         <div class="mb-3">
                                             <strong class="text-primary d-block">Nombre Área:</strong>
-                                            <span style="color: #002D72;">{{ $grupo->profesore->area->area }}</span>
+                                            <span class="text-primary">{{ $grupo->profesore->area->area }}</span>
                                         </div>
                                         <div>
                                             <strong class="text-primary d-block">Jefe de Área:</strong>
-                                            <span style="color: #002D72;">{{ $grupo->profesore->area->jefe->nombre ?? 'N/A' }}</span>
+                                            <span class="text-primary">{{ $grupo->profesore->area->jefe->nombre ?? 'N/A' }}</span>
                                         </div>
                                     @else
                                         <div class="text-center text-muted">
@@ -170,11 +169,10 @@
                         </div>
                     </div>
 
-                    
                     <div class="row mb-4">
                         <div class="col-12">
                             <div class="card border-0 shadow-sm">
-                                <div class="card-header text-white fw-bold" style="background-color: #002D72;">
+                                <div class="card-header text-white fw-bold bg-primary-dark">
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div>
                                             <i class="fas fa-calendar-alt me-2"></i>
@@ -209,7 +207,7 @@
                                                                 <li class="list-group-item d-flex justify-content-between align-items-center ps-0">
                                                                     <span>
                                                                         <i class="fas fa-clock me-2 text-muted"></i>
-                                                                        {{ \Carbon\Carbon::parse($horario->hora_inicio)->format('h:i A') }} - 
+                                                                        {{ \Carbon\Carbon::parse($horario->hora_inicio)->format('h:i A') }} -
                                                                         {{ \Carbon\Carbon::parse($horario->hora_fin)->format('h:i A') }}
                                                                     </span>
                                                                     <span class="badge bg-primary rounded-pill">
@@ -224,33 +222,53 @@
                                             @endif
                                         </div>
 
+                                        {{-- ========================================================== --}}
+                                        {{-- INICIO DEL BLOQUE DE FORMULARIO (CORREGIDO Y EN SU SITIO) --}}
+                                        {{-- ========================================================== --}}
                                         <div class="col-md-8">
                                             <h6 class="text-dark fw-bold">Modificar Horario</h6>
                                             <div class="row">
+                                                
+                                                {{-- ESTE ES EL BLOQUE DEL PASO 1 ACTUALIZADO --}}
                                                 <div class="col-lg-6">
                                                     <form method="POST" action="{{ route('grupos.hora.store', $grupo->id_grupo) }}">
                                                         @csrf
                                                         <label class="form-label fw-bold">Paso 1: Patrón y Hora</label>
                                                         <div class="input-group mb-2">
-                                                            <select name="patron" class="form-select" required>
+                                                            <select name="patron" class="form-select" required id="patronSelect">
                                                                 <option value="">Patrón...</option>
                                                                 <option value="L-M" {{ $grupo->patron == 'L-M' ? 'selected' : '' }}>Lunes y Miérc.</option>
                                                                 <option value="M-J" {{ $grupo->patron == 'M-J' ? 'selected' : '' }}>Martes y Juev.</option>
                                                             </select>
-                                                            <select name="hora_inicio" class="form-select" required>
+                                                            
+                                                            {{-- INICIO DE SELECT MODIFICADO --}}
+                                                            <select name="hora_inicio" class="form-select" required id="horaSelect">
                                                                 <option value="">Hora...</option>
                                                                 @foreach ($allowedStartTimes as $hora)
-                                                                    <option value="{{ $hora }}" {{ $grupo->hora_inicio == $hora ? 'selected' : '' }}>
+                                                                    @php
+                                                                        // Asumimos que $horasOcupadasDelProfesor es un array de strings ['HH:MM:SS', ...]
+                                                                        $isOcupado = in_array($hora, $horasOcupadasDelProfesor ?? []);
+                                                                    @endphp
+                                                                    <option 
+                                                                        value="{{ $hora }}" 
+                                                                        {{ $grupo->hora_inicio == $hora ? 'selected' : '' }} 
+                                                                        {{ $isOcupado ? 'disabled' : '' }}
+                                                                    >
                                                                         {{ \Carbon\Carbon::parse($hora)->format('h:i A') }}
+                                                                        {{ $isOcupado ? '(Ocupado)' : '' }}
                                                                     </option>
                                                                 @endforeach
                                                             </select>
+                                                            {{-- FIN DE SELECT MODIFICADO --}}
+                                                            
                                                         </div>
                                                         <button type="submit" class="btn btn-warning btn-sm w-100">
                                                             <i class="fas fa-save me-1"></i> Guardar Patrón/Hora
                                                         </button>
                                                     </form>
                                                 </div>
+                                                {{-- FIN DEL BLOQUE DEL PASO 1 --}}
+
                                                 <div class="col-lg-6">
                                                     <form method="POST" action="{{ route('grupos.aula.store', $grupo->id_grupo) }}">
                                                         @csrf
@@ -282,15 +300,20 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        {{-- ======================================================== --}}
+                                        {{-- FIN DEL BLOQUE DE FORMULARIO (CORREGIDO Y EN SU SITIO) --}}
+                                        {{-- ======================================================== --}}
+
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+
                     <div class="row">
                         <div class="col-md-12">
                             <div class="card border-0 shadow-sm">
-                                <div class="card-header text-white fw-bold" style="background-color: #002D72;">
+                                <div class="card-header text-white fw-bold bg-primary-dark">
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div>
                                             <i class="fas fa-user-graduate me-2"></i>
@@ -305,7 +328,7 @@
                                     @if($grupo->alumnos->count() > 0)
                                         <div class="table-responsive">
                                             <table class="table table-hover align-middle">
-                                                <thead style="background-color: #f8f9fa;">
+                                                <thead class="bg-light">
                                                     <tr>
                                                         <th class="text-center" width="8%">#</th>
                                                         <th width="15%">N° Control</th>
@@ -317,40 +340,41 @@
                                                 </thead>
                                                 <tbody>
                                                     @foreach($grupo->alumnos as $index => $alumno)
-                                                    <tr class="border-bottom">
-                                                        <td class="text-center fw-bold" style="color: #002D72;">
-                                                            {{ $index + 1 }}
-                                                        </td>
-                                                        <td>
-                                                            <strong style="color: #002D72;">{{ $alumno->n_control }}</strong>
-                                                        </td>
-                                                        <td>
-                                                            <div class="fw-bold" style="color: #002D72;">
-                                                                {{ $alumno->nombre }} {{ $alumno->s_nombre ?? '' }} {{ $alumno->ap_pat }} {{ $alumno->ap_mat }}
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <span class="badge bg-primary">
-                                                                {{ $alumno->semestre }}
-                                                            </span>
-                                                        </td>
-                                                        <td style="color: #002D72;">
-                                                            {{ $alumno->carrera->nombre_carrera ?? 'N/A' }}
-                                                        </td>
-                                                        <td>
-                                                            <span class="badge {{ $alumno->situacion == 'Vigente' ? 'bg-success' : 'bg-danger' }}">
-                                                                {{ $alumno->situacion }}
-                                                            </span>
-                                                        </td>
-                                                    </tr>
+                                                        <tr class="border-bottom">
+                                                            <td class="text-center fw-bold text-primary">
+                                                                {{ $index + 1 }}
+                                                            </td>
+                                                            <td>
+                                                                <strong class="text-primary">{{ $alumno->n_control }}</strong>
+                                                            </td>
+                                                            <td>
+                                                                <div class="fw-bold text-primary">
+                                                                    {{ $alumno->nombre }} {{ $alumno->s_nombre ?? '' }} {{ $alumno->ap_pat }} {{ $alumno->ap_mat }}
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <span class="badge bg-primary">
+                                                                    {{ $alumno->semestre }}
+                                                                </span>
+                                                            </td>
+                                                            <td class="text-primary">
+                                                                {{ $alumno->carrera->nombre_carrera ?? 'N/A' }}
+                                                            </td>
+                                                            <td>
+                                                                <span class="badge {{ $alumno->situacion == 'Vigente' ? 'bg-success' : 'bg-danger' }}">
+                                                                    {{ $alumno->situacion }}
+                                                                </span>
+                                                            </td>
+                                                        </tr>
                                                     @endforeach
                                                 </tbody>
                                             </table>
                                         </div>
                                     @else
+                                        {{-- ESTA SECCIÓN AHORA ESTÁ LIMPIA --}}
                                         <div class="text-center py-5">
-                                            <i class="fas fa-user-slash fa-3x mb-3" style="color: #6c757d;"></i>
-                                            <h5 style="color: #002D72;">No hay alumnos inscritos en este grupo</h5>
+                                            <i class="fas fa-user-slash fa-3x mb-3 text-muted"></i>
+                                            <h5 class="text-primary">No hay alumnos inscritos en este grupo</h5>
                                             <p class="text-muted">Los alumnos aparecerán aquí cuando se inscriban al grupo.</p>
                                         </div>
                                     @endif
@@ -376,7 +400,10 @@
         </div>
     </div>
 </div>
+@endsection
 
+{{-- PUSH DE ESTILOS CONSOLIDADO Y AL FINAL --}}
+@push('styles')
 <style>
     .card {
         border-radius: 0.75rem;
@@ -410,6 +437,10 @@
     .text-primary {
         color: #002D72 !important;
     }
+    /* Clase añadida para fondos */
+    .bg-primary-dark {
+        background-color: #002D72 !important;
+    }
     .border-bottom {
         border-bottom: 1px solid #e9ecef !important;
     }
@@ -427,5 +458,13 @@
     .list-group-flush .list-group-item {
         background-color: transparent;
     }
+
+    /* --- NUEVA REGLA AÑADIDA --- */
+    /* Estilo para las opciones deshabilitadas (horarios ocupados) */
+    select option[disabled] {
+        background-color: #e9ecef; /* Un gris claro */
+        color: #6c757d;           /* Un color de texto apagado */
+        font-style: italic;
+    }
 </style>
-@endsection
+@endpush

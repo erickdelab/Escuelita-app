@@ -14,7 +14,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\DB; // Importación de DB
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class GrupoController extends Controller
@@ -74,57 +74,71 @@ class GrupoController extends Controller
     }
 
     /**
-     * ✅ MÉTODO show() MODIFICADO
-     * Muestra la vista de 'detalles' con toda la información del grupo y los formularios de horario.
+     * ✅ MÉTODO show() CORREGIDO Y COMPLETO
+     * Muestra la vista de 'detalles' con TODA la información y lógica de formularios.
      */
-    public function show(Grupo $grupo): View
+    public function show($id): View
     {
-        $grupo->load([
-            'materia',
-            'profesore.area', // Cargamos el área del profesor
-            'periodo',
-            'alumnos.carrera', // Cargamos la carrera de los alumnos
-            'horarios' => function ($query) {
-                $query->orderBy('dia_semana')->orderBy('hora_inicio');
-            },
-            'horarios.aula' // Cargamos el aula del horario
-        ]);
-        
-        // Datos para la tabla de horario actual
-        $horariosAgrupados = $grupo->horarios->groupBy('dia_semana');
-        $diasSemana = [
-            1 => 'Lunes', 2 => 'Martes', 3 => 'Miércoles',
-            4 => 'Jueves', 5 => 'Viernes', 6 => 'Sábado'
-        ];
+        // 1. Cargar el grupo con TODAS las relaciones anidadas necesarias
+        $grupo = Grupo::with([
+            'profesore.area.jefe', // Carga profesor, su area, y el jefe de area
+            'materia', 
+            'periodo', 
+            'alumnos.carrera', // Carga alumnos y la carrera de cada uno
+            'horarios.aula'    // Carga los horarios y el aula de cada horario
+        ])->findOrFail($id);
 
-        // Datos para el "Paso 1: Asignar Hora"
-        $allowedStartTimes = ['07:00:00', '09:00:00', '11:00:00', '13:00:00', '15:00:00'];
+        // 2. Lógica para "Horario Actual" (de la antigua vista de detalles)
+        $diasSemana = [1 => 'Lunes', 2 => 'Martes', 3 => 'Miércoles', 4 => 'Jueves', 5 => 'Viernes'];
+        // Agrupar horarios por día, ordenados por hora
+        $horariosAgrupados = $grupo->horarios->sortBy('hora_inicio')->groupBy('dia_semana');
 
-        // Datos para el "Paso 2: Asignar Aula"
+        // 3. Lógica para "Paso 1: Patrón y Hora" (de showHoraForm)
+        $allowedStartTimes = ['07:00:00', '09:00:00', '11:00:00', '13:00:00', '15:00:00', '17:00:00', '19:00:00'];
+
+        // 4. Lógica de validación de profesor (la que acabamos de agregar)
+        $horasOcupadasDelProfesor = [];
+        if ($grupo->profesore && $grupo->periodo) {
+            $horasOcupadasDelProfesor = Grupo::where('n_trabajador', $grupo->n_trabajador) // del mismo profesor
+                ->where('periodo_id', $grupo->periodo_id)   // en el mismo periodo
+                ->where('id_grupo', '!=', $grupo->id_grupo) // pero que no sea este mismo grupo
+                ->whereNotNull('hora_inicio')               // que tengan una hora asignada
+                ->pluck('hora_inicio')                      // obtenemos solo la hora de inicio
+                ->unique()                                  // valores únicos
+                ->toArray();                                // convertimos a array
+        }
+
+        // 5. Lógica para "Paso 2: Aula" (de showAulaForm)
         $aulasDisponibles = [];
         $aulasOcupadas = [];
-
-        // Solo buscamos aulas si el grupo YA tiene un patrón y hora definidos
+        
+        // Solo buscar aulas si el Paso 1 (patrón y hora) está completo
         if ($grupo->patron && $grupo->hora_inicio) {
+            // Usamos el servicio inyectado en el constructor
+            // NOTA: Tu servicio 'verificarDisponibilidad' DEBERÍA probablemente aceptar el periodo_id
+            // para ser más preciso y evitar bugs entre periodos.
             $data = $this->scheduleService->verificarDisponibilidad(
                 $grupo->cod_materia,
                 $grupo->patron,
                 $grupo->hora_inicio
+                // Ej: $this->scheduleService->verificarDisponibilidad(..., $grupo->periodo_id)
             );
             $aulasDisponibles = $data['disponibles'];
             $aulasOcupadas = $data['ocupadas'];
         }
 
-        // ❗️ CAMBIO CLAVE: Apuntamos a 'grupo.detalles'
-        return view('grupo.detalles', compact(
-            'grupo', 
-            'horariosAgrupados', 
+        // 6. Retornar la vista con TODAS las variables
+        return view('grupo.show', compact(
+            'grupo',
             'diasSemana',
+            'horariosAgrupados',
             'allowedStartTimes',
+            'horasOcupadasDelProfesor',
             'aulasDisponibles',
             'aulasOcupadas'
         ));
     }
+
 
     /**
      * Muestra el formulario para editar un grupo.
@@ -182,7 +196,6 @@ class GrupoController extends Controller
 
     /**
      * MÉTODO detalles() AHORA OBSOLETO
-     * La ruta 'grupos.show' (Route::resources) ahora maneja esta lógica.
      * Redirigimos a 'show' para mantener una única ruta de detalles.
      */
     public function detalles(Grupo $grupo): RedirectResponse
@@ -196,15 +209,16 @@ class GrupoController extends Controller
 
     /**
      * Muestra el formulario independiente para asignar hora (Paso 1).
+     * ESTE MÉTODO YA NO ES NECESARIO, la lógica está en show()
      */
     public function showHoraForm(Grupo $grupo): View
     {
-        $allowedStartTimes = ['07:00:00', '09:00:00', '11:00:00', '13:00:00', '15:00:00'];
-        return view('grupo.asignar-hora', compact('grupo', 'allowedStartTimes'));
+        // Esta lógica ahora vive en show()
+        // Redirigir por si acaso alguien entra a la ruta antigua
+        return redirect()->route('grupos.show', $grupo);
     }
 
     /**
-     * ✅ MÉTODO storeHora() MODIFICADO
      * Almacena el patrón/hora y borra el horario antiguo.
      * Redirige a 'grupos.show' (que ahora es 'detalles').
      */
@@ -214,6 +228,23 @@ class GrupoController extends Controller
             'patron' => 'required|in:L-M,M-J',
             'hora_inicio' => 'required'
         ]);
+
+        // Validar que la hora no esté ocupada por el profesor
+        $horasOcupadasDelProfesor = [];
+        if ($grupo->profesore && $grupo->periodo) {
+            $horasOcupadasDelProfesor = Grupo::where('n_trabajador', $grupo->n_trabajador)
+                ->where('periodo_id', $grupo->periodo_id)
+                ->where('id_grupo', '!=', $grupo->id_grupo)
+                ->whereNotNull('hora_inicio')
+                ->pluck('hora_inicio')
+                ->unique()
+                ->toArray();
+        }
+
+        if (in_array($validated['hora_inicio'], $horasOcupadasDelProfesor)) {
+            return redirect()->route('grupos.show', $grupo)
+                ->with('error', 'Esa hora está ocupada por el profesor en otro grupo.');
+        }
 
         DB::transaction(function () use ($grupo, $validated) {
             // 1. Borrar horario existente (entradas en tabla 'horarios')
@@ -226,7 +257,7 @@ class GrupoController extends Controller
             ]);
         });
         
-        // 3. Redirigir de vuelta a la página 'show' (que renderiza 'detalles')
+        // 3. Redirigir de vuelta a la página 'show'
         return redirect()->route('grupos.show', $grupo)
             ->with('success', 'Patrón de hora actualizado. Ahora seleccione un aula.');
     }
@@ -237,29 +268,16 @@ class GrupoController extends Controller
 
     /**
      * Muestra el formulario independiente para asignar aula (Paso 2).
+     * ESTE MÉTODO YA NO ES NECESARIO, la lógica está en show()
      */
     public function showAulaForm(Grupo $grupo): View|RedirectResponse
     {
-        if (!$grupo->patron || !$grupo->hora_inicio) {
-            return redirect()->route('grupos.hora.show', $grupo)
-                ->with('error', 'Primero debes definir patrón y hora.');
-        }
-
-        $data = $this->scheduleService->verificarDisponibilidad(
-            $grupo->cod_materia,
-            $grupo->patron,
-            $grupo->hora_inicio
-        );
-
-        return view('grupo.asignar-aula', [
-            'grupo' => $grupo,
-            'aulasDisponibles' => $data['disponibles'],
-            'aulasOcupadas' => $data['ocupadas']
-        ]);
+        // Esta lógica ahora vive en show()
+        // Redirigir por si acaso alguien entra a la ruta antigua
+        return redirect()->route('grupos.show', $grupo);
     }
 
     /**
-     * ✅ MÉTODO storeAula() MODIFICADO
      * Almacena el aula y genera el horario.
      * Redirige a 'grupos.show' (que ahora es 'detalles').
      */
@@ -276,19 +294,18 @@ class GrupoController extends Controller
         $this->scheduleService->assignSchedule(
             $grupo->id_grupo,
             $grupo->cod_materia,
-            $grupo->n_trabajador,
+            $grupo->n_trabajador, // Asumiendo que n_trabajador está en grupo
             $validated['aula_id'],
             $grupo->patron,
             $grupo->hora_inicio
         );
 
-        // 3. Redirigir de vuelta a 'show' (que renderiza 'detalles')
+        // 3. Redirigir de vuelta a 'show'
         return redirect()->route('grupos.show', $grupo)
             ->with('success', 'Aula asignada y horario completado correctamente.');
     }
 
     /**
-     * ✅ NUEVO MÉTODO: destroyHorario()
      * Limpia el horario completo (entradas en 'horarios' y campos en 'grupos')
      * Redirige a 'grupos.show'.
      */

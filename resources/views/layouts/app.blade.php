@@ -171,6 +171,10 @@
                                 <li><a class="dropdown-item text-primary" href="{{ url('/grupos') }}">
                                     <i class="bi bi-collection me-2"></i>Grupos
                                 </a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item text-primary" href="{{ url('/aulas') }}">
+                                    <i class="bi bi-building me-2"></i>Aulas
+                                </a></li>
                             </ul>
                         </li>
 

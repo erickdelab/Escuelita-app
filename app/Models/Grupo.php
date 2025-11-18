@@ -27,7 +27,8 @@ class Grupo extends Model
         'n_trabajador',
         'semestre',
         'patron',
-        'hora_inicio'
+        'hora_inicio',
+        'periodo_id'
     ];
 
     /* -------------------------------------------------------------------------- */

@@ -48,6 +48,9 @@
                                 <a href="{{ url('/periodos') }}" class="btn btn-outline-primary btn-hover">
                                     <i class="fas fa-calendar-alt me-2"></i>Períodos
                                 </a>
+                                <a href="{{ url('/aulas') }}" class="btn btn-outline-primary btn-hover">
+                                    <i class="fas fa-building me-2"></i>Aulas
+                                </a>
                             </div>
                         </div>
                     </div>

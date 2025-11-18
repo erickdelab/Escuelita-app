@@ -16,7 +16,7 @@ class AulaController extends Controller
      */
     public function index(Request $request): View
     {
-        $aulas = Aula::paginate(20);
+        $aulas = Aula::paginate(30);
         return view('aula.index', compact('aulas'))
             ->with('i', ($request->input('page', 1) - 1) * $aulas->perPage());
     }

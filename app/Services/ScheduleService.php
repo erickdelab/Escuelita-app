@@ -127,7 +127,7 @@ class ScheduleService
     }
 
     /**
-     * 🔹 NUEVO MÉTODO:
+     * 🔹 MÉTODO CORREGIDO:
      * Verifica la disponibilidad de aulas según patrón y hora seleccionada.
      * Devuelve dos listas: disponibles y ocupadas.
      */
@@ -136,10 +136,15 @@ class ScheduleService
     // 1️⃣ Obtener todas las aulas
     $aulas = \App\Models\Aula::all();
 
-    // 2️⃣ Buscar las aulas ocupadas en ese patrón y hora
-    $aulasOcupadasIds = \App\Models\Horario::where('patron', $patron)
-        ->where('hora_inicio', $hora_inicio)
-        ->pluck('aula_id')
+    // 2️⃣ CORRECCIÓN: Buscar las aulas ocupadas
+    // Buscamos en 'horarios' aquellos que TENGAN UN GRUPO ('whereHas')
+    // que coincida con el patrón y la hora.
+    $aulasOcupadasIds = \App\Models\Horario::whereHas('grupo', function ($query) use ($patron, $hora_inicio) {
+            $query->where('patron', $patron)
+                  ->where('hora_inicio', $hora_inicio);
+        })
+        ->distinct() // Solo necesitamos el ID del aula una vez
+        ->pluck('aula_id') // Obtenemos solo los IDs de las aulas
         ->toArray();
 
     // 3️⃣ Clasificar (usa 'id' porque así se llama el campo en tu tabla)

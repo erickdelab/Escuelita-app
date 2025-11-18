@@ -99,23 +99,8 @@
                                                     <i class="fas fa-list-alt"></i> Detalles
                                                 </a>
 
-                                                {{-- 🕒 Asignar horario --}}
-                                                @if (!$grupo->patron || !$grupo->hora_inicio)
-                                                    {{-- Paso 1: Asignar hora --}}
-                                                    <a class="btn btn-sm btn-outline-warning" href="{{ route('grupos.hora.show', $grupo) }}" title="Asignar patrón y hora">
-                                                        <i class="bi bi-calendar-plus"></i> Asignar Hora
-                                                    </a>
-                                                @elseif(!$grupo->horarios_count)
-                                                    {{-- Paso 2: Asignar aula --}}
-                                                    <a class="btn btn-sm btn-warning" href="{{ route('grupos.aula.show', $grupo) }}" title="Asignar aula al horario">
-                                                        <i class="bi bi-door-open"></i> Asignar Aula
-                                                    </a>
-                                                @else
-                                                    {{-- 👁️ Ver horario completo --}}
-                                                    <a class="btn btn-sm btn-secondary" href="{{ route('grupos.show', $grupo) }}" title="Ver horario asignado">
-                                                        <i class="bi bi-calendar-week"></i> Ver Horario
-                                                    </a>
-                                                @endif
+                                                
+                                            
                                                 
                                                 {{-- ✏️ Editar grupo --}}
                                                 <a class="btn btn-sm btn-outline-success" href="{{ route('grupos.edit', $grupo) }}" title="Editar grupo">
