@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\{
     TablaController,
     AreaController,
@@ -15,10 +16,17 @@ use App\Http\Controllers\{
     AlumnoGrupoController,
     ReporteController,
     PeriodoController,
-    AulaController
+    AulaController,
+    CalificacionController // ✅ Agregado al bloque de uso
 };
 
-// 🏠 Página principal pública (index.html)
+/*
+|--------------------------------------------------------------------------
+| Rutas Públicas y de Autenticación
+|--------------------------------------------------------------------------
+*/
+
+// 🏠 Página principal pública
 Route::get('/', fn() => File::get(public_path('index.html')));
 
 // 🔐 Rutas de autenticación (login, registro, etc.)
@@ -27,17 +35,23 @@ Auth::routes();
 // 🏡 Página de inicio tras iniciar sesión
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 
-// 📊 Vista general de tablas (solo autenticados)
+
+/*
+|--------------------------------------------------------------------------
+| Rutas Protegidas (Requieren Login)
+|--------------------------------------------------------------------------
+*/
 Route::middleware(['auth'])->group(function () {
 
     // ==================================================
-    // === VISTA GENERAL DE TABLAS ===
+    // === ADMINISTRACIÓN GENERAL Y TABLAS ===
     // ==================================================
     Route::view('/tablas', 'tablas.index')->name('tablas.index');
     Route::get('/tabla/{nombre}', [TablaController::class, 'mostrar'])->name('tabla.mostrar');
 
+
     // ==================================================
-    // === RECURSOS REST PRINCIPALES ===
+    // === RECURSOS CRUD PRINCIPALES ===
     // ==================================================
     Route::resources([
         'profesores' => ProfesoreController::class,
@@ -51,38 +65,39 @@ Route::middleware(['auth'])->group(function () {
         'grupos'     => GrupoController::class,
     ]);
 
-    // ==================================================
-    // === GRUPOS: ASIGNACIÓN DE HORARIO EN 2 PASOS ===
-    // ==================================================
-
-    // Paso 1️⃣: Asignar patrón (L-M / M-J) y hora de inicio
-    Route::get('/grupos/{grupo}/asignar-hora', [GrupoController::class, 'showHoraForm'])
-        ->name('grupos.hora.show');
-    Route::post('/grupos/{grupo}/asignar-hora', [GrupoController::class, 'storeHora'])
-        ->name('grupos.hora.store');
-
-    // Paso 2️⃣: Asignar aula según el horario guardado
-    Route::get('/grupos/{grupo}/asignar-aula', [GrupoController::class, 'showAulaForm'])
-        ->name('grupos.aula.show');
-    Route::post('/grupos/{grupo}/asignar-aula', [GrupoController::class, 'storeAula'])
-        ->name('grupos.aula.store');
-
-    // ✅ Ruta AJAX para verificar aulas disponibles según patrón y hora
-    Route::post('/grupos/verificar-aulas', [GrupoController::class, 'verificarAulas'])
-        ->name('grupos.verificarAulas');
-
-    // ✅ Ruta para eliminar el horario desde la vista de detalles
-    Route::delete('/grupos/{grupo}/eliminar-horario', [GrupoController::class, 'destroyHorario'])
-        ->name('grupos.horario.destroy');
 
     // ==================================================
-    // === MATERIAS - RUTAS ADICIONALES ===
+    // === MÓDULO DE GRUPOS (Horarios y Calificaciones) ===
+    // ==================================================
+    
+    // --- Asignación de Horarios (Paso 1 y 2) ---
+    Route::get('/grupos/{grupo}/asignar-hora', [GrupoController::class, 'showHoraForm'])->name('grupos.hora.show');
+    Route::post('/grupos/{grupo}/asignar-hora', [GrupoController::class, 'storeHora'])->name('grupos.hora.store');
+    
+    Route::get('/grupos/{grupo}/asignar-aula', [GrupoController::class, 'showAulaForm'])->name('grupos.aula.show');
+    Route::post('/grupos/{grupo}/asignar-aula', [GrupoController::class, 'storeAula'])->name('grupos.aula.store');
+
+    // --- Utilidades de Horarios (AJAX y Eliminación) ---
+    Route::post('/grupos/verificar-aulas', [GrupoController::class, 'verificarAulas'])->name('grupos.verificarAulas');
+    Route::delete('/grupos/{grupo}/eliminar-horario', [GrupoController::class, 'destroyHorario'])->name('grupos.horario.destroy');
+
+    // --- Calificaciones (NUEVO) ---
+    Route::prefix('grupos')->name('grupos.calificar.')->group(function () {
+        Route::get('/{id}/calificar', [CalificacionController::class, 'index'])->name('index');
+        Route::post('/calificar/guardar', [CalificacionController::class, 'store'])->name('store');
+        Route::delete('/calificar/{id}/desinscribir', [CalificacionController::class, 'desinscribir'])->name('desinscribir');
+    });
+
+
+    // ==================================================
+    // === MÓDULO DE MATERIAS (Acciones Extra) ===
     // ==================================================
     Route::post('materias/{cod_materia}/reactivar', [MateriaController::class, 'reactivar'])
         ->name('materias.reactivar');
 
+
     // ==================================================
-    // === INSCRIPCIÓN DE ALUMNOS A GRUPOS ===
+    // === MÓDULO DE ALUMNOS (Inscripciones) ===
     // ==================================================
     Route::prefix('alumnos/{n_control}/grupos')->name('alumnos.grupos.')->group(function () {
         Route::get('/create', [AlumnoGrupoController::class, 'create'])->name('create');
@@ -90,8 +105,9 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/{grupo}', [AlumnoGrupoController::class, 'destroy'])->name('destroy');
     });
 
+
     // ==================================================
-    // === REPORTES DEL SISTEMA ===
+    // === MÓDULO DE REPORTES ===
     // ==================================================
     Route::prefix('reportes')->name('reportes.')->group(function () {
         Route::get('/', [ReporteController::class, 'index'])->name('index');
@@ -101,4 +117,5 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/estadisticas', [ReporteController::class, 'reporteEstadisticas'])->name('estadisticas');
         Route::get('/alumnos-especial-tics', [ReporteController::class, 'alumnosEspecialTICS'])->name('alumnos_especial_tics');
     });
+
 });

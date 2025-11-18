@@ -29,6 +29,11 @@
                             <small class="opacity-75">Información completa del grupo, materia, profesor y alumnos inscritos</small>
                         </div>
                         <div class="text-end">
+                            {{-- ✅ BOTÓN NUEVO: CALIFICAR GRUPO --}}
+                            <a href="{{ route('grupos.calificar.index', $grupo->id_grupo) }}" class="btn btn-success fw-bold me-2 shadow-sm border-white">
+                                <i class="fas fa-clipboard-check me-2"></i>Calificar Grupo
+                            </a>
+                            
                             <span class="badge bg-light text-dark fs-6 p-2">
                                 <i class="fas fa-graduation-cap me-1"></i>
                                 Semestre {{ $grupo->semestre }}
@@ -225,6 +230,8 @@
                                         <div class="col-md-8">
                                             <h6 class="text-dark fw-bold">Modificar Horario</h6>
                                             <div class="row">
+                                                
+                                                {{-- ESTE ES EL BLOQUE DEL PASO 1 ACTUALIZADO --}}
                                                 <div class="col-lg-6">
                                                     <form method="POST" action="{{ route('grupos.hora.store', $grupo->id_grupo) }}">
                                                         @csrf
@@ -235,20 +242,36 @@
                                                                 <option value="L-M" {{ $grupo->patron == 'L-M' ? 'selected' : '' }}>Lunes y Miérc.</option>
                                                                 <option value="M-J" {{ $grupo->patron == 'M-J' ? 'selected' : '' }}>Martes y Juev.</option>
                                                             </select>
+                                                            
+                                                            {{-- INICIO DE SELECT MODIFICADO --}}
                                                             <select name="hora_inicio" class="form-select" required id="horaSelect">
                                                                 <option value="">Hora...</option>
                                                                 @foreach ($allowedStartTimes as $hora)
-                                                                    <option value="{{ $hora }}" {{ $grupo->hora_inicio == $hora ? 'selected' : '' }}>
+                                                                    @php
+                                                                        // Asumimos que $horasOcupadasDelProfesor es un array de strings ['HH:MM:SS', ...]
+                                                                        // que viene del controlador (Paso 1 de esta guía).
+                                                                        $isOcupado = in_array($hora, $horasOcupadasDelProfesor ?? []);
+                                                                    @endphp
+                                                                    <option 
+                                                                        value="{{ $hora }}" 
+                                                                        {{ $grupo->hora_inicio == $hora ? 'selected' : '' }} 
+                                                                        {{ $isOcupado ? 'disabled' : '' }}
+                                                                    >
                                                                         {{ \Carbon\Carbon::parse($hora)->format('h:i A') }}
+                                                                        {{ $isOcupado ? '(Ocupado)' : '' }}
                                                                     </option>
                                                                 @endforeach
                                                             </select>
+                                                            {{-- FIN DE SELECT MODIFICADO --}}
+                                                            
                                                         </div>
                                                         <button type="submit" class="btn btn-warning btn-sm w-100">
                                                             <i class="fas fa-save me-1"></i> Guardar Patrón/Hora
                                                         </button>
                                                     </form>
                                                 </div>
+                                                {{-- FIN DEL BLOQUE DEL PASO 1 --}}
+
                                                 <div class="col-lg-6">
                                                     <form method="POST" action="{{ route('grupos.aula.store', $grupo->id_grupo) }}">
                                                         @csrf
@@ -295,6 +318,7 @@
                                             <i class="fas fa-user-graduate me-2"></i>
                                             Alumnos Inscritos
                                         </div>
+                                        
                                         <span class="badge bg-light text-dark fs-6">
                                             {{ $grupo->alumnos->count() }} alumno(s)
                                         </span>
@@ -347,154 +371,6 @@
                                             </table>
                                         </div>
                                     @else
-                                    {{-- ... (código anterior) ... --}}
-
-<div class="col-md-8">
-    <h6 class="text-dark fw-bold">Modificar Horario</h6>
-    <div class="row">
-        
-        {{-- ESTE ES EL BLOQUE DEL PASO 1 ACTUALIZADO --}}
-        <div class="col-lg-6">
-            <form method="POST" action="{{ route('grupos.hora.store', $grupo->id_grupo) }}">
-                @csrf
-                <label class="form-label fw-bold">Paso 1: Patrón y Hora</label>
-                <div class="input-group mb-2">
-                    <select name="patron" class="form-select" required id="patronSelect">
-                        <option value="">Patrón...</option>
-                        <option value="L-M" {{ $grupo->patron == 'L-M' ? 'selected' : '' }}>Lunes y Miérc.</option>
-                        <option value="M-J" {{ $grupo->patron == 'M-J' ? 'selected' : '' }}>Martes y Juev.</option>
-                    </select>
-                    
-                    {{-- INICIO DE SELECT MODIFICADO --}}
-                    <select name="hora_inicio" class="form-select" required id="horaSelect">
-                        <option value="">Hora...</option>
-                        @foreach ($allowedStartTimes as $hora)
-                            @php
-                                // Asumimos que $horasOcupadasDelProfesor es un array de strings ['HH:MM:SS', ...]
-                                // que viene del controlador (Paso 1 de esta guía).
-                                $isOcupado = in_array($hora, $horasOcupadasDelProfesor ?? []);
-                            @endphp
-                            <option 
-                                value="{{ $hora }}" 
-                                {{ $grupo->hora_inicio == $hora ? 'selected' : '' }} 
-                                {{ $isOcupado ? 'disabled' : '' }}
-                            >
-                                {{ \Carbon\Carbon::parse($hora)->format('h:i A') }}
-                                {{ $isOcupado ? '(Ocupado)' : '' }}
-                            </option>
-                        @endforeach
-                    </select>
-                    {{-- FIN DE SELECT MODIFICADO --}}
-                    
-                </div>
-                <button type="submit" class="btn btn-warning btn-sm w-100">
-                    <i class="fas fa-save me-1"></i> Guardar Patrón/Hora
-                </button>
-            </form>
-        </div>
-        {{-- FIN DEL BLOQUE DEL PASO 1 --}}
-
-        <div class="col-lg-6">
-            <form method="POST" action="{{ route('grupos.aula.store', $grupo->id_grupo) }}">
-                @csrf
-                <label class="form-label fw-bold">Paso 2: Aula</label>
-                @if (!$grupo->patron || !$grupo->hora_inicio)
-                    <div class="alert alert-info p-2 text-center">
-                        <small>Complete el Paso 1 para ver aulas.</small>
-                    </div>
-                @else
-                    <select name="aula_id" class="form-select mb-2" required>
-                        <option value="">-- Selecciona un aula --</option>
-                        @foreach ($aulasDisponibles as $aula)
-                            <option value="{{ $aula->id }}">{{ $aula->nombre }} (Cap: {{ $aula->capacidad }})</option>
-                        @endforeach
-                        
-                        @if(count($aulasOcupadas) > 0)
-                            <optgroup label="Ocupadas">
-                                @foreach ($aulasOcupadas as $aula)
-                                    <option value="{{ $aula->id }}" disabled>{{ $aula->nombre }} (Ocupada)</option>
-                                @endforeach
-                            </optgroup>
-                        @endif
-                    </select>
-                    <button type="submit" class="btn btn-success btn-sm w-100">
-                        <i class="fas fa-check-circle me-1"></i> Asignar Aula
-                    </button>
-                @endif
-            </form>
-        </div>
-    </div>
-</div>
-
-{{-- ... (resto de tu código) ... --}}
-
-
-{{-- REEMPLAZA TU BLOQUE @push('styles') CON ESTE --}}
-@push('styles')
-<style>
-    .card {
-        border-radius: 0.75rem;
-        transition: transform 0.2s ease-in-out;
-    }
-    .card:hover {
-        transform: translateY(-2px);
-    }
-    .card-header {
-        border-radius: 0.75rem 0.75rem 0 0 !important;
-        font-size: 1.1rem;
-    }
-    .table th {
-        font-weight: 600;
-        font-size: 0.9rem;
-        border: none;
-    }
-    .table td {
-        vertical-align: middle;
-        border-color: #e9ecef;
-    }
-    .badge {
-        font-size: 0.75rem;
-        padding: 0.4em 0.6em;
-    }
-    .btn {
-        border-radius: 0.5rem;
-        font-weight: 500;
-        padding: 0.5rem 1.5rem;
-    }
-    .text-primary {
-        color: #002D72 !important;
-    }
-    /* Clase añadida para fondos */
-    .bg-primary-dark {
-        background-color: #002D72 !important;
-    }
-    .border-bottom {
-        border-bottom: 1px solid #e9ecef !important;
-    }
-    .shadow-sm {
-        box-shadow: 0 0.125rem 0.25rem rgba(0, 45, 114, 0.1) !important;
-    }
-    /* Estilos para los formularios de horario */
-    .border-end {
-        border-right: 1px solid #dee2e6 !important;
-    }
-    .btn-sm {
-        padding: 0.25rem 0.5rem;
-        font-size: .875rem;
-    }
-    .list-group-flush .list-group-item {
-        background-color: transparent;
-    }
-
-    /* --- NUEVA REGLA AÑADIDA --- */
-    /* Estilo para las opciones deshabilitadas (horarios ocupados) */
-    select option[disabled] {
-        background-color: #e9ecef; /* Un gris claro */
-        color: #6c757d;           /* Un color de texto apagado */
-        font-style: italic;
-    }
-</style>
-@endpush
                                         <div class="text-center py-5">
                                             <i class="fas fa-user-slash fa-3x mb-3 text-muted"></i>
                                             <h5 class="text-primary">No hay alumnos inscritos en este grupo</h5>
@@ -579,6 +455,14 @@
     }
     .list-group-flush .list-group-item {
         background-color: transparent;
+    }
+
+    /* --- NUEVA REGLA AÑADIDA --- */
+    /* Estilo para las opciones deshabilitadas (horarios ocupados) */
+    select option[disabled] {
+        background-color: #e9ecef; /* Un gris claro */
+        color: #6c757d;           /* Un color de texto apagado */
+        font-style: italic;
     }
 </style>
 @endpush
