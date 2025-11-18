@@ -8,6 +8,7 @@ use App\Models\CalificacionGrupo;
 use App\Models\Alumno; // Asegúrate de importar Alumno para la baja
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\Boleta;
 
 class CalificacionController extends Controller
 {
@@ -89,9 +90,29 @@ class CalificacionController extends Controller
         AlumnoGrupo::where('n_control', $n_control)->delete();
     }
 
-    public function desinscribir($alumno_grupo_id)
+    public function finalizarCurso($alumno_grupo_id)
     {
-        AlumnoGrupo::destroy($alumno_grupo_id);
-        return back()->with('success', 'Alumno desinscrito del grupo.');
+        // 1. Buscar la inscripción con todas las relaciones necesarias
+        $inscripcion = AlumnoGrupo::with([
+            'calificacion', 
+            'grupo.periodo'
+        ])->findOrFail($alumno_grupo_id);
+
+        // 2. Crear el registro en la tabla Boletas (Snapshot)
+        Boleta::create([
+            'n_control'    => $inscripcion->n_control,
+            'cod_materia'  => $inscripcion->grupo->cod_materia,
+            'periodo'      => $inscripcion->grupo->periodo->codigo_periodo ?? 'N/A',
+            'calificacion' => $inscripcion->calificacion->promedio ?? null, // Si no tiene promedio, va null
+            'oportunidad'  => $inscripcion->oportunidad,
+            'n_trabajador' => $inscripcion->grupo->n_trabajador,
+            'id_grupo'     => $inscripcion->id_grupo,
+        ]);
+
+        // 3. Eliminar la inscripción activa (y sus calificaciones parciales por cascada)
+        // Esto libera al alumno del grupo actual.
+        $inscripcion->delete();
+
+        return back()->with('success', 'Curso finalizado y movido a boleta exitosamente.');
     }
 }

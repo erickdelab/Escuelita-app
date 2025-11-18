@@ -119,15 +119,20 @@
                                                 <button type="submit" class="btn btn-sm btn-outline-primary" title="Guardar Calificaciones">
                                                     <i class="fas fa-save"></i>
                                                 </button>
-                                        </form>
-                                                {{-- BOTÓN DESINSCRIBIR (Formulario separado) --}}
-                                                <form action="{{ route('grupos.calificar.desinscribir', $inscripcion->id) }}" method="POST" class="d-inline" onsubmit="return confirm('¿Estás seguro de desinscribir a este alumno? Se perderán sus calificaciones parciales.');">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-sm btn-outline-danger ms-1" title="Desinscribir Alumno">
-                                                        <i class="fas fa-user-times"></i>
-                                                    </button>
-                                                </form>
+                                            
+                                            {{-- 🔴 AQUÍ FALTABA CERRAR EL FORMULARIO ANTERIOR --}}
+                                            </form>
+<form action="{{ route('grupos.calificar.finalizar', $inscripcion->id) }}" 
+      method="POST" 
+      class="d-inline" 
+      onsubmit="return confirm('¿Confirmas finalizar el curso para este alumno? \n\nSe moverá su calificación final a la BOLETA y saldrá de la lista de este grupo.');">
+    @csrf
+    @method('DELETE') {{-- Usamos DELETE porque semánticamente lo quitamos del grupo --}}
+    
+    <button type="submit" class="btn btn-sm btn-outline-success ms-1" title="Finalizar y mover a Boleta">
+        <i class="fas fa-check-double"></i>
+    </button>
+</form>
                                             </td>
                                     </tr>
                                 @empty

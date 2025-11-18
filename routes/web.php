@@ -85,7 +85,7 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('grupos')->name('grupos.calificar.')->group(function () {
         Route::get('/{id}/calificar', [CalificacionController::class, 'index'])->name('index');
         Route::post('/calificar/guardar', [CalificacionController::class, 'store'])->name('store');
-        Route::delete('/calificar/{id}/desinscribir', [CalificacionController::class, 'desinscribir'])->name('desinscribir');
+        Route::delete('/calificar/{id}/finalizar', [CalificacionController::class, 'finalizarCurso'])->name('finalizar');
     });
 
 
