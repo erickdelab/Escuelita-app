@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('template_title')
-    {{ __('Create') }} Materia
+    {{ __('Crear') }} Materia
 @endsection
 
 @section('content')
@@ -11,7 +11,16 @@
 
                 <div class="card card-default">
                     <div class="card-header">
-                        <span class="card-title">{{ __('Create') }} Materia</span>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span class="card-title">{{ __('Crear') }} Materia</span>
+                            
+                            <!-- Botón Regresar añadido aquí -->
+                            <div class="float-right">
+                                <a href="{{ route('materias.index') }}" class="btn btn-primary btn-sm float-right"  data-placement="left">
+                                  {{ __('Regresar') }}
+                                </a>
+                            </div>
+                        </div>
                     </div>
                     <div class="card-body bg-white">
                         <form method="POST" action="{{ route('materias.store') }}"  role="form" enctype="multipart/form-data">

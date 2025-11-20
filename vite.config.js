@@ -11,4 +11,11 @@ export default defineConfig({
             refresh: true,
         }),
     ],
+    Server: {
+        host: true,
+        port: 5173,
+    
+        hmr: {
+            host: '',},
+        }, 
 });
