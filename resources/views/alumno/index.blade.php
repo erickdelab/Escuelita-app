@@ -12,7 +12,7 @@
                 <!-- Header -->
                 <div class="card-header text-white" style="background-color: #002D72;">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <h4 class="mb-0">🎓 {{ __('Alumgaynos') }}</h4>
+                        <h4 class="mb-0">🎓 {{ __('Alumnos') }}</h4>
                         <a href="{{ route('alumnos.create') }}" class="btn btn-light btn-sm fw-bold">
                             + {{ __('Nuevo Alumno') }}
                         </a>
