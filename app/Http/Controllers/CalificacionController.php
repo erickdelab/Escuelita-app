@@ -5,14 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Grupo;
 use App\Models\AlumnoGrupo;
 use App\Models\CalificacionGrupo;
-use App\Models\Alumno; // Asegúrate de importar Alumno para la baja
+use App\Models\Boleta;
+use App\Models\Alumno;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Models\Boleta;
 
 class CalificacionController extends Controller
 {
-    // Mostrar la vista de calificación
     public function index($id_grupo)
     {
         $grupo = Grupo::with('materia', 'profesore')->findOrFail($id_grupo);
@@ -21,11 +20,10 @@ class CalificacionController extends Controller
             ->with(['alumno', 'calificacion']) 
             ->get();
 
-        // ✅ AQUÍ ESTÁ LA CLAVE: La vista debe ser 'grupo.calificar'
-        // Esto busca el archivo en resources/views/grupo/calificar.blade.php
         return view('grupo.calificar', compact('grupo', 'inscripciones'));
     }
 
+    // ✅ Guarda calificaciones y aplica la REGLA DEL CERO
     public function store(Request $request)
     {
         $request->validate([
@@ -39,13 +37,21 @@ class CalificacionController extends Controller
         DB::transaction(function () use ($request) {
             $inscripcion = AlumnoGrupo::findOrFail($request->alumno_grupo_id);
             
-            // Calcular Promedio
             $promedio = null;
+            
+            // Solo calculamos si las 4 unidades tienen valor
             if (isset($request->u1, $request->u2, $request->u3, $request->u4)) {
-                $promedio = ($request->u1 + $request->u2 + $request->u3 + $request->u4) / 4;
+                
+                // 🔥 REGLA DE ORO: Si alguna unidad es < 70, el promedio es 0 automático.
+                if ($request->u1 < 70 || $request->u2 < 70 || $request->u3 < 70 || $request->u4 < 70) {
+                    $promedio = 0; 
+                } else {
+                    // Si todas son >= 70, se calcula el promedio matemático
+                    $promedio = ($request->u1 + $request->u2 + $request->u3 + $request->u4) / 4;
+                }
             }
 
-            // Guardar Calificaciones
+            // Guardar o Actualizar
             CalificacionGrupo::updateOrCreate(
                 ['alumno_grupo_id' => $inscripcion->id],
                 [
@@ -53,66 +59,63 @@ class CalificacionController extends Controller
                     'u2' => $request->u2,
                     'u3' => $request->u3,
                     'u4' => $request->u4,
-                    'promedio' => $promedio
+                    'promedio' => $promedio // Se guarda 0 o el cálculo real
                 ]
             );
-
-            // Lógica de Cambio de Oportunidad
-            if ($promedio !== null) {
-                if ($promedio >= 70) {
-                    $inscripcion->oportunidad = 'Aprobada';
-                    $inscripcion->save();
-                } else {
-                    if ($inscripcion->oportunidad == 'Primera') {
-                        $inscripcion->oportunidad = 'Repite';
-                        $inscripcion->save();
-                    } elseif ($inscripcion->oportunidad == 'Repite') {
-                        $inscripcion->oportunidad = 'Especial';
-                        $inscripcion->save();
-                    } elseif ($inscripcion->oportunidad == 'Especial') {
-                        $this->ejecutarBajaDefinitiva($inscripcion->n_control);
-                    }
-                }
-            }
         });
 
-        return back()->with('success', 'Calificaciones guardadas correctamente.');
+        return back()->with('success', 'Calificaciones guardadas. Si hay una unidad reprobada, el promedio será 0.');
     }
 
-    private function ejecutarBajaDefinitiva($n_control)
-    {
-        Alumno::where('n_control', $n_control)->update([
-            'situacion' => 'Baja',
-            'FKid_carrera' => null,
-            'semestre' => null,
-            'promedio_general' => null
-        ]);
-        AlumnoGrupo::where('n_control', $n_control)->delete();
-    }
+ // ... (resto del código anterior igual) ...
 
+    // ✅ Finaliza y mueve a Boleta (Con lógica de BAJA DEFINITIVA)
     public function finalizarCurso($alumno_grupo_id)
     {
-        // 1. Buscar la inscripción con todas las relaciones necesarias
         $inscripcion = AlumnoGrupo::with([
             'calificacion', 
             'grupo.periodo'
         ])->findOrFail($alumno_grupo_id);
 
-        // 2. Crear el registro en la tabla Boletas (Snapshot)
+        // 1. Validar que ya exista un promedio calculado
+        if (!$inscripcion->calificacion || is_null($inscripcion->calificacion->promedio)) {
+            return back()->with('error', 'No se puede finalizar. Faltan calificaciones.');
+        }
+
+        $calificacionFinal = $inscripcion->calificacion->promedio;
+        $n_control = $inscripcion->n_control;
+
+        // 2. Crear registro en Boleta (Guardamos el historial antes de borrar nada)
         Boleta::create([
-            'n_control'    => $inscripcion->n_control,
+            'n_control'    => $n_control,
             'cod_materia'  => $inscripcion->grupo->cod_materia,
             'periodo'      => $inscripcion->grupo->periodo->codigo_periodo ?? 'N/A',
-            'calificacion' => $inscripcion->calificacion->promedio ?? null, // Si no tiene promedio, va null
+            'calificacion' => $calificacionFinal,
             'oportunidad'  => $inscripcion->oportunidad,
             'n_trabajador' => $inscripcion->grupo->n_trabajador,
             'id_grupo'     => $inscripcion->id_grupo,
         ]);
 
-        // 3. Eliminar la inscripción activa (y sus calificaciones parciales por cascada)
-        // Esto libera al alumno del grupo actual.
+        // 3. 🚨 LÓGICA DE BAJA DEFINITIVA 🚨
+        // Si estaba en 'Especial' y reprobó (< 70)
+        if ($inscripcion->oportunidad == 'Especial' && $calificacionFinal < 70) {
+            
+            // A. Cambiar estatus del alumno a 'Baja'
+            Alumno::where('n_control', $n_control)->update([
+                'situacion' => 'Baja',
+                // Opcional: Limpiar otros datos si tu lógica lo requiere
+                // 'semestre' => null, 
+            ]);
+
+            // B. Dar de baja de TODOS los grupos actuales (incluyendo este y otros que curse)
+            AlumnoGrupo::where('n_control', $n_control)->delete();
+
+            return back()->with('error', 'El alumno ha reprobado en Especial. Se aplicó BAJA DEFINITIVA y se eliminaron sus cargas académicas.');
+        }
+
+        // 4. Si no fue baja definitiva, solo eliminamos la inscripción actual (la que finalizó)
         $inscripcion->delete();
 
-        return back()->with('success', 'Curso finalizado y movido a boleta exitosamente.');
+        return back()->with('success', 'Curso finalizado correctamente. Calificación asentada en Boleta.');
     }
 }

@@ -9,140 +9,138 @@
     <div class="row">
         <div class="col-sm-12">
             <div class="card shadow-lg border-0">
-                <!-- Header -->
                 <div class="card-header text-white" style="background-color: #002D72;">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <h4 class="mb-0">🎓 {{ __('Inscribir Alumno a Grupos') }}</h4>
                         <a href="{{ route('alumnos.show', $alumno->n_control) }}" class="btn btn-light btn-sm fw-bold">
-                            ← {{ __('Regresar al Detalle del Alumno') }}
+                            ← {{ __('Regresar al Detalle') }}
                         </a>
                     </div>
                 </div>
 
                 <div class="card-body bg-white">
-                    <!-- Información del Alumno -->
                     <div class="row mb-4">
                         <div class="col-md-12">
-                            <div class="alert alert-info">
-                                <h5 class="alert-heading">Alumno: {{ $alumno->n_control }} - {{ $alumno->nombre }} {{ $alumno->ap_pat }} {{ $alumno->ap_mat }}</h5>
-                                <p class="mb-0">Selecciona un grupo disponible para inscribir al alumno.</p>
+                            <div class="alert alert-info border-0 shadow-sm" style="background-color: rgba(0, 45, 114, 0.1); color: #002D72;">
+                                <h5 class="alert-heading fw-bold">
+                                    <i class="fas fa-user-circle me-2"></i>
+                                    Alumno: {{ $alumno->n_control }} - {{ $alumno->nombre }} {{ $alumno->ap_pat }} {{ $alumno->ap_mat }}
+                                </h5>
+                                <p class="mb-0">Selecciona un grupo de la lista. El sistema calculará automáticamente si es Primera, Repite o Especial.</p>
                             </div>
                         </div>
                     </div>
 
                     <div class="row">
-                        <!-- Formulario para Inscribir a Nuevo Grupo -->
                         <div class="col-md-6">
-                            <div class="card mb-4">
-                                <div class="card-header text-white" style="background-color: #002D72;">
-                                    <h5 class="mb-0">Grupos Disponibles</h5>
+                            <div class="card mb-4 border shadow-sm">
+                                <div class="card-header text-white fw-bold" style="background-color: #002D72;">
+                                    <i class="fas fa-chalkboard-teacher me-2"></i> Selección de Grupo
                                 </div>
                                 <div class="card-body">
                                     @if($gruposDisponibles->count() > 0)
-                                        <form method="POST" action="{{ route('alumnos.grupos.store', $alumno->n_control) }}">
+                                        <form method="POST" action="{{ route('alumnos.grupos.store', $alumno->n_control) }}" id="inscripcionForm">
                                             @csrf
-                                            <div class="form-group mb-3">
-                                                <label for="id_grupo" class="form-label fw-bold">Selecciona un grupo:</label>
-                                                <select name="id_grupo" class="form-select" id="id_grupo" required>
-                                                    <option value="">-- Seleccione un Grupo --</option>
+                                            
+                                            {{-- 1. SELECT DE GRUPO --}}
+                                            <div class="form-group mb-4">
+                                                <label for="id_grupo" class="form-label fw-bold text-dark">Selecciona un grupo:</label>
+                                                <select name="id_grupo" class="form-select form-select-lg" id="id_grupo" required>
+                                                    <option value="" selected disabled>-- Seleccione un Grupo --</option>
                                                     @foreach($gruposDisponibles as $grupo)
                                                         @php
-                                                            // ✅ Asegurar que la materia esté cargada
+                                                            // Asegurar carga de relación
                                                             if (!$grupo->relationLoaded('materia') && $grupo->cod_materia) {
                                                                 $grupo->load('materia');
                                                             }
+                                                            $nombreMateria = $grupo->materia->nombre ?? 'Materia no encontrada';
                                                             
-                                                            // ✅ Obtener el nombre de la materia
-                                                            $nombreMateria = $grupo->materia->nombre ?? $grupo->nombre_materia ?? 'Materia no encontrada';
+                                                            // Datos para mostrar
+                                                            $profesor = $grupo->profesore ? ($grupo->profesore->nombre . ' ' . $grupo->profesore->ap_paterno) : 'Sin Prof.';
+                                                            $horario = $grupo->patron ? ($grupo->patron . ' ' . \Carbon\Carbon::parse($grupo->hora_inicio)->format('H:i')) : 'Sin Horario';
                                                         @endphp
-                                                        <option value="{{ $grupo->id_grupo }}">
-                                                            Grupo {{ $grupo->id_grupo }} - 
-                                                            {{ $nombreMateria }} ({{ $grupo->cod_materia ?? 'Sin código' }})
-                                                            - Semestre {{ $grupo->semestre }}
-                                                            @if($grupo->profesore)
-                                                                - Prof: {{ $grupo->profesore->nombre }} {{ $grupo->profesore->ap_paterno }}
+
+                                                        {{-- 
+                                                            🔥 CLAVE: Pasamos la oportunidad calculada en atributos data- 
+                                                            Si la materia está bloqueada (aprobada/baja), deshabilitamos la opción.
+                                                        --}}
+                                                        <option value="{{ $grupo->id_grupo }}" 
+                                                                data-oportunidad="{{ $grupo->oportunidad_calc }}"
+                                                                data-materia="{{ $nombreMateria }}"
+                                                                {{ $grupo->estado_materia == 'Bloqueada' ? 'disabled' : '' }}
+                                                        >
+                                                            @if($grupo->estado_materia == 'Bloqueada')
+                                                                ⛔ ({{ $grupo->oportunidad_calc }}) 
                                                             @endif
+                                                            {{ $nombreMateria }} - Gpo {{ $grupo->id_grupo }} ({{ $horario }})
                                                         </option>
                                                     @endforeach
                                                 </select>
                                             </div>
 
-                                            {{-- ✅ Campo para seleccionar oportunidad --}}
-                                            <div class="form-group mb-3">
-                                                <label for="oportunidad" class="form-label fw-bold">Oportunidad:</label>
-                                                <select name="oportunidad" class="form-select" id="oportunidad" required>
-                                                    <option value="Primera">Primera Oportunidad</option>
-                                                    <option value="Repite">Repite Materia</option>
-                                                    <option value="Especial">Oportunidad Especial</option>
-                                                </select>
+                                            {{-- 2. VISUALIZACIÓN AUTOMÁTICA DE OPORTUNIDAD --}}
+                                            <div class="card bg-light border-0 mb-4" id="infoOportunidadBox" style="display: none;">
+                                                <div class="card-body text-center">
+                                                    <h6 class="text-muted mb-2">El alumno cursará esta materia en:</h6>
+                                                    
+                                                    {{-- Aquí se mostrará el badge dinámicamente --}}
+                                                    <span id="badgeOportunidad" class="badge fs-5 px-4 py-2 bg-secondary">
+                                                        Seleccione grupo...
+                                                    </span>
+
+                                                    {{-- Input oculto que se enviará al backend --}}
+                                                    <input type="hidden" name="oportunidad" id="inputOportunidad">
+                                                </div>
                                             </div>
 
-                                            <button type="submit" class="btn text-white w-100" style="background-color: #002D72; border-color: #002D72;">
-                                                <i class="fa fa-user-plus"></i> Inscribir a Grupo Seleccionado
+                                            <button type="submit" class="btn btn-primary btn-lg w-100 fw-bold" id="btnInscribir" disabled>
+                                                <i class="fa fa-check-circle me-2"></i> Confirmar Inscripción
                                             </button>
                                         </form>
                                     @else
-                                        <div class="alert alert-warning">
-                                            <i class="fa fa-info-circle"></i> No hay grupos disponibles para inscribir.
+                                        <div class="alert alert-warning text-center">
+                                            <i class="fa fa-exclamation-triangle fa-2x mb-3"></i><br>
+                                            No hay grupos disponibles para inscribir.
                                         </div>
                                     @endif
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Grupos Inscritos -->
                         <div class="col-md-6">
-                            <div class="card">
-                                <div class="card-header text-white" style="background-color: #002D72;">
-                                    <h5 class="mb-0">Grupos Inscritos ({{ $alumno->grupos->count() }})</h5>
+                            <div class="card border shadow-sm">
+                                <div class="card-header text-white fw-bold" style="background-color: #6c757d;">
+                                    <i class="fas fa-list me-2"></i> Carga Académica Actual ({{ $alumno->grupos->count() }})
                                 </div>
-                                <div class="card-body">
+                                <div class="card-body bg-light">
                                     @if($alumno->grupos->count() > 0)
-                                        @foreach($alumno->grupos as $grupo)
-                                            @php
-                                                // ✅ Asegurar que la materia esté cargada
-                                                if (!$grupo->relationLoaded('materia') && $grupo->cod_materia) {
-                                                    $grupo->load('materia');
-                                                }
-                                                
-                                                // ✅ Obtener el nombre de la materia
-                                                $nombreMateria = $grupo->materia->nombre ?? $grupo->nombre_materia ?? 'Materia no encontrada';
-                                            @endphp
-                                            <div class="d-flex justify-content-between align-items-center mb-3 p-2 border rounded">
-                                                <div>
-                                                    <strong>Grupo {{ $grupo->id_grupo }}</strong> - 
-                                                    <span class="fw-bold" style="color: #002D72;">{{ $nombreMateria }}</span>
-                                                    <small class="text-muted">({{ $grupo->cod_materia ?? 'Sin código' }})</small>
-                                                    <br>
-                                                    <small class="text-muted">
-                                                        Semestre {{ $grupo->semestre }}
-                                                        @if($grupo->profesore)
-                                                            - {{ $grupo->profesore->nombre }} {{ $grupo->profesore->ap_paterno }}
-                                                        @endif
-                                                        {{-- ✅ Mostrar oportunidad --}}
+                                        <ul class="list-group list-group-flush">
+                                            @foreach($alumno->grupos as $grupo)
+                                                @php
+                                                    $nombreMat = $grupo->materia->nombre ?? 'Materia';
+                                                @endphp
+                                                <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent">
+                                                    <div>
+                                                        <strong style="color: #002D72;">{{ $nombreMat }}</strong>
                                                         <br>
-                                                        <span class="badge 
-                                                            @if($grupo->pivot->oportunidad == 'Primera') bg-success
-                                                            @elseif($grupo->pivot->oportunidad == 'Repite') bg-warning
-                                                            @elseif($grupo->pivot->oportunidad == 'Especial') bg-info
-                                                            @else bg-secondary @endif">
-                                                            {{ $grupo->pivot->oportunidad }}
-                                                        </span>
-                                                    </small>
-                                                </div>
-                                                <form method="POST" action="{{ route('alumnos.grupos.destroy', [$alumno->n_control, $grupo->id_grupo]) }}" class="d-inline">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-outline-danger btn-sm"
-                                                            onclick="return confirm('¿Estás seguro de desinscribir al alumno de este grupo?')">
-                                                        <i class="fa fa-user-times"></i> Desinscribir
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        @endforeach
+                                                        <small class="text-muted">
+                                                            {{ $grupo->pivot->oportunidad }} | Gpo {{ $grupo->id_grupo }}
+                                                        </small>
+                                                    </div>
+                                                    <form method="POST" action="{{ route('alumnos.grupos.destroy', [$alumno->n_control, $grupo->id_grupo]) }}">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-outline-danger btn-sm" title="Desinscribir">
+                                                            <i class="fa fa-times"></i>
+                                                        </button>
+                                                    </form>
+                                                </li>
+                                            @endforeach
+                                        </ul>
                                     @else
-                                        <div class="alert alert-info">
-                                            <i class="fa fa-info-circle"></i> El alumno no está inscrito en ningún grupo.
+                                        <div class="text-center py-4 text-muted">
+                                            <i class="fa fa-folder-open fa-2x mb-2"></i><br>
+                                            Sin materias inscritas.
                                         </div>
                                     @endif
                                 </div>
@@ -155,51 +153,49 @@
     </div>
 </div>
 
-<style>
-    .card {
-        border: 1px solid #dee2e6;
-        border-radius: 0.5rem;
-    }
-    
-    .card-header {
-        border-bottom: 1px solid rgba(0,0,0,0.125);
-    }
-    
-    .form-select {
-        border-radius: 0.375rem;
-        border: 1px solid #dee2e6;
-    }
-    
-    .form-select:focus {
-        border-color: #002D72;
-        box-shadow: 0 0 0 0.2rem rgba(0, 45, 114, 0.25);
-    }
-    
-    .btn {
-        border-radius: 0.375rem;
-    }
-    
-    .fw-bold {
-        font-weight: 600;
-    }
-    
-    .badge {
-        font-size: 0.7rem;
-        padding: 0.3em 0.5em;
-    }
-    
-    .alert-info {
-        background-color: rgba(0, 45, 114, 0.1);
-        border-color: rgba(0, 45, 114, 0.2);
-        color: #002D72;
-    }
-    
-    .border {
-        border-color: #e9ecef !important;
-    }
-    
-    .border:hover {
-        border-color: #002D72 !important;
-    }
-</style>
+{{-- SCRIPT PARA AUTOMATIZACIÓN --}}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const selectGrupo = document.getElementById('id_grupo');
+        const boxInfo = document.getElementById('infoOportunidadBox');
+        const badge = document.getElementById('badgeOportunidad');
+        const inputHidden = document.getElementById('inputOportunidad');
+        const btnSubmit = document.getElementById('btnInscribir');
+
+        selectGrupo.addEventListener('change', function() {
+            // 1. Obtener la opción seleccionada
+            const selectedOption = this.options[this.selectedIndex];
+            
+            // 2. Leer el atributo data-oportunidad
+            const oportunidad = selectedOption.getAttribute('data-oportunidad');
+
+            if (oportunidad) {
+                // Mostrar la caja
+                boxInfo.style.display = 'block';
+                btnSubmit.disabled = false;
+
+                // Actualizar Texto y Color del Badge
+                badge.textContent = oportunidad;
+                badge.className = 'badge fs-5 px-4 py-2'; // Reset clases base
+
+                if (oportunidad === 'Primera') {
+                    badge.classList.add('bg-success');
+                } else if (oportunidad === 'Repite') {
+                    badge.classList.add('bg-warning', 'text-dark');
+                } else if (oportunidad === 'Especial') {
+                    badge.classList.add('bg-danger');
+                } else {
+                    badge.classList.add('bg-secondary');
+                }
+
+                // 3. Actualizar el input oculto para enviar al backend
+                inputHidden.value = oportunidad;
+            } else {
+                boxInfo.style.display = 'none';
+                btnSubmit.disabled = true;
+                inputHidden.value = '';
+            }
+        });
+    });
+</script>
 @endsection
