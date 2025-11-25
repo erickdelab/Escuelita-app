@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 18-11-2025 a las 23:03:28
+-- Tiempo de generación: 25-11-2025 a las 19:57:29
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -49,7 +49,7 @@ CREATE TABLE `alumnos` (
 --
 
 INSERT INTO `alumnos` (`n_control`, `id_carrera`, `nombre`, `s_nombre`, `ap_pat`, `ap_mat`, `fech_nac`, `genero`, `FKid_carrera`, `situacion`, `semestre`, `promedio_general`, `created_at`, `updated_at`) VALUES
-('091234', NULL, 'Jimmy', 'Baraquiel', 'Valenzuela', 'Álvarez', '2000-11-21', 'M', 1, 'Vigente', NULL, NULL, '2025-11-19 03:48:30', '2025-11-19 03:53:20'),
+('091234', NULL, 'Jimmy', 'Baraquiel', 'Valenzuela', 'Álvarez', '2000-11-21', 'M', 1, 'Baja', 1, 100.00, '2025-11-19 03:48:30', '2025-11-21 06:27:35'),
 ('123', NULL, 'juan', 'Pablo', 'Escobar', 'Sultan', '2002-07-08', 'M', 8, 'Vigente', 2, 97.96, '2025-10-24 00:53:58', '2025-10-31 02:10:03'),
 ('19222128', NULL, 'Andrés', 'Manuel', 'Pérez', 'Fernández', '2000-12-01', 'M', 1, 'Vigente', 3, 89.00, NULL, '2025-10-31 02:54:10'),
 ('19222164', NULL, 'Juan', 'Diego', 'Soria', 'Lopez', '2001-12-21', 'M', 8, 'Vigente', 3, 78.90, '2025-10-15 05:36:09', '2025-10-29 04:30:59'),
@@ -150,12 +150,9 @@ INSERT INTO `alumno_grupo` (`id`, `n_control`, `id_grupo`, `oportunidad`, `creat
 (17, '123', 3, 'Primera', '2025-10-28 22:36:43', '2025-10-28 22:36:43'),
 (19, '123', 8, 'Primera', '2025-10-29 01:17:41', '2025-10-29 01:17:41'),
 (23, '123', 4, 'Especial', '2025-10-31 02:24:44', '2025-10-31 02:24:44'),
-(25, '123', 2, 'Aprobada', '2025-11-05 10:53:08', '2025-11-19 03:35:31'),
 (26, '123', 1238, 'Primera', '2025-11-07 00:52:00', '2025-11-07 00:52:00'),
 (27, '123', 5, 'Primera', '2025-11-07 04:15:10', '2025-11-07 04:15:10'),
-(29, '22160007', 1237, 'Primera', '2025-11-12 02:35:10', '2025-11-12 02:35:10'),
-(30, '19222128', 1, 'Primera', '2025-11-19 03:37:34', '2025-11-19 03:37:34'),
-(33, '091234', 1247, 'Primera', '2025-11-19 03:56:24', '2025-11-19 03:56:24');
+(29, '22160007', 1237, 'Primera', '2025-11-12 02:35:10', '2025-11-12 02:35:10');
 
 -- --------------------------------------------------------
 
@@ -289,7 +286,12 @@ CREATE TABLE `boletas` (
 INSERT INTO `boletas` (`id`, `n_control`, `cod_materia`, `periodo`, `calificacion`, `oportunidad`, `n_trabajador`, `id_grupo`, `created_at`, `updated_at`) VALUES
 (1, '19222128', 'TICS101', 'AGODIC25', 34.00, 'Repite', 'CAMOTO1', 1, '2025-11-19 03:01:59', '2025-11-19 03:01:59'),
 (2, '123', 'TICS101', 'AGODIC25', 67.50, 'Aprobada', 'CAMOTO1', 1, '2025-11-19 03:28:47', '2025-11-19 03:28:47'),
-(3, '091234', 'TICS666', 'ENEJUN25', 52.00, 'Especial', 'ERDELO1', 1247, '2025-11-19 03:55:00', '2025-11-19 03:55:00');
+(7, '19222128', 'TICS101', 'AGODIC25', 72.50, 'Primera', 'CAMOTO1', 1, '2025-11-21 05:56:44', '2025-11-21 05:56:44'),
+(15, '091234', 'TICS101', 'AGODIC25', 80.00, 'Primera', 'CAMOTO1', 1, '2025-11-21 06:25:25', '2025-11-21 06:25:25'),
+(16, '123', 'TICS102', 'AGODIC25', 0.00, 'Aprobada', 'CAMOTO1', 2, '2025-11-21 06:26:26', '2025-11-21 06:26:26'),
+(17, '091234', 'TICS102', 'AGODIC25', 0.00, 'Primera', 'CAMOTO1', 2, '2025-11-21 06:26:41', '2025-11-21 06:26:41'),
+(18, '091234', 'TICS102', 'AGODIC25', 0.00, 'Repite', 'CAMOTO1', 2, '2025-11-21 06:27:07', '2025-11-21 06:27:07'),
+(19, '091234', 'TICS102', 'AGODIC25', 0.00, 'Especial', 'CAMOTO1', 2, '2025-11-21 06:27:35', '2025-11-21 06:27:35');
 
 -- --------------------------------------------------------
 
@@ -308,8 +310,20 @@ CREATE TABLE `cache` (
 --
 
 INSERT INTO `cache` (`key`, `value`, `expiration`) VALUES
-('erick@erick|127.0.0.1', 'i:1;', 1763487787),
-('erick@erick|127.0.0.1:timer', 'i:1763487786;', 1763487787);
+('adknd@ssa.com|10.58.0.242', 'i:1;', 1763669259),
+('adknd@ssa.com|10.58.0.242:timer', 'i:1763669259;', 1763669259),
+('admin1@admin.com|127.0.0.1', 'i:1;', 1764094296),
+('admin1@admin.com|127.0.0.1:timer', 'i:1764094296;', 1764094296),
+('carlos@carlos.com|127.0.0.1', 'i:2;', 1763669183),
+('carlos@carlos.com|127.0.0.1:timer', 'i:1763669183;', 1763669183),
+('carlosmoran0119@gmail.com|10.58.0.242', 'i:2;', 1763668396),
+('carlosmoran0119@gmail.com|10.58.0.242:timer', 'i:1763668396;', 1763668396),
+('jajuwquj@aja.com|10.58.0.242', 'i:2;', 1763668345),
+('jajuwquj@aja.com|10.58.0.242:timer', 'i:1763668345;', 1763668345),
+('user@user.com|10.58.0.242', 'i:1;', 1763665423),
+('user@user.com|10.58.0.242:timer', 'i:1763665423;', 1763665423),
+('werfe@defew.com|127.0.0.1', 'i:1;', 1763678126),
+('werfe@defew.com|127.0.0.1:timer', 'i:1763678126;', 1763678126);
 
 -- --------------------------------------------------------
 
@@ -348,9 +362,23 @@ CREATE TABLE `calificaciones_grupo` (
 INSERT INTO `calificaciones_grupo` (`id`, `alumno_grupo_id`, `u1`, `u2`, `u3`, `u4`, `promedio`, `created_at`, `updated_at`) VALUES
 (1, 22, 34.00, 42.00, 25.00, 35.00, 34.00, '2025-11-19 03:01:53', '2025-11-19 03:01:53'),
 (2, 21, 90.00, 60.00, 60.00, 60.00, 67.50, '2025-11-19 03:09:41', '2025-11-19 03:28:03'),
-(3, 25, 89.00, 0.00, 0.00, 0.00, 22.25, '2025-11-19 03:35:16', '2025-11-19 03:35:40'),
+(3, 25, 89.00, 0.00, 0.00, 0.00, 0.00, '2025-11-19 03:35:16', '2025-11-21 06:26:10'),
 (4, 31, 50.00, 50.00, 10.00, 50.00, 40.00, '2025-11-19 03:52:00', '2025-11-19 03:52:11'),
-(5, 32, 19.00, 19.00, 70.00, 100.00, 52.00, '2025-11-19 03:54:41', '2025-11-19 03:54:51');
+(5, 32, 19.00, 19.00, 70.00, 100.00, 52.00, '2025-11-19 03:54:41', '2025-11-19 03:54:51'),
+(6, 35, 70.00, 70.00, 70.00, 70.00, 70.00, '2025-11-21 05:28:57', '2025-11-21 05:30:06'),
+(7, 36, 90.00, 50.02, 40.00, 12.00, 48.01, '2025-11-21 05:33:31', '2025-11-21 05:48:29'),
+(8, 37, 100.00, 90.00, 60.00, 90.00, 85.00, '2025-11-21 05:49:17', '2025-11-21 05:49:17'),
+(9, 30, 70.00, 70.00, 70.00, 80.00, 72.50, '2025-11-21 05:50:51', '2025-11-21 05:56:35'),
+(10, 38, 60.00, 80.00, 80.00, 80.00, 0.00, '2025-11-21 05:59:32', '2025-11-21 05:59:32'),
+(11, 39, 2.00, 2.00, 2.00, 2.00, 0.00, '2025-11-21 06:01:17', '2025-11-21 06:01:17'),
+(12, 40, 3.00, 5.00, 5.00, 5.00, 0.00, '2025-11-21 06:01:44', '2025-11-21 06:01:44'),
+(13, 41, 12.00, 34.00, 7.00, 7.00, 0.00, '2025-11-21 06:19:18', '2025-11-21 06:19:18'),
+(14, 42, 6.00, 6.00, 6.00, 6.00, 0.00, '2025-11-21 06:19:41', '2025-11-21 06:19:41'),
+(15, 43, 9.00, 7.00, 7.00, 7.00, 0.00, '2025-11-21 06:20:07', '2025-11-21 06:20:07'),
+(16, 44, 80.00, 80.00, 80.00, 80.00, 80.00, '2025-11-21 06:25:21', '2025-11-21 06:25:21'),
+(17, 47, 100.00, 45.00, 5.00, 4.00, 0.00, '2025-11-21 06:26:37', '2025-11-21 06:26:37'),
+(18, 48, 12.00, 54.00, 54.00, 54.00, 0.00, '2025-11-21 06:27:04', '2025-11-21 06:27:04'),
+(19, 49, 100.00, 100.00, 78.00, 9.00, 0.00, '2025-11-21 06:27:32', '2025-11-21 06:27:32');
 
 -- --------------------------------------------------------
 
@@ -606,7 +634,7 @@ CREATE TABLE `job_batches` (
 
 CREATE TABLE `materias` (
   `cod_materia` varchar(30) NOT NULL,
-  `nombre` varchar(30) DEFAULT NULL,
+  `nombre` varchar(100) DEFAULT NULL,
   `credito` int(11) DEFAULT NULL,
   `cadena` tinyint(1) DEFAULT NULL,
   `materia_estado` varchar(10) DEFAULT NULL,
@@ -656,12 +684,65 @@ INSERT INTO `materias` (`cod_materia`, `nombre`, `credito`, `cadena`, `materia_e
 ('QUI102', 'Química Orgánica', 4, 1, 'Activa', NULL, NULL),
 ('QUI103', 'Química Analítica', 4, 1, 'Activa', NULL, NULL),
 ('QUI104', 'Bioquímica', 4, 1, 'Activa', NULL, NULL),
-('TICS101', 'Fundamentos de Programación', 4, 1, 'Activa', NULL, NULL),
+('TICS101', 'Fundamentos de Programación', 5, 1, 'Activa', NULL, '2025-11-25 18:50:27'),
 ('TICS102', 'Redes I', 5, 1, 'Activa', NULL, '2025-11-12 02:29:00'),
 ('TICS103', 'Base de Datos', 5, 1, 'Activa', NULL, '2025-11-12 02:29:11'),
-('TICS104', 'Ciberseguridad', 4, 1, 'Activa', NULL, NULL),
+('TICS104', 'Ciberseguridad', 5, 1, 'Activa', NULL, '2025-11-25 18:50:27'),
 ('visc12', 'visc', 5, 2, 'Baja', '2025-11-12 02:27:18', '2025-11-12 02:27:47'),
-('TICS666', 'Inteligencia Artificial', 5, 1, 'Activa', '2025-11-19 03:41:47', '2025-11-19 03:41:47');
+('TICS666', 'Inteligencia Artificial', 5, 1, 'Activa', '2025-11-19 03:41:47', '2025-11-19 03:41:47'),
+('TICS201', 'Cálculo Diferencial', 5, 1, 'Activa', '2025-11-25 18:50:27', '2025-11-25 18:50:27'),
+('TICS204', 'Matemáticas Discretas I', 5, 1, 'Activa', '2025-11-25 18:50:27', '2025-11-25 18:50:27'),
+('TICS205', 'Taller de Ética', 4, 1, 'Activa', '2025-11-25 18:50:27', '2025-11-25 18:50:27'),
+('TICS206', 'Fundamentos de Investigación', 4, 1, 'Activa', '2025-11-25 18:50:27', '2025-11-25 18:50:27'),
+('TICS208', 'Introducción a las TICs', 3, 1, 'Activa', '2025-11-25 18:50:27', '2025-11-25 18:50:27'),
+('TICS209', 'Cálculo Integral', 5, 1, 'Activa', '2025-11-25 18:50:27', '2025-11-25 18:50:27'),
+('TICS210', 'Programación Orientada a Objetos', 5, 1, 'Activa', '2025-11-25 18:50:27', '2025-11-25 18:50:27'),
+('TICS211', 'Matemáticas Discretas II', 5, 1, 'Activa', '2025-11-25 18:50:27', '2025-11-25 18:50:27'),
+('TICS212', 'Álgebra Lineal', 5, 1, 'Activa', '2025-11-25 18:50:27', '2025-11-25 18:50:27'),
+('TICS213', 'Contabilidad y Costos', 5, 1, 'Activa', '2025-11-25 18:50:27', '2025-11-25 18:50:27'),
+('TICS214', 'Probabilidad y Estadística', 5, 1, 'Activa', '2025-11-25 18:50:27', '2025-11-25 18:50:27'),
+('TICS215', 'Matemáticas Aplicadas a Comunicaciones', 4, 1, 'Activa', '2025-11-25 18:50:27', '2025-11-25 18:50:27'),
+('TICS216', 'Estructuras de Datos', 5, 1, 'Activa', '2025-11-25 18:50:27', '2025-11-25 18:50:27'),
+('TICS217', 'Matemáticas para la Toma de Decisiones', 5, 1, 'Activa', '2025-11-25 18:50:27', '2025-11-25 18:50:27'),
+('TICS218', 'Desarrollo Sustentable', 5, 1, 'Activa', '2025-11-25 18:50:27', '2025-11-25 18:50:27'),
+('TICS219', 'Electricidad y Magnetismo', 4, 1, 'Activa', '2025-11-25 18:50:27', '2025-11-25 18:50:27'),
+('TICS220', 'Fundamentos de Redes', 5, 1, 'Activa', '2025-11-25 18:50:27', '2025-11-25 18:50:27'),
+('TICS221', 'Análisis de Señales y Sistemas de Comunicación', 5, 1, 'Activa', '2025-11-25 18:50:27', '2025-11-25 18:50:27'),
+('TICS222', 'Fundamentos de Bases de Datos', 5, 1, 'Activa', '2025-11-25 18:50:27', '2025-11-25 18:50:27'),
+('TICS223', 'Sistemas Operativos I', 4, 1, 'Activa', '2025-11-25 18:50:27', '2025-11-25 18:50:27'),
+('TICS224', 'Desarrollo de Emprendedores', 5, 1, 'Activa', '2025-11-25 18:50:27', '2025-11-25 18:50:27'),
+('TICS225', 'Circuitos Eléctricos y Electrónicos', 5, 1, 'Activa', '2025-11-25 18:50:27', '2025-11-25 18:50:27'),
+('TICS226', 'Redes de Computadoras', 5, 1, 'Activa', '2025-11-25 18:50:27', '2025-11-25 18:50:27'),
+('TICS227', 'Telecomunicaciones', 5, 1, 'Activa', '2025-11-25 18:50:27', '2025-11-25 18:50:27'),
+('TICS228', 'Taller de Bases de Datos', 4, 1, 'Activa', '2025-11-25 18:50:27', '2025-11-25 18:50:27'),
+('TICS229', 'Programación II', 5, 1, 'Activa', '2025-11-25 18:50:27', '2025-11-25 18:50:27'),
+('TICS230', 'Sistemas Operativos II', 5, 1, 'Activa', '2025-11-25 18:50:27', '2025-11-25 18:50:27'),
+('TICS231', 'Arquitectura de Computadoras', 4, 1, 'Activa', '2025-11-25 18:50:27', '2025-11-25 18:50:27'),
+('TICS232', 'Redes Emergentes', 5, 1, 'Activa', '2025-11-25 18:50:27', '2025-11-25 18:50:27'),
+('TICS233', 'Actividades Complementarias', 5, 1, 'Activa', '2025-11-25 18:50:27', '2025-11-25 18:50:27'),
+('TICS234', 'Tecnologías Inalámbricas', 4, 1, 'Activa', '2025-11-25 18:50:27', '2025-11-25 18:50:27'),
+('TICS235', 'Bases de Datos Distribuidas', 5, 1, 'Activa', '2025-11-25 18:50:27', '2025-11-25 18:50:27'),
+('TICS236', 'Programación Web', 5, 1, 'Activa', '2025-11-25 18:50:27', '2025-11-25 18:50:27'),
+('TICS237', 'Ingeniería de Software', 4, 1, 'Activa', '2025-11-25 18:50:27', '2025-11-25 18:50:27'),
+('TICS238', 'Interacción Humano-Computadora', 4, 1, 'Activa', '2025-11-25 18:50:27', '2025-11-25 18:50:27'),
+('TICS239', 'Administración y Seguridad de Redes', 5, 1, 'Activa', '2025-11-25 18:50:27', '2025-11-25 18:50:27'),
+('TICS240', 'Taller de Investigación I', 4, 1, 'Activa', '2025-11-25 18:50:27', '2025-11-25 18:50:27'),
+('TICS241', 'Negocios Electrónicos I', 4, 1, 'Activa', '2025-11-25 18:50:27', '2025-11-25 18:50:27'),
+('TICS242', 'Desarrollo de Aplicaciones Móviles', 5, 1, 'Activa', '2025-11-25 18:50:27', '2025-11-25 18:50:27'),
+('TICS243', 'Taller de Ingeniería de Software', 4, 1, 'Activa', '2025-11-25 18:50:27', '2025-11-25 18:50:27'),
+('TICS244', 'Administración Gerencial', 4, 1, 'Activa', '2025-11-25 18:50:27', '2025-11-25 18:50:27'),
+('TICS245', 'Servicio Social', 10, 1, 'Activa', '2025-11-25 18:50:27', '2025-11-25 18:50:27'),
+('TICS246', 'Taller de Investigación II', 4, 1, 'Activa', '2025-11-25 18:50:27', '2025-11-25 18:50:27'),
+('TICS247', 'Sistemas Web con Oracle', 5, 1, 'Activa', '2025-11-25 18:50:27', '2025-11-25 18:50:27'),
+('TICS248', 'Fundamentos de Internet de las Cosas', 5, 1, 'Activa', '2025-11-25 18:50:27', '2025-11-25 18:50:27'),
+('TICS250', 'Cubos OLAP Inteligencia Empresarial', 5, 1, 'Activa', '2025-11-25 18:50:27', '2025-11-25 18:50:27'),
+('TICS251', 'Internet de las Cosas Avanzado', 5, 1, 'Activa', '2025-11-25 18:50:27', '2025-11-25 18:50:27'),
+('TICS252', 'Programación de Aplicaciones en Ambientes Distribuidos', 5, 1, 'Activa', '2025-11-25 18:50:27', '2025-11-25 18:50:27'),
+('TICS253', 'Auditoría Tecnológica de la Información', 4, 1, 'Activa', '2025-11-25 18:50:27', '2025-11-25 18:50:27'),
+('TICS254', 'Ingeniería del Conocimiento', 4, 1, 'Activa', '2025-11-25 18:50:27', '2025-11-25 18:50:27'),
+('TICS255', 'Negocios Electrónicos II', 4, 1, 'Activa', '2025-11-25 18:50:27', '2025-11-25 18:50:27'),
+('TICS256', 'Administración de Proyectos', 5, 1, 'Activa', '2025-11-25 18:50:27', '2025-11-25 18:50:27'),
+('TICS257', 'Residencia Profesional', 10, 1, 'Activa', '2025-11-25 18:50:27', '2025-11-25 18:50:27');
 
 -- --------------------------------------------------------
 
@@ -792,7 +873,11 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('0UkhUs6IIWO4liE7QifBrVCQ9Wsz7kV3WuDGfHjb', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:145.0) Gecko/20100101 Firefox/145.0', 'YTo2OntzOjY6Il90b2tlbiI7czo0MDoiRkRiMXk2MUI3aG1kNm9CdnZGb3l1VnRrdnRoQ2owUW1SdURHVzBoWSI7czozOiJ1cmwiO2E6MDp7fXM6OToiX3ByZXZpb3VzIjthOjE6e3M6MzoidXJsIjtzOjI2OiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvaG9tZSI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fXM6NTA6ImxvZ2luX3dlYl81OWJhMzZhZGRjMmIyZjk0MDE1ODBmMDE0YzdmNThlYTRlMzA5ODlkIjtpOjE7czo0OiJhdXRoIjthOjE6e3M6MjE6InBhc3N3b3JkX2NvbmZpcm1lZF9hdCI7aToxNzYzNDk4Njg5O319', 1763503066);
+('3eEvg3gp3CCsbImr8r1A9y8sxYniQtqgus9Y98G3', NULL, '10.58.0.242', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:145.0) Gecko/20100101 Firefox/145.0', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoieDFwY1pCOVByWDI3aG5NZDlXNFBwRmw3WEpZUklzb2VoVHU0RVdXWiI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MjQ6Imh0dHA6Ly8xMC41OC4wLjEyNC9sb2dpbiI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1763677853),
+('FFZwiuYiUNgIvZG0Iq2atfhE5s787gabZKAUQsAx', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:145.0) Gecko/20100101 Firefox/145.0', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiSmhwdEQxN0wwUDhXMjFIa043OG1VWlZ2RWt6OU9YRWVidzVpaVhaeCI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MTY6Imh0dHA6Ly9sb2NhbGhvc3QiO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1764094134),
+('MKBFcsMx8qWOIR89UTXjLsl3UDUiAHAncOik4mV7', 4, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:145.0) Gecko/20100101 Firefox/145.0', 'YTo1OntzOjY6Il90b2tlbiI7czo0MDoiYXpaMGx3QURFelZNVWFBTG5KeFdsQWZubWhCUVdnZnNFdVlaeVZPNSI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MjY6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9ob21lIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6NDtzOjQ6ImF1dGgiO2E6MTp7czoyMToicGFzc3dvcmRfY29uZmlybWVkX2F0IjtpOjE3NjQwOTQyNDY7fX0=', 1764094247),
+('qSUPsikUhBVJJygjCitMw6MV9sm5cfiPNyFBj3f5', NULL, '10.58.0.186', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:145.0) Gecko/20100101 Firefox/145.0', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoid09TUWNKVWV3TjRvb3ZkTXFxS2JzeFV2R2FYWm8zTmtacUFnRE1SSSI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MTc6Imh0dHA6Ly8xMC41OC4wLjc4Ijt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1764095005),
+('xniCFS3cOyljsQoYZZZ9NcryubIhWNHntpUCXs6m', 4, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:145.0) Gecko/20100101 Firefox/145.0', 'YTo2OntzOjY6Il90b2tlbiI7czo0MDoiWU8wak9kNmh5eFVnZXAzSHAyWVVETkRFVVcxcGQ1d29WQUxnbVNzTCI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MzU6Imh0dHA6Ly9sb2NhbGhvc3QvZ3J1cG9zLzIvY2FsaWZpY2FyIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czozOiJ1cmwiO2E6MDp7fXM6NTA6ImxvZ2luX3dlYl81OWJhMzZhZGRjMmIyZjk0MDE1ODBmMDE0YzdmNThlYTRlMzA5ODlkIjtpOjQ7czo0OiJhdXRoIjthOjE6e3M6MjE6InBhc3N3b3JkX2NvbmZpcm1lZF9hdCI7aToxNzYzNjgwMjY5O319', 1763684984);
 
 -- --------------------------------------------------------
 
@@ -818,7 +903,8 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
 (1, 'eric', 'erick@erick.com', NULL, '$2y$12$MqLiNKSb4KOIPyyX3rR14.W431KKi.uFtx286WOMUh5C70SSaMW.6', NULL, '2025-10-15 11:45:59', '2025-10-15 11:45:59'),
 (2, 'eric', 'eric@eric.com', NULL, '$2y$12$K2nLkcV6MSYICuauCapV7u1Fe5UalLZWC7WLgkvC3v92nSUDEIaa.', NULL, '2025-10-16 22:51:39', '2025-10-16 22:51:39'),
-(3, 'carlos', 'carlos@gmail.com', NULL, '$2y$12$r/7muLckfOikwQKsdfwUVeNkMAijJz.fHp1GNeq2DBjatHyMKibj6', NULL, '2025-10-24 00:24:04', '2025-10-24 00:24:04');
+(3, 'carlos', 'carlos@gmail.com', NULL, '$2y$12$r/7muLckfOikwQKsdfwUVeNkMAijJz.fHp1GNeq2DBjatHyMKibj6', NULL, '2025-10-24 00:24:04', '2025-10-24 00:24:04'),
+(4, 'admin', 'admin@admin.com', NULL, '$2y$12$OgYEnfRIfO65XEO9Oh0U8OFU.yGhUOEIz1eT2bcWwF8w7QfT5iGJq', NULL, '2025-11-21 01:03:39', '2025-11-21 01:03:39');
 
 --
 -- Índices para tablas volcadas
@@ -960,7 +1046,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT de la tabla `alumno_grupo`
 --
 ALTER TABLE `alumno_grupo`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
 
 --
 -- AUTO_INCREMENT de la tabla `areas`
@@ -972,13 +1058,13 @@ ALTER TABLE `areas`
 -- AUTO_INCREMENT de la tabla `boletas`
 --
 ALTER TABLE `boletas`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT de la tabla `calificaciones_grupo`
 --
 ALTER TABLE `calificaciones_grupo`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT de la tabla `carreras`
@@ -1026,7 +1112,7 @@ ALTER TABLE `periodos`
 -- AUTO_INCREMENT de la tabla `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Restricciones para tablas volcadas
