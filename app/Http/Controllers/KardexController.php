@@ -11,69 +11,85 @@ class KardexController extends Controller
 {
     public function show($n_control)
     {
-        $alumno = Alumno::findOrFail($n_control);
+        // Cargar alumno con sus grupos actuales para saber qué está cursando
+        $alumno = Alumno::with('grupos')->findOrFail($n_control);
 
-        // 1. Obtener TODAS las materias del plan (TICS)
+        // 1. Obtener materias de TICS ordenadas para el Grid
         $todasLasMaterias = Materia::where('cod_materia', 'like', 'TICS%')
                                    ->orderBy('semestre')
                                    ->orderBy('cod_materia')
                                    ->get();
 
-        // 2. Obtener historial del alumno
+        // 2. Obtener historial académico (Boleta)
         $historial = Boleta::where('n_control', $n_control)
                            ->get()
                            ->keyBy('cod_materia');
 
-        // 3. Procesar lógica de estados y prerrequisitos
-        foreach ($todasLasMaterias as $materia) {
-            $codigo = $materia->cod_materia;
-            
-            // Valores base (Gris / Pendiente)
-            $materia->clase_css = 'bg-light text-dark border-secondary'; 
-            $materia->calificacion_mostrar = null;
-            $materia->bloqueada = false; // Por defecto no está bloqueada
+        // 3. Obtener carga actual (IDs de materias que está cursando hoy)
+        $cargaActual = $alumno->grupos->pluck('cod_materia')->toArray();
 
-            // A. ¿Ya la cursó el alumno?
+        // 4. Procesar lógica de cada materia
+        foreach ($todasLasMaterias as $materia) {
+            // Limpiar código de espacios
+            $codigo = trim($materia->cod_materia);
+            
+            // --- ESTADO INICIAL ---
+            $materia->clase_css = 'bg-light text-dark border-secondary'; // Gris (Pendiente)
+            $materia->calificacion_mostrar = null;
+            $materia->bloqueada = false;
+            $materia->aprobada = false; // Bandera interna
+
+            // --- A. VERIFICAR HISTORIAL (PASADO) ---
             if ($historial->has($codigo)) {
                 $registro = $historial[$codigo];
                 $materia->calificacion_mostrar = $registro->calificacion;
 
                 if ($registro->calificacion >= 70) {
-                    $materia->clase_css = 'bg-success text-white'; // Aprobada
+                    $materia->clase_css = 'bg-success text-white'; // Verde Fuerte
+                    $materia->aprobada = true;
                 } else {
-                    if ($registro->oportunidad == 'Repite') {
-                        $materia->clase_css = 'bg-warning text-dark'; // Repite
-                    } elseif ($registro->oportunidad == 'Especial') {
-                        $materia->clase_css = 'bg-danger text-white'; // Especial
+                    // Reprobada
+                    if ($registro->oportunidad == 'Especial') {
+                        $materia->clase_css = 'bg-danger text-white'; // Rojo
+                    } elseif ($registro->oportunidad == 'Repite') {
+                        $materia->clase_css = 'bg-warning text-dark'; // Amarillo
                     } else {
                         $materia->clase_css = 'bg-secondary text-white'; // Reprobada normal
                     }
                 }
-            } 
-            // B. Si NO la ha cursado, verificamos prerrequisitos
-            else {
-                if ($materia->prerrequisito) {
-                    $codigoPrereq = $materia->prerrequisito;
-                    $prereqAprobado = false;
+            }
 
-                    // Buscamos si el prerrequisito existe en el historial Y si pasó
-                    if ($historial->has($codigoPrereq)) {
-                        if ($historial[$codigoPrereq]->calificacion >= 70) {
-                            $prereqAprobado = true;
-                        }
-                    }
+            // --- B. VERIFICAR CARGA ACTUAL (PRESENTE) ---
+            // Si la está cursando y no la ha aprobado antes, se pone verde claro
+            if (in_array($codigo, $cargaActual) && !$materia->aprobada) {
+                $materia->clase_css = 'bg-cursando text-dark border-success'; 
+                $materia->calificacion_mostrar = null; // Aún no hay calificación final
+            }
 
-                    // Si el prerrequisito NO está aprobado, bloqueamos esta materia
-                    if (!$prereqAprobado) {
-                        $materia->bloqueada = true;
-                        // Opcional: Hacerla visualmente más tenue
-                        $materia->clase_css = 'bg-light text-muted border-light opacity-75'; 
+            // --- C. LÓGICA DE PRERREQUISITOS (FUTURO) ---
+            // Si NO está aprobada y NO la está cursando, validamos candados
+            $estaCursando = in_array($codigo, $cargaActual);
+            
+            if (!$materia->aprobada && !$estaCursando && !empty($materia->prerrequisito)) {
+                $codigoPrereq = trim($materia->prerrequisito);
+                $prereqCumplido = false;
+
+                // Buscamos si el prerrequisito fue aprobado en el historial
+                if ($historial->has($codigoPrereq)) {
+                    if ($historial[$codigoPrereq]->calificacion >= 70) {
+                        $prereqCumplido = true;
                     }
+                }
+
+                // Si no cumple, se bloquea
+                if (!$prereqCumplido) {
+                    $materia->bloqueada = true;
+                    $materia->clase_css = 'bg-locked text-muted'; // Estilo especial
                 }
             }
         }
 
-        // 4. Agrupar por columnas (semestres)
+        // Agrupar por columnas (Semestres)
         $reticula = $todasLasMaterias->groupBy('semestre');
         $maxSemestres = 9; 
 
