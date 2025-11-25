@@ -17,6 +17,7 @@ use App\Http\Controllers\{
     ReporteController,
     PeriodoController,
     AulaController,
+    KardexController,
     CalificacionController // ✅ Agregado al bloque de uso
 };
 
@@ -87,6 +88,8 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/calificar/guardar', [CalificacionController::class, 'store'])->name('store');
         Route::delete('/calificar/{id}/finalizar', [CalificacionController::class, 'finalizarCurso'])->name('finalizar');
     });
+
+    Route::get('/kardex/{n_control}', [App\Http\Controllers\KardexController::class, 'show'])->name('kardex.show');
 
 
     // ==================================================

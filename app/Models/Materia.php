@@ -17,7 +17,15 @@ class Materia extends Model
      *
      * @var array<int, string>
      */
-    protected $fillable = ['cod_materia', 'nombre', 'credito', 'cadena', 'materia_estado'];
+    protected $fillable = [
+        'cod_materia', 
+        'nombre', 
+        'credito', 
+        'cadena', 
+        'materia_estado',
+        'semestre',      // <--- Nuevo
+        'prerrequisito'  // <--- Nuevo
+    ];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
@@ -25,6 +33,11 @@ class Materia extends Model
     public function grupos()
     {
         return $this->hasMany(\App\Models\Grupo::class, 'cod_materia', 'cod_materia');
+    }
+    // Relación para obtener la materia previa necesaria
+    public function materiaPrerrequisito()
+    {
+        return $this->belongsTo(Materia::class, 'prerrequisito', 'cod_materia');
     }
     
     /**
