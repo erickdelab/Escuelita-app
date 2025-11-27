@@ -12,6 +12,7 @@ use App\Http\Requests\AlumnoRequest;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
+use Carbon\Carbon;
 
 class AlumnoController extends Controller
 {
@@ -32,10 +33,9 @@ class AlumnoController extends Controller
         // Cargar carreras para el filtro
         $carreras = Carrera::pluck('nombre_carrera', 'id_carrera');
 
-        // ✅ OPTIMIZADO: Búsqueda con filtros múltiples
+        // Búsqueda con filtros múltiples
         $alumnos = Alumno::with('carrera')
             ->when($search, function ($query, $search) {
-                // Agrupación CRÍTICA para evitar resultados incorrectos
                 $query->where(function ($q) use ($search) {
                     $q->where('n_control', 'like', "%{$search}%")
                       ->orWhere('nombre', 'like', "%{$search}%")
@@ -61,21 +61,11 @@ class AlumnoController extends Controller
             })
             ->when($promedioFilter, function ($query, $promedioFilter) {
                 switch ($promedioFilter) {
-                    case '90-100':
-                        $query->where('promedio_general', '>=', 90);
-                        break;
-                    case '80-89':
-                        $query->whereBetween('promedio_general', [80, 89.99]);
-                        break;
-                    case '70-79':
-                        $query->whereBetween('promedio_general', [70, 79.99]);
-                        break;
-                    case '0-69':
-                        $query->where('promedio_general', '<', 70);
-                        break;
-                    case 'sin_promedio':
-                        $query->whereNull('promedio_general');
-                        break;
+                    case '90-100': $query->where('promedio_general', '>=', 90); break;
+                    case '80-89': $query->whereBetween('promedio_general', [80, 89.99]); break;
+                    case '70-79': $query->whereBetween('promedio_general', [70, 79.99]); break;
+                    case '0-69': $query->where('promedio_general', '<', 70); break;
+                    case 'sin_promedio': $query->whereNull('promedio_general'); break;
                 }
             })
             ->when($sort == 'carrera', function ($query) use ($direction) {
@@ -93,182 +83,94 @@ class AlumnoController extends Controller
             ->with('i', ($alumnos->currentPage() - 1) * $alumnos->perPage());
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create(): View
     {
         $alumno = new Alumno();
-        
-        // Carga de datos para el SELECT de Carreras (nombre como valor, id como clave)
         $carreras = Carrera::pluck('nombre_carrera', 'id_carrera'); 
-
         return view('alumno.create', compact('alumno', 'carreras'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(AlumnoRequest $request): RedirectResponse
     {
         Alumno::create($request->validated());
-
-        return Redirect::route('alumnos.index')
-            ->with('success', 'Alumno creado exitosamente.');
+        return Redirect::route('alumnos.index')->with('success', 'Alumno creado exitosamente.');
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show($n_control): View
     {
-        $alumno = Alumno::with([
-            'carrera',
-            'grupos.materia', 
-            'grupos.profesore'
-        ])->findOrFail($n_control);
-
-        // ✅ OPTIMIZADO: Una sola línea eficiente
+        $alumno = Alumno::with(['carrera','grupos.materia','grupos.profesore'])->findOrFail($n_control);
         $materiasTomadas = $alumno->grupos->pluck('materia')->filter()->unique('cod_materia');
-
-        // ✅ NUEVO: Obtener grupos disponibles (excluyendo los que ya está inscrito)
         $gruposInscritos = $alumno->grupos->pluck('id_grupo')->toArray();
-        
-        $gruposDisponibles = Grupo::with(['materia', 'profesore'])
-                                ->whereNotIn('id_grupo', $gruposInscritos)
-                                ->get();
+        $gruposDisponibles = Grupo::with(['materia', 'profesore'])->whereNotIn('id_grupo', $gruposInscritos)->get();
 
         return view('alumno.show', compact('alumno', 'materiasTomadas', 'gruposDisponibles'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit($n_control): View
     {
         $alumno = Alumno::findOrFail($n_control);
-        
-        // Carga de datos para el SELECT de Carreras
         $carreras = Carrera::pluck('nombre_carrera', 'id_carrera'); 
-
         return view('alumno.edit', compact('alumno', 'carreras'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(AlumnoRequest $request, Alumno $alumno): RedirectResponse
     {
         $alumno->update($request->validated());
-
-        return Redirect::route('alumnos.index')
-            ->with('success', 'Cambios guardados correctamente.');
+        return Redirect::route('alumnos.index')->with('success', 'Cambios guardados correctamente.');
     }
 
-    /**
-     * Cambia el estatus del alumno a 'Baja' (Eliminación Lógica) y desvincula la carrera.
-     */
     public function destroy($n_control): RedirectResponse
     {
         $alumno = Alumno::findOrFail($n_control);
-
-        // Verificar si el alumno tiene grupos inscritos
         if ($alumno->grupos()->count() > 0) {
             return Redirect::route('alumnos.index')
-                ->with('error', 'No se puede dar de baja al alumno porque está inscrito en ' . $alumno->grupos()->count() . ' grupo(s). Primero desinscríbalo de los grupos.');
+                ->with('error', 'No se puede dar de baja al alumno porque está inscrito en grupos.');
         }
-
-        // === BAJA LÓGICA Y DESVINCULACIÓN ===
-        // 1. Cambia la situación a 'Baja'.
-        // 2. Establece la FKid_carrera a NULL (Desvinculación de la carrera).
-        // 3. Establece el semestre a NULL.
-        // 4. Establece el promedio_general a NULL.
         $alumno->update([
             'situacion' => 'Baja',
-            'FKid_carrera' => NULL, // Desvinculación de la carrera
+            'FKid_carrera' => NULL,
             'semestre' => NULL,
-            'promedio_general' => NULL, // ✅ NUEVO: Limpiar promedio al dar de baja
+            'promedio_general' => NULL,
         ]);
-
-        return Redirect::route('alumnos.index')
-            ->with('success', 'Alumno dado de BAJA y desvinculado de la carrera.');
+        return Redirect::route('alumnos.index')->with('success', 'Alumno dado de BAJA.');
     }
 
-    /**
-     * Restaurar alumno (cambiar situación a 'Vigente')
-     */
     public function restore($n_control): RedirectResponse
     {
         $alumno = Alumno::findOrFail($n_control);
-        
-        $alumno->update([
-            'situacion' => 'Vigente'
-        ]);
-
-        return Redirect::route('alumnos.index')
-            ->with('success', 'Alumno restaurado exitosamente.');
+        $alumno->update(['situacion' => 'Vigente']);
+        return Redirect::route('alumnos.index')->with('success', 'Alumno restaurado exitosamente.');
     }
 
-    /**
-     * Eliminación física del alumno (solo si no tiene grupos inscritos)
-     */
     public function forceDelete($n_control): RedirectResponse
     {
         $alumno = Alumno::findOrFail($n_control);
-
-        // Verificar si el alumno tiene grupos inscritos
         if ($alumno->grupos()->count() > 0) {
-            return Redirect::route('alumnos.index')
-                ->with('error', 'No se puede eliminar al alumno porque está inscrito en ' . $alumno->grupos()->count() . ' grupo(s). Primero desinscríbalo de los grupos.');
+            return Redirect::route('alumnos.index')->with('error', 'Error: Alumno inscrito en grupos.');
         }
-
         $alumno->delete();
-
-        return Redirect::route('alumnos.index')
-            ->with('success', 'Alumno eliminado permanentemente.');
+        return Redirect::route('alumnos.index')->with('success', 'Alumno eliminado permanentemente.');
     }
 
-    /**
-     * ✅ NUEVO: Mostrar formulario para inscribir a grupos
-     */
     public function createGrupo($n_control): View
     {
         $alumno = Alumno::findOrFail($n_control);
-        
-        // Obtener grupos disponibles (excluyendo aquellos en los que ya está inscrito)
         $gruposInscritos = $alumno->grupos->pluck('id_grupo')->toArray();
-        
-        $gruposDisponibles = Grupo::with(['materia', 'profesore'])
-                                ->whereNotIn('id_grupo', $gruposInscritos)
-                                ->get();
-
+        $gruposDisponibles = Grupo::with(['materia', 'profesore'])->whereNotIn('id_grupo', $gruposInscritos)->get();
         return view('alumno.inscribir-grupo', compact('alumno', 'gruposDisponibles'));
     }
 
-    /**
-     * ✅ NUEVO: Inscribir alumno a grupo
-     */
     public function storeGrupo(Request $request, $n_control): RedirectResponse
     {
         $request->validate([
             'id_grupo' => 'required|exists:grupos,id_grupo',
             'oportunidad' => 'required|in:Primera,Repite,Especial'
         ]);
-
         $alumno = Alumno::findOrFail($n_control);
-        
-        // Verificar que no esté ya inscrito
-        $yaInscrito = DB::table('alumno_grupo')
-            ->where('n_control', $n_control)
-            ->where('id_grupo', $request->id_grupo)
-            ->exists();
-
+        $yaInscrito = DB::table('alumno_grupo')->where('n_control', $n_control)->where('id_grupo', $request->id_grupo)->exists();
         if ($yaInscrito) {
-            return redirect()->back()
-                ->with('error', 'El alumno ya está inscrito en este grupo.');
+            return redirect()->back()->with('error', 'El alumno ya está inscrito en este grupo.');
         }
-
-        // ✅ Inscribir al grupo con oportunidad
         DB::table('alumno_grupo')->insert([
             'n_control' => $n_control,
             'id_grupo' => $request->id_grupo,
@@ -276,102 +178,195 @@ class AlumnoController extends Controller
             'created_at' => now(),
             'updated_at' => now(),
         ]);
-
-        return redirect()->route('alumnos.show', $n_control)
-            ->with('success', 'Alumno inscrito al grupo exitosamente.');
+        return redirect()->route('alumnos.show', $n_control)->with('success', 'Alumno inscrito al grupo exitosamente.');
     }
 
-    /**
-     * ✅ NUEVO: Desinscribir alumno de grupo
-     */
     public function destroyGrupo($n_control, $id_grupo): RedirectResponse
     {
         $alumno = Alumno::findOrFail($n_control);
-        
-        // Verificar que esté inscrito en el grupo
-        $inscrito = DB::table('alumno_grupo')
-            ->where('n_control', $n_control)
-            ->where('id_grupo', $id_grupo)
-            ->exists();
-
+        $inscrito = DB::table('alumno_grupo')->where('n_control', $n_control)->where('id_grupo', $id_grupo)->exists();
         if (!$inscrito) {
-            return redirect()->back()
-                ->with('error', 'El alumno no está inscrito en este grupo.');
+            return redirect()->back()->with('error', 'El alumno no está inscrito en este grupo.');
         }
-
-        // ✅ Desinscribir del grupo
-        DB::table('alumno_grupo')
-            ->where('n_control', $n_control)
-            ->where('id_grupo', $id_grupo)
-            ->delete();
-
-        return redirect()->route('alumnos.show', $n_control)
-            ->with('success', 'Alumno desinscrito del grupo exitosamente.');
+        DB::table('alumno_grupo')->where('n_control', $n_control)->where('id_grupo', $id_grupo)->delete();
+        return redirect()->route('alumnos.show', $n_control)->with('success', 'Alumno desinscrito del grupo exitosamente.');
     }
 
-    /**
-     * ✅ NUEVO: Verificar si hay filtros activos para mostrar en la vista
-     */
     public function hasActiveFilters(): bool
     {
         $request = request();
-        return !empty($request->search) || 
-               !empty($request->situacion_filter) || 
-               !empty($request->carrera_filter) || 
-               !empty($request->semestre_filter) || 
-               !empty($request->genero_filter) || 
-               !empty($request->promedio_filter);
+        return !empty($request->search) || !empty($request->situacion_filter) || !empty($request->carrera_filter) || 
+               !empty($request->semestre_filter) || !empty($request->genero_filter) || !empty($request->promedio_filter);
     }
+
     /**
-     * Muestra la vista detallada de calificaciones actuales e historial por periodo.
+     * Muestra la vista detallada de calificaciones actuales, HORARIO VISUAL e historial por periodo.
      */
     public function calificaciones(Request $request, $n_control): View
     {
-        $alumno = Alumno::findOrFail($n_control);
+        $alumno = Alumno::with('carrera')->findOrFail($n_control);
 
         // 1. CARGA ACADÉMICA ACTUAL
-        // Obtenemos los grupos donde está inscrito actualmente
-        // Cargamos relaciones profundas para mostrar Horarios, Profesores y Calificaciones Parciales
         $cargaActual = \App\Models\AlumnoGrupo::with([
             'grupo.materia',
             'grupo.profesore',
-            'grupo.horarios.aula', // Para pintar el horario tipo la imagen
-            'calificacion'         // Para obtener U1, U2, U3, U4
+            'grupo.horarios.aula',
+            'calificacion'
         ])
         ->where('n_control', $n_control)
         ->get();
 
-        // 2. HISTORIAL DE PERIODOS PASADOS (BOLETA)
-        // Obtener lista de periodos únicos donde el alumno tenga registros en boletas
-        $periodosDisponibles = \App\Models\Boleta::where('n_control', $n_control)
-            ->select('periodo')
-            ->distinct()
-            ->orderBy('periodo', 'desc') // Los más recientes primero
-            ->pluck('periodo');
+        // 2. CONSTRUCCIÓN DEL HORARIO VISUAL (GRID)
+        // Definimos el rango de horas a mostrar (07:00 a 20:00)
+        $horas = ['07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00'];
+        $dias = [1, 2, 3, 4, 5, 6]; // Lunes a Sábado
 
-        $boletasHistorial = collect(); // Colección vacía por defecto
+        // Inicializamos la matriz vacía
+        $horarioGrid = [];
+        foreach($horas as $h) {
+            foreach($dias as $d) {
+                $horarioGrid[$h][$d] = null;
+            }
+        }
+
+        // Paleta de colores para las materias
+        $colores = [
+            ['bg' => '#cfe2ff', 'border' => '#b6d4fe', 'text' => '#084298'], // Azul
+            ['bg' => '#d1e7dd', 'border' => '#badbcc', 'text' => '#0f5132'], // Verde
+            ['bg' => '#f8d7da', 'border' => '#f5c2c7', 'text' => '#842029'], // Rojo
+            ['bg' => '#fff3cd', 'border' => '#ffecb5', 'text' => '#664d03'], // Amarillo
+            ['bg' => '#cff4fc', 'border' => '#b6effb', 'text' => '#055160'], // Cyan
+            ['bg' => '#e2e3e5', 'border' => '#d3d6d8', 'text' => '#141619'], // Gris
+            ['bg' => '#f3d9fa', 'border' => '#e5bbf5', 'text' => '#581c87'], // Morado
+        ];
+        
+        $materiaMap = []; // Para asignar color consistente a cada materia
+        $colorIndex = 0;
+
+        foreach($cargaActual as $inscripcion) {
+            $grupo = $inscripcion->grupo;
+            $materia = $grupo->materia;
+            
+            // Asignar color si es materia nueva en el loop
+            if(!isset($materiaMap[$materia->cod_materia])) {
+                $materiaMap[$materia->cod_materia] = $colores[$colorIndex % count($colores)];
+                $colorIndex++;
+            }
+            $estilo = $materiaMap[$materia->cod_materia];
+
+            foreach($grupo->horarios as $h) {
+                $inicio = Carbon::parse($h->hora_inicio);
+                $fin = Carbon::parse($h->hora_fin);
+                
+                // Rellenamos las celdas hora por hora
+                // Suponemos bloques de hora en punto (07:00, 08:00...)
+                while($inicio < $fin) {
+                    $horaStr = $inicio->format('H:i');
+                    if(isset($horarioGrid[$horaStr][$h->dia_semana])) {
+                        $horarioGrid[$horaStr][$h->dia_semana] = [
+                            'nombre' => $materia->nombre,
+                            'aula' => $h->aula->nombre ?? 'N/A',
+                            'grupo' => $grupo->id_grupo,
+                            'estilo' => $estilo
+                        ];
+                    }
+                    $inicio->addHour();
+                }
+            }
+        }
+
+        // 3. HISTORIAL DE PERIODOS
+        $periodosDisponibles = \App\Models\Periodo::orderBy('anio', 'desc')
+            ->orderBy('id', 'desc')
+            ->pluck('codigo_periodo');
+
+        $boletasHistorial = collect();
         $mensajeHistorial = null;
         $periodoSeleccionado = $request->input('periodo_select');
 
-        // Si el usuario seleccionó un periodo y presionó "Ver"
         if ($periodoSeleccionado) {
-            $boletasHistorial = \App\Models\Boleta::with(['materia', 'profesor']) // Cargar nombre de materia
+            $boletasHistorial = \App\Models\Boleta::with(['materia', 'profesor'])
                 ->where('n_control', $n_control)
                 ->where('periodo', $periodoSeleccionado)
                 ->get();
 
             if ($boletasHistorial->isEmpty()) {
-                $mensajeHistorial = "No cuenta con carga en el periodo seleccionado.";
+                $mensajeHistorial = "No se encontraron registros de calificaciones para el periodo seleccionado.";
             }
         }
 
         return view('alumno.calificaciones', compact(
             'alumno', 
             'cargaActual', 
+            'horarioGrid', // Variable nueva para la vista
+            'horas',       // Variable nueva
             'periodosDisponibles', 
             'boletasHistorial', 
             'mensajeHistorial',
             'periodoSeleccionado'
         ));
+    }
+
+    /**
+     * Muestra el horario gráfico del alumno.
+     */
+    public function horario($n_control): View
+    {
+        $alumno = Alumno::findOrFail($n_control);
+
+        // 1. Obtener grupos del periodo ACTUAL (o los vigentes del alumno)
+        // Asumimos que los grupos "Vigentes" son los de la carga actual.
+        // Si tienes lógica de periodos activos, agrégala al whereHas('periodo', ...)
+        $grupos = $alumno->grupos()
+            ->with(['materia', 'profesore', 'horarios.aula'])
+            ->get();
+
+        // 2. Estructurar datos para el Grid (Calendario)
+        // Formato: $calendario[dia][hora] = InfoClase
+        $calendario = [];
+        $horasDisponibles = range(7, 20); // De 7:00 AM a 8:00 PM (Ajusta según tu necesidad)
+        
+        // Colores pastel para diferenciar materias
+        $colores = [
+            '#FFD1DC', '#D1E8E2', '#FFF4E0', '#E0F7FA', '#F3E5F5', 
+            '#F0F4C3', '#FFCCBC', '#CFD8DC', '#E1BEE7', '#B2DFDB'
+        ];
+        $materiasColor = []; // Para asignar siempre el mismo color a la misma materia
+        $colorIndex = 0;
+
+        foreach ($grupos as $grupo) {
+            // Asignar color a la materia si no tiene
+            if (!isset($materiasColor[$grupo->cod_materia])) {
+                $materiasColor[$grupo->cod_materia] = $colores[$colorIndex % count($colores)];
+                $colorIndex++;
+            }
+
+            foreach ($grupo->horarios as $horario) {
+                $dia = $horario->dia_semana; // 1=Lunes, 2=Martes...
+                $horaInicio = (int) \Carbon\Carbon::parse($horario->hora_inicio)->format('H');
+                $horaFin = (int) \Carbon\Carbon::parse($horario->hora_fin)->format('H');
+                
+                // Duración en horas (para el rowspan)
+                $duracion = $horaFin - $horaInicio;
+
+                // Guardamos la info en el bloque de inicio
+                $calendario[$dia][$horaInicio] = [
+                    'materia' => $grupo->materia->nombre,
+                    'codigo' => $grupo->materia->cod_materia,
+                    'profesor' => $grupo->profesore ? $grupo->profesore->nombre . ' ' . $grupo->profesore->ap_paterno : 'N/A',
+                    'aula' => $horario->aula->nombre ?? 'N/A',
+                    'duracion' => $duracion,
+                    'color' => $materiasColor[$grupo->cod_materia],
+                    'grupo' => $grupo->id_grupo
+                ];
+
+                // Marcar las horas siguientes como "ocupadas" para no pintar celdas vacías
+                for ($h = $horaInicio + 1; $h < $horaFin; $h++) {
+                    $calendario[$dia][$h] = 'ocupado';
+                }
+            }
+        }
+
+        return view('alumno.horario', compact('alumno', 'calendario', 'horasDisponibles'));
     }
 }

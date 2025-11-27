@@ -116,19 +116,24 @@ Route::middleware(['auth'])->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | MÓDULO DE ALUMNOS (Inscripciones y Calificaciones)
+    | MÓDULO DE ALUMNOS (Inscripciones, Calificaciones, Horario)
     |--------------------------------------------------------------------------
     */
+
+    // Inscripciones a grupos
     Route::prefix('alumnos/{n_control}/grupos')->name('alumnos.grupos.')->group(function () {
         Route::get('/create', [AlumnoGrupoController::class, 'create'])->name('create');
         Route::post('/', [AlumnoGrupoController::class, 'store'])->name('store');
         Route::delete('/{grupo}', [AlumnoGrupoController::class, 'destroy'])->name('destroy');
     });
 
-    Route::get(
-        '/alumnos/{n_control}/calificaciones',
-        [AlumnoController::class, 'calificaciones']
-    )->name('alumnos.calificaciones');
+    // Calificaciones del alumno
+    Route::get('/alumnos/{n_control}/calificaciones', [AlumnoController::class, 'calificaciones'])
+        ->name('alumnos.calificaciones');
+
+    // ⭐ NUEVA RUTA AGREGADA: Horario del alumno
+    Route::get('/alumnos/{n_control}/horario', [AlumnoController::class, 'horario'])
+        ->name('alumnos.horario');
 
 
     /*

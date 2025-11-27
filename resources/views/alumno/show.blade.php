@@ -14,14 +14,19 @@
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <h4 class="mb-0">🎓 {{ __('Detalle del Alumno') }}</h4>
                         <div class="float-right">
-    {{-- ✅ NUEVO BOTÓN: VER KARDEX --}}
+    {{-- Botón Kardex --}}
     <a href="{{ route('kardex.show', $alumno->n_control) }}" class="btn btn-warning btn-sm fw-bold text-dark me-2">
-        <i class="fas fa-th me-1"></i> Ver Retícula / Kardex
+        <i class="fas fa-th me-1"></i> Ver Retícula
     </a>
     
-    {{-- AQUÍ AGREGAMOS EL NUEVO BOTÓN --}}
+    {{-- Botón Calificaciones --}}
     <a href="{{ route('alumnos.calificaciones', $alumno->n_control) }}" class="btn btn-info btn-sm fw-bold text-white me-2">
         <i class="fas fa-clipboard-check me-1"></i> Calificaciones
+    </a>
+
+    {{-- ✅ NUEVO BOTÓN: HORARIO --}}
+    <a href="{{ route('alumnos.horario', $alumno->n_control) }}" class="btn btn-primary btn-sm fw-bold me-2" style="background-color: #6f42c1; border-color: #6f42c1;">
+        <i class="fas fa-calendar-alt me-1"></i> Horario
     </a>
     {{-- FIN NUEVO BOTÓN --}}
 
