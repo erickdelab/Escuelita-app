@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 25-11-2025 a las 22:16:13
+-- Tiempo de generación: 27-11-2025 a las 20:57:45
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -29,6 +29,7 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `alumnos` (
   `n_control` varchar(9) NOT NULL,
+  `contraseña` varchar(255) DEFAULT NULL,
   `id_carrera` bigint(20) UNSIGNED DEFAULT NULL,
   `nombre` varchar(50) DEFAULT NULL,
   `s_nombre` varchar(30) DEFAULT NULL,
@@ -48,83 +49,83 @@ CREATE TABLE `alumnos` (
 -- Volcado de datos para la tabla `alumnos`
 --
 
-INSERT INTO `alumnos` (`n_control`, `id_carrera`, `nombre`, `s_nombre`, `ap_pat`, `ap_mat`, `fech_nac`, `genero`, `FKid_carrera`, `situacion`, `semestre`, `promedio_general`, `created_at`, `updated_at`) VALUES
-('091234', NULL, 'Jimmy', 'Baraquiel', 'Valenzuela', 'Álvarez', '2000-11-21', 'M', 1, 'Vigente', 1, 100.00, '2025-11-19 03:48:30', '2025-11-26 02:09:51'),
-('123', NULL, 'juan', 'Pablo', 'Escobar', 'Sultan', '2002-07-08', 'M', 8, 'Vigente', 2, 97.96, '2025-10-24 00:53:58', '2025-10-31 02:10:03'),
-('19222128', NULL, 'Andrés', 'Manuel', 'Pérez', 'Fernández', '2000-12-01', 'M', 1, 'Vigente', 3, 89.00, NULL, '2025-10-31 02:54:10'),
-('19222164', NULL, 'Juan', 'Diego', 'Soria', 'Lopez', '2001-12-21', 'M', 8, 'Vigente', 3, 78.90, '2025-10-15 05:36:09', '2025-10-29 04:30:59'),
-('19222168', NULL, 'José', 'Antonio', 'Hernández', 'Vargas', '1999-07-20', 'M', 1, 'Vigente', 1, 50.00, NULL, '2025-10-29 04:05:49'),
-('19233245', NULL, 'Ricardo', 'Eduardo', 'Castillo', 'Mendoza', '2000-02-03', 'M', 1, 'Egresado', 11, 89.00, NULL, '2025-11-05 10:03:40'),
-('20212178', NULL, 'Elena', 'Isabel', 'Ramírez', 'Díaz', '2001-08-18', 'F', 2, 'Baja', 10, NULL, NULL, '2025-10-15 04:53:48'),
-('20222165', NULL, 'Pedro', 'Luis', 'García', 'Sánchez', '2000-01-10', 'M', 1, 'Vigente', 10, 80.00, NULL, '2025-10-29 00:58:20'),
-('20222166', NULL, 'Juan', 'Carlos', 'Perez', 'Lopez', '2000-09-12', 'M', 2, 'Vigente', 4, NULL, '2025-10-15 04:55:30', '2025-10-15 10:37:14'),
-('20222286', NULL, 'Lucía', 'Fernanda', 'Rodríguez', 'Torres', '2001-03-15', 'F', 7, 'Vigente', 2, NULL, NULL, NULL),
-('20232012', NULL, 'Laura', 'María', 'Gómez', 'Ramírez', '2002-04-05', 'F', 1, 'Vigente', 10, 89.00, NULL, '2025-10-29 00:58:39'),
-('20242234', NULL, 'Miguel', 'Ángel', 'Torres', 'Ramírez', '2002-06-12', 'M', 1, 'Vigente', 8, 70.00, NULL, '2025-10-29 00:59:03'),
-('20243321', NULL, 'Valeria', '', 'Jiménez', 'Ortega', '2001-11-09', 'F', 7, 'Vigente', 2, NULL, NULL, NULL),
-('20246678', NULL, 'Andrea', 'Carolina', 'Vargas', 'Jiménez', '2002-03-21', 'F', 3, 'Vigente', 10, NULL, NULL, NULL),
-('20248890', NULL, 'Mariana', '', 'Romero', 'García', '2001-07-30', 'F', 8, 'Vigente', 9, NULL, NULL, NULL),
-('20250012', NULL, 'Patricia', 'Elena', 'Herrera', 'Torres', '2002-09-19', 'F', 1, 'Vigente', 8, 87.00, NULL, '2025-10-29 01:07:04'),
-('20254412', NULL, 'Daniela', 'Fernanda', 'Soto', 'Pérez', '2002-08-27', 'F', 2, 'Vigente', 8, NULL, NULL, NULL),
-('21122177', NULL, 'Sofía', '', 'Ortiz', 'Mendoza', '2003-02-14', 'F', 4, 'Vigente', 2, NULL, NULL, NULL),
-('21222198', NULL, 'Marta', 'Patricia', 'López', 'Morales', '2000-11-30', 'F', 9, 'Vigente', 8, NULL, NULL, NULL),
-('21245567', NULL, 'Juan', '', 'Rivas', 'Torres', '2001-05-15', 'M', 9, 'Vigente', 9, NULL, NULL, NULL),
-('21249901', NULL, 'Sergio', 'Andrés', 'Molina', 'Sánchez', '2003-01-05', 'M', 10, 'Vigente', 6, NULL, NULL, NULL),
-('22143199', NULL, 'Diego', '', 'Martínez', 'Gómez', '2002-05-25', 'M', 5, 'Baja', 6, NULL, NULL, NULL),
-('22147789', NULL, 'Fernando', 'Luis', 'Delgado', 'López', '2000-12-11', 'M', 6, 'Baja', 7, NULL, NULL, NULL),
-('22153201', NULL, 'Carla', 'Emilia', 'Hernández', 'Lopez', '2001-09-22', 'M', 10, 'Vigente', 6, NULL, NULL, '2025-10-02 09:55:15'),
-('22160001', NULL, 'Alejandro', 'David', 'García', 'López', '2001-03-14', 'M', 1, 'Vigente', 3, 78.32, NULL, '2025-10-29 04:04:56'),
-('22160002', NULL, 'Beatriz', 'Elena', 'Ramírez', 'Torres', '2002-07-21', 'F', 2, 'Vigente', 3, NULL, NULL, NULL),
-('22160003', NULL, 'Javier', 'Andrés', 'Hernández', 'Gómez', '2000-11-19', 'M', 3, 'Egresado', 11, NULL, NULL, NULL),
-('22160004', NULL, 'Carolina', 'María', 'Sánchez', 'Martínez', '2003-01-25', 'F', 4, 'Vigente', 2, NULL, NULL, NULL),
-('22160005', NULL, 'Luis', 'Fernando', 'Cruz', 'Domínguez', '2001-04-12', 'M', 5, 'Baja', 4, NULL, NULL, NULL),
-('22160006', NULL, 'Gabriela', 'Isabel', 'Jiménez', 'Pérez', '2002-02-08', 'F', 6, 'Vigente', 7, NULL, NULL, NULL),
-('22160007', NULL, 'Héctor', 'Manuel', 'Ortega', 'Santos', '2000-10-30', 'M', 7, 'Vigente', 10, NULL, NULL, NULL),
-('22160008', NULL, 'Natalia', 'Fernanda', 'Vega', 'Ramírez', '2003-03-09', 'F', 8, 'Vigente', 1, 89.00, NULL, '2025-11-05 10:04:20'),
-('22160009', NULL, 'Oscar', 'Antonio', 'Morales', 'Hernández', '1999-06-22', 'M', 9, 'Egresado', 11, NULL, NULL, NULL),
-('22160010', NULL, 'Patricia', 'Lucía', 'Castillo', 'Flores', '2001-05-13', 'F', 10, 'Vigente', 8, NULL, NULL, NULL),
-('22160011', NULL, 'Ricardo', 'Emilio', 'López', 'García', '2002-09-28', 'M', 1, 'Vigente', 6, NULL, NULL, NULL),
-('22160012', NULL, 'Sofía', 'Valeria', 'Fernández', 'Rojas', '2000-12-06', 'F', 2, 'Baja', 7, NULL, NULL, NULL),
-('22160013', NULL, 'Tomás', 'Adrián', 'Mendoza', 'Torres', '2001-08-19', 'M', 3, 'Vigente', 9, NULL, NULL, NULL),
-('22160014', NULL, 'Daniela', 'Paola', 'Martínez', 'Cruz', '2002-04-02', 'F', 4, 'Vigente', 5, NULL, NULL, NULL),
-('22160015', NULL, 'Ignacio', 'Carlos', 'Hernández', 'Ramírez', '2001-11-27', 'M', 5, 'Vigente', 3, NULL, NULL, NULL),
-('22160016', NULL, 'Laura', 'Patricia', 'Pérez', 'Domínguez', '2000-01-15', 'F', 6, 'Egresado', 11, NULL, NULL, NULL),
-('22160017', NULL, 'Diego', 'Alejandro', 'Gómez', 'Santos', '2002-07-08', 'M', 7, 'Vigente', 4, NULL, NULL, NULL),
-('22160018', NULL, 'Mariana', 'Carolina', 'Vargas', 'Luna', '2003-10-03', 'F', 8, 'Vigente', 2, NULL, NULL, NULL),
-('22160019', NULL, 'Andrés', 'Roberto', 'Flores', 'Mendoza', '2001-06-29', 'M', 9, 'Baja', 6, NULL, NULL, NULL),
-('22160020', NULL, 'Elena', 'Beatriz', 'Ramírez', 'Ortega', '2002-03-11', 'F', 10, 'Vigente', 7, NULL, NULL, NULL),
-('22160021', NULL, 'Mateo', 'Julián', 'Sánchez', 'Ríos', '2001-09-23', 'M', 1, 'Vigente', 10, NULL, NULL, NULL),
-('22160022', NULL, 'Camila', 'Fernanda', 'Cruz', 'Pérez', '2000-05-04', 'F', 2, 'Egresado', 11, NULL, NULL, NULL),
-('22160023', NULL, 'Pablo', 'Enrique', 'Domínguez', 'Gómez', '2002-02-19', 'M', 3, 'Vigente', 8, NULL, NULL, NULL),
-('22160024', NULL, 'Valeria', 'Marisol', 'López', 'Martínez', '2003-12-20', 'F', 4, 'Vigente', 2, 89.00, NULL, '2025-10-31 01:24:02'),
-('22160025', NULL, 'Roberto', 'Emilio', 'Hernández', 'Vega', '2000-08-15', 'M', 5, 'Baja', 6, NULL, NULL, NULL),
-('22160026', NULL, 'Daniel', 'Adrián', 'Mendoza', 'Torres', '2001-07-27', 'M', 6, 'Vigente', 9, NULL, NULL, NULL),
-('22160027', NULL, 'Lucía', 'Elena', 'Gómez', 'Sánchez', '2002-06-05', 'F', 7, 'Vigente', 3, NULL, NULL, NULL),
-('22160028', NULL, 'Felipe', 'Eduardo', 'Rojas', 'López', '1999-12-14', 'M', 8, 'Egresado', 11, NULL, NULL, NULL),
-('22160029', NULL, 'Carla', 'Isabel', 'Santos', 'Flores', '2003-09-17', 'F', 9, 'Vigente', 1, NULL, NULL, NULL),
-('22160030', NULL, 'Hugo', 'Manuel', 'Luna', 'Morales', '2000-11-03', 'M', 10, 'Vigente', 7, NULL, NULL, NULL),
-('22160031', NULL, 'Isabel', 'Andrea', 'Ramírez', 'Vega', '2001-03-29', 'F', 1, 'Vigente', 6, 80.00, NULL, '2025-10-29 04:26:58'),
-('22160032', NULL, 'Fernando', 'José', 'Pérez', 'Torres', '2002-01-18', 'M', 2, 'Baja', 5, NULL, NULL, NULL),
-('22160033', NULL, 'Mónica', 'Elena', 'Ortega', 'Cruz', '2001-09-14', 'F', 3, 'Vigente', 9, NULL, NULL, NULL),
-('22160034', NULL, 'Raúl', 'David', 'Sánchez', 'Martínez', '2003-02-06', 'M', 4, 'Vigente', 2, NULL, NULL, NULL),
-('22160035', NULL, 'Ángela', 'María', 'Gómez', 'Fernández', '2002-07-02', 'F', 5, 'Vigente', 4, NULL, NULL, NULL),
-('22160036', NULL, 'Jorge', 'Ignacio', 'Domínguez', 'Rivas', '2000-04-10', 'M', 6, 'Egresado', 11, NULL, NULL, NULL),
-('22160037', NULL, 'Diana', 'Patricia', 'Flores', 'Ramírez', '2001-10-28', 'F', 7, 'Vigente', 8, NULL, NULL, NULL),
-('22160038', NULL, 'Santiago', 'Alejandro', 'Torres', 'Hernández', '2002-08-16', 'M', 8, 'Vigente', 7, NULL, NULL, NULL),
-('22160039', NULL, 'Ana', 'Lucía', 'Martínez', 'Ortega', '2000-05-07', 'F', 9, 'Vigente', 5, NULL, NULL, '2025-10-15 12:36:18'),
-('22160040', NULL, 'Cristian', 'Antonio', 'Pérez', 'Gómez', '2003-03-25', 'M', 10, 'Vigente', 3, NULL, NULL, NULL),
-('22160041', NULL, 'Marisol', 'Valeria', 'López', 'Santos', '2002-09-12', 'F', 1, 'Vigente', 6, NULL, NULL, NULL),
-('22160042', NULL, 'Álvaro', 'Roberto', 'Ramírez', 'Domínguez', '2001-06-01', 'M', 2, 'Vigente', 10, NULL, NULL, NULL),
-('22160043', NULL, 'Estefanía', 'Andrea', 'Sánchez', 'Flores', '2000-07-08', 'F', 3, 'Vigente', 8, NULL, NULL, NULL),
-('22160044', NULL, 'Rodrigo', 'Manuel', 'Cruz', 'Mendoza', '2001-05-16', 'M', 4, 'Baja', 7, NULL, NULL, NULL),
-('22160045', NULL, 'Teresa', 'Isabel', 'Ortega', 'Luna', '2003-10-21', 'F', 5, 'Vigente', 2, NULL, NULL, NULL),
-('22160046', NULL, 'Ángel', 'David', 'Gómez', 'Ramírez', '2002-12-19', 'M', 6, 'Vigente', 9, NULL, NULL, NULL),
-('22160047', NULL, 'Verónica', 'Carolina', 'Hernández', 'Santos', '2000-02-24', 'F', 7, 'Egresado', 11, NULL, NULL, NULL),
-('22160048', NULL, 'Adrián', 'Tomás', 'Morales', 'García', '2001-11-30', 'M', 8, 'Vigente', 7, NULL, NULL, NULL),
-('22160049', NULL, 'Lorena', 'Fernanda', 'Rivas', 'López', '2002-04-18', 'F', 9, 'Vigente', 4, NULL, NULL, NULL),
-('22160050', NULL, 'Emilio', 'Javier', 'Martínez', 'Ortega', '2003-08-13', 'M', 10, 'Vigente', 3, NULL, NULL, NULL),
-('2221212', NULL, 'Carlos', 'Tobon', 'Chat', 'Gpt', '1990-08-12', 'M', 1, 'Vigente', 1, 100.00, '2025-10-29 00:26:46', '2025-11-05 10:03:56'),
-('9999999', NULL, 'Juan', NULL, 'Perez', 'Lopez', '2000-02-02', 'Masculino', 10, 'Vigente', 2, NULL, NULL, NULL);
+INSERT INTO `alumnos` (`n_control`, `contraseña`, `id_carrera`, `nombre`, `s_nombre`, `ap_pat`, `ap_mat`, `fech_nac`, `genero`, `FKid_carrera`, `situacion`, `semestre`, `promedio_general`, `created_at`, `updated_at`) VALUES
+('091234', '091234', NULL, 'Jimmy', 'Baraquiel', 'Valenzuela', 'Álvarez', '2000-11-21', 'M', 1, 'Vigente', 1, 100.00, '2025-11-19 03:48:30', '2025-11-26 02:09:51'),
+('123', '123', NULL, 'juan', 'Pablo', 'Escobar', 'Sultan', '2002-07-08', 'M', 8, 'Vigente', 2, 97.96, '2025-10-24 00:53:58', '2025-10-31 02:10:03'),
+('19222128', '19222128', NULL, 'Andrés', 'Manuel', 'Pérez', 'Fernández', '2000-12-01', 'M', 1, 'Vigente', 3, 89.00, NULL, '2025-10-31 02:54:10'),
+('19222164', '19222164', NULL, 'Juan', 'Diego', 'Soria', 'Lopez', '2001-12-21', 'M', 8, 'Vigente', 3, 78.90, '2025-10-15 05:36:09', '2025-10-29 04:30:59'),
+('19222168', '19222168', NULL, 'José', 'Antonio', 'Hernández', 'Vargas', '1999-07-20', 'M', 1, 'Vigente', 1, 50.00, NULL, '2025-10-29 04:05:49'),
+('19233245', '19233245', NULL, 'Ricardo', 'Eduardo', 'Castillo', 'Mendoza', '2000-02-03', 'M', 1, 'Egresado', 11, 89.00, NULL, '2025-11-05 10:03:40'),
+('20212178', '20212178', NULL, 'Elena', 'Isabel', 'Ramírez', 'Díaz', '2001-08-18', 'F', 2, 'Baja', 10, NULL, NULL, '2025-10-15 04:53:48'),
+('20222165', '20222165', NULL, 'Pedro', 'Luis', 'García', 'Sánchez', '2000-01-10', 'M', 1, 'Vigente', 10, 80.00, NULL, '2025-10-29 00:58:20'),
+('20222166', '20222166', NULL, 'Juan', 'Carlos', 'Perez', 'Lopez', '2000-09-12', 'M', 2, 'Vigente', 4, NULL, '2025-10-15 04:55:30', '2025-10-15 10:37:14'),
+('20222286', '20222286', NULL, 'Lucía', 'Fernanda', 'Rodríguez', 'Torres', '2001-03-15', 'F', 7, 'Vigente', 2, NULL, NULL, NULL),
+('20232012', '20232012', NULL, 'Laura', 'María', 'Gómez', 'Ramírez', '2002-04-05', 'F', 1, 'Vigente', 10, 89.00, NULL, '2025-10-29 00:58:39'),
+('20242234', '20242234', NULL, 'Miguel', 'Ángel', 'Torres', 'Ramírez', '2002-06-12', 'M', 1, 'Vigente', 8, 70.00, NULL, '2025-10-29 00:59:03'),
+('20243321', '20243321', NULL, 'Valeria', '', 'Jiménez', 'Ortega', '2001-11-09', 'F', 7, 'Vigente', 2, NULL, NULL, NULL),
+('20246678', '20246678', NULL, 'Andrea', 'Carolina', 'Vargas', 'Jiménez', '2002-03-21', 'F', 3, 'Vigente', 10, NULL, NULL, NULL),
+('20248890', '20248890', NULL, 'Mariana', '', 'Romero', 'García', '2001-07-30', 'F', 8, 'Vigente', 9, NULL, NULL, NULL),
+('20250012', '20250012', NULL, 'Patricia', 'Elena', 'Herrera', 'Torres', '2002-09-19', 'F', 1, 'Vigente', 8, 87.00, NULL, '2025-10-29 01:07:04'),
+('20254412', '20254412', NULL, 'Daniela', 'Fernanda', 'Soto', 'Pérez', '2002-08-27', 'F', 2, 'Vigente', 8, NULL, NULL, NULL),
+('21122177', '21122177', NULL, 'Sofía', '', 'Ortiz', 'Mendoza', '2003-02-14', 'F', 4, 'Vigente', 2, NULL, NULL, NULL),
+('21222198', '21222198', NULL, 'Marta', 'Patricia', 'López', 'Morales', '2000-11-30', 'F', 9, 'Vigente', 8, NULL, NULL, NULL),
+('21245567', '21245567', NULL, 'Juan', '', 'Rivas', 'Torres', '2001-05-15', 'M', 9, 'Vigente', 9, NULL, NULL, NULL),
+('21249901', '21249901', NULL, 'Sergio', 'Andrés', 'Molina', 'Sánchez', '2003-01-05', 'M', 10, 'Vigente', 6, NULL, NULL, NULL),
+('22143199', '22143199', NULL, 'Diego', '', 'Martínez', 'Gómez', '2002-05-25', 'M', 5, 'Baja', 6, NULL, NULL, NULL),
+('22147789', '22147789', NULL, 'Fernando', 'Luis', 'Delgado', 'López', '2000-12-11', 'M', 6, 'Baja', 7, NULL, NULL, NULL),
+('22153201', '22153201', NULL, 'Carla', 'Emilia', 'Hernández', 'Lopez', '2001-09-22', 'M', 10, 'Vigente', 6, NULL, NULL, '2025-10-02 09:55:15'),
+('22160001', '22160001', NULL, 'Alejandro', 'David', 'García', 'López', '2001-03-14', 'M', 1, 'Vigente', 3, 78.32, NULL, '2025-10-29 04:04:56'),
+('22160002', '22160002', NULL, 'Beatriz', 'Elena', 'Ramírez', 'Torres', '2002-07-21', 'F', 2, 'Vigente', 3, NULL, NULL, NULL),
+('22160003', '22160003', NULL, 'Javier', 'Andrés', 'Hernández', 'Gómez', '2000-11-19', 'M', 3, 'Egresado', 11, NULL, NULL, NULL),
+('22160004', '22160004', NULL, 'Carolina', 'María', 'Sánchez', 'Martínez', '2003-01-25', 'F', 4, 'Vigente', 2, NULL, NULL, NULL),
+('22160005', '22160005', NULL, 'Luis', 'Fernando', 'Cruz', 'Domínguez', '2001-04-12', 'M', 5, 'Baja', 4, NULL, NULL, NULL),
+('22160006', '22160006', NULL, 'Gabriela', 'Isabel', 'Jiménez', 'Pérez', '2002-02-08', 'F', 6, 'Vigente', 7, NULL, NULL, NULL),
+('22160007', '22160007', NULL, 'Héctor', 'Manuel', 'Ortega', 'Santos', '2000-10-30', 'M', 7, 'Vigente', 10, NULL, NULL, NULL),
+('22160008', '22160008', NULL, 'Natalia', 'Fernanda', 'Vega', 'Ramírez', '2003-03-09', 'F', 8, 'Vigente', 1, 89.00, NULL, '2025-11-05 10:04:20'),
+('22160009', '22160009', NULL, 'Oscar', 'Antonio', 'Morales', 'Hernández', '1999-06-22', 'M', 9, 'Egresado', 11, NULL, NULL, NULL),
+('22160010', '22160010', NULL, 'Patricia', 'Lucía', 'Castillo', 'Flores', '2001-05-13', 'F', 10, 'Vigente', 8, NULL, NULL, NULL),
+('22160011', '22160011', NULL, 'Ricardo', 'Emilio', 'López', 'García', '2002-09-28', 'M', 1, 'Vigente', 6, NULL, NULL, NULL),
+('22160012', '22160012', NULL, 'Sofía', 'Valeria', 'Fernández', 'Rojas', '2000-12-06', 'F', 2, 'Baja', 7, NULL, NULL, NULL),
+('22160013', '22160013', NULL, 'Tomás', 'Adrián', 'Mendoza', 'Torres', '2001-08-19', 'M', 3, 'Vigente', 9, NULL, NULL, NULL),
+('22160014', '22160014', NULL, 'Daniela', 'Paola', 'Martínez', 'Cruz', '2002-04-02', 'F', 4, 'Vigente', 5, NULL, NULL, NULL),
+('22160015', '22160015', NULL, 'Ignacio', 'Carlos', 'Hernández', 'Ramírez', '2001-11-27', 'M', 5, 'Vigente', 3, NULL, NULL, NULL),
+('22160016', '22160016', NULL, 'Laura', 'Patricia', 'Pérez', 'Domínguez', '2000-01-15', 'F', 6, 'Egresado', 11, NULL, NULL, NULL),
+('22160017', '22160017', NULL, 'Diego', 'Alejandro', 'Gómez', 'Santos', '2002-07-08', 'M', 7, 'Vigente', 4, NULL, NULL, NULL),
+('22160018', '22160018', NULL, 'Mariana', 'Carolina', 'Vargas', 'Luna', '2003-10-03', 'F', 8, 'Vigente', 2, NULL, NULL, NULL),
+('22160019', '22160019', NULL, 'Andrés', 'Roberto', 'Flores', 'Mendoza', '2001-06-29', 'M', 9, 'Baja', 6, NULL, NULL, NULL),
+('22160020', '22160020', NULL, 'Elena', 'Beatriz', 'Ramírez', 'Ortega', '2002-03-11', 'F', 10, 'Vigente', 7, NULL, NULL, NULL),
+('22160021', '22160021', NULL, 'Mateo', 'Julián', 'Sánchez', 'Ríos', '2001-09-23', 'M', 1, 'Vigente', 10, NULL, NULL, NULL),
+('22160022', '22160022', NULL, 'Camila', 'Fernanda', 'Cruz', 'Pérez', '2000-05-04', 'F', 2, 'Egresado', 11, NULL, NULL, NULL),
+('22160023', '22160023', NULL, 'Pablo', 'Enrique', 'Domínguez', 'Gómez', '2002-02-19', 'M', 3, 'Vigente', 8, NULL, NULL, NULL),
+('22160024', '22160024', NULL, 'Valeria', 'Marisol', 'López', 'Martínez', '2003-12-20', 'F', 4, 'Vigente', 2, 89.00, NULL, '2025-10-31 01:24:02'),
+('22160025', '22160025', NULL, 'Roberto', 'Emilio', 'Hernández', 'Vega', '2000-08-15', 'M', 5, 'Baja', 6, NULL, NULL, NULL),
+('22160026', '22160026', NULL, 'Daniel', 'Adrián', 'Mendoza', 'Torres', '2001-07-27', 'M', 6, 'Vigente', 9, NULL, NULL, NULL),
+('22160027', '22160027', NULL, 'Lucía', 'Elena', 'Gómez', 'Sánchez', '2002-06-05', 'F', 7, 'Vigente', 3, NULL, NULL, NULL),
+('22160028', '22160028', NULL, 'Felipe', 'Eduardo', 'Rojas', 'López', '1999-12-14', 'M', 8, 'Egresado', 11, NULL, NULL, NULL),
+('22160029', '22160029', NULL, 'Carla', 'Isabel', 'Santos', 'Flores', '2003-09-17', 'F', 9, 'Vigente', 1, NULL, NULL, NULL),
+('22160030', '22160030', NULL, 'Hugo', 'Manuel', 'Luna', 'Morales', '2000-11-03', 'M', 10, 'Vigente', 7, NULL, NULL, NULL),
+('22160031', '22160031', NULL, 'Isabel', 'Andrea', 'Ramírez', 'Vega', '2001-03-29', 'F', 1, 'Vigente', 6, 80.00, NULL, '2025-10-29 04:26:58'),
+('22160032', '22160032', NULL, 'Fernando', 'José', 'Pérez', 'Torres', '2002-01-18', 'M', 2, 'Baja', 5, NULL, NULL, NULL),
+('22160033', '22160033', NULL, 'Mónica', 'Elena', 'Ortega', 'Cruz', '2001-09-14', 'F', 3, 'Vigente', 9, NULL, NULL, NULL),
+('22160034', '22160034', NULL, 'Raúl', 'David', 'Sánchez', 'Martínez', '2003-02-06', 'M', 4, 'Vigente', 2, NULL, NULL, NULL),
+('22160035', '22160035', NULL, 'Ángela', 'María', 'Gómez', 'Fernández', '2002-07-02', 'F', 5, 'Vigente', 4, NULL, NULL, NULL),
+('22160036', '22160036', NULL, 'Jorge', 'Ignacio', 'Domínguez', 'Rivas', '2000-04-10', 'M', 6, 'Egresado', 11, NULL, NULL, NULL),
+('22160037', '22160037', NULL, 'Diana', 'Patricia', 'Flores', 'Ramírez', '2001-10-28', 'F', 7, 'Vigente', 8, NULL, NULL, NULL),
+('22160038', '22160038', NULL, 'Santiago', 'Alejandro', 'Torres', 'Hernández', '2002-08-16', 'M', 8, 'Vigente', 7, NULL, NULL, NULL),
+('22160039', '22160039', NULL, 'Ana', 'Lucía', 'Martínez', 'Ortega', '2000-05-07', 'F', 9, 'Vigente', 5, NULL, NULL, '2025-10-15 12:36:18'),
+('22160040', '22160040', NULL, 'Cristian', 'Antonio', 'Pérez', 'Gómez', '2003-03-25', 'M', 10, 'Vigente', 3, NULL, NULL, NULL),
+('22160041', '22160041', NULL, 'Marisol', 'Valeria', 'López', 'Santos', '2002-09-12', 'F', 1, 'Vigente', 6, NULL, NULL, NULL),
+('22160042', '22160042', NULL, 'Álvaro', 'Roberto', 'Ramírez', 'Domínguez', '2001-06-01', 'M', 2, 'Vigente', 10, NULL, NULL, NULL),
+('22160043', '22160043', NULL, 'Estefanía', 'Andrea', 'Sánchez', 'Flores', '2000-07-08', 'F', 3, 'Vigente', 8, NULL, NULL, NULL),
+('22160044', '22160044', NULL, 'Rodrigo', 'Manuel', 'Cruz', 'Mendoza', '2001-05-16', 'M', 4, 'Baja', 7, NULL, NULL, NULL),
+('22160045', '22160045', NULL, 'Teresa', 'Isabel', 'Ortega', 'Luna', '2003-10-21', 'F', 5, 'Vigente', 2, NULL, NULL, NULL),
+('22160046', '22160046', NULL, 'Ángel', 'David', 'Gómez', 'Ramírez', '2002-12-19', 'M', 6, 'Vigente', 9, NULL, NULL, NULL),
+('22160047', '22160047', NULL, 'Verónica', 'Carolina', 'Hernández', 'Santos', '2000-02-24', 'F', 7, 'Egresado', 11, NULL, NULL, NULL),
+('22160048', '22160048', NULL, 'Adrián', 'Tomás', 'Morales', 'García', '2001-11-30', 'M', 8, 'Vigente', 7, NULL, NULL, NULL),
+('22160049', '22160049', NULL, 'Lorena', 'Fernanda', 'Rivas', 'López', '2002-04-18', 'F', 9, 'Vigente', 4, NULL, NULL, NULL),
+('22160050', '22160050', NULL, 'Emilio', 'Javier', 'Martínez', 'Ortega', '2003-08-13', 'M', 10, 'Vigente', 3, NULL, NULL, NULL),
+('2221212', '2221212', NULL, 'Carlos', 'Tobon', 'Chat', 'Gpt', '1990-08-12', 'M', 1, 'Vigente', 1, 100.00, '2025-10-29 00:26:46', '2025-11-05 10:03:56'),
+('9999999', '9999999', NULL, 'Juan', NULL, 'Perez', 'Lopez', '2000-02-02', 'Masculino', 10, 'Vigente', 2, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -149,11 +150,11 @@ INSERT INTO `alumno_grupo` (`id`, `n_control`, `id_grupo`, `oportunidad`, `creat
 (4, '22160041', 8, 'Primera', NULL, NULL),
 (17, '123', 3, 'Primera', '2025-10-28 22:36:43', '2025-10-28 22:36:43'),
 (19, '123', 8, 'Primera', '2025-10-29 01:17:41', '2025-10-29 01:17:41'),
-(23, '123', 4, 'Especial', '2025-10-31 02:24:44', '2025-10-31 02:24:44'),
 (26, '123', 1238, 'Primera', '2025-11-07 00:52:00', '2025-11-07 00:52:00'),
 (27, '123', 5, 'Primera', '2025-11-07 04:15:10', '2025-11-07 04:15:10'),
 (29, '22160007', 1237, 'Primera', '2025-11-12 02:35:10', '2025-11-12 02:35:10'),
-(51, '091234', 1247, 'Primera', '2025-11-26 03:15:38', '2025-11-26 03:15:38');
+(61, '091234', 1250, 'Primera', '2025-11-28 00:55:48', '2025-11-28 00:55:48'),
+(62, '091234', 1251, 'Primera', '2025-11-28 01:31:26', '2025-11-28 01:31:26');
 
 -- --------------------------------------------------------
 
@@ -290,7 +291,10 @@ INSERT INTO `boletas` (`id`, `n_control`, `cod_materia`, `periodo`, `calificacio
 (7, '19222128', 'TICS101', 'AGODIC25', 72.50, 'Primera', 'CAMOTO1', 1, '2025-11-21 05:56:44', '2025-11-21 05:56:44'),
 (15, '091234', 'TICS101', 'AGODIC25', 80.00, 'Primera', 'CAMOTO1', 1, '2025-11-21 06:25:25', '2025-11-21 06:25:25'),
 (16, '123', 'TICS102', 'AGODIC25', 0.00, 'Aprobada', 'CAMOTO1', 2, '2025-11-21 06:26:26', '2025-11-21 06:26:26'),
-(20, '091234', 'TICS210', 'AGODIC25', 100.00, 'Primera', 'CAMOTO1', 1248, '2025-11-26 02:51:53', '2025-11-26 02:51:53');
+(20, '091234', 'TICS210', 'AGODIC25', 100.00, 'Primera', 'CAMOTO1', 1248, '2025-11-26 02:51:53', '2025-11-26 02:51:53'),
+(21, '091234', 'AE101', 'ENEJUN25', 90.00, 'Primera', 'PROF003', 3, '2025-11-28 00:32:09', '2025-11-28 00:32:09'),
+(23, '123', 'TICS104', 'ENEJUN25', 75.00, 'Especial', 'PROF004', 4, '2025-11-28 00:46:32', '2025-11-28 00:46:32'),
+(24, '091234', 'TICS102', 'AGODIC24', 70.00, 'Primera', 'CAMOTO1', 2, '2025-11-28 00:50:34', '2025-11-28 00:50:34');
 
 -- --------------------------------------------------------
 
@@ -313,8 +317,8 @@ INSERT INTO `cache` (`key`, `value`, `expiration`) VALUES
 ('adknd@ssa.com|10.58.0.242:timer', 'i:1763669259;', 1763669259),
 ('admin1@admin.com|127.0.0.1', 'i:1;', 1764094296),
 ('admin1@admin.com|127.0.0.1:timer', 'i:1764094296;', 1764094296),
-('carlos@carlos.com|127.0.0.1', 'i:2;', 1763669183),
-('carlos@carlos.com|127.0.0.1:timer', 'i:1763669183;', 1763669183),
+('carlos@carlos.com|127.0.0.1', 'i:1;', 1764265560),
+('carlos@carlos.com|127.0.0.1:timer', 'i:1764265560;', 1764265560),
 ('carlosmoran0119@gmail.com|10.58.0.242', 'i:2;', 1763668396),
 ('carlosmoran0119@gmail.com|10.58.0.242:timer', 'i:1763668396;', 1763668396),
 ('jajuwquj@aja.com|10.58.0.242', 'i:2;', 1763668345),
@@ -378,7 +382,13 @@ INSERT INTO `calificaciones_grupo` (`id`, `alumno_grupo_id`, `u1`, `u2`, `u3`, `
 (17, 47, 100.00, 45.00, 5.00, 4.00, 0.00, '2025-11-21 06:26:37', '2025-11-21 06:26:37'),
 (18, 48, 12.00, 54.00, 54.00, 54.00, 0.00, '2025-11-21 06:27:04', '2025-11-21 06:27:04'),
 (19, 49, 100.00, 100.00, 78.00, 9.00, 0.00, '2025-11-21 06:27:32', '2025-11-21 06:27:32'),
-(20, 50, 100.00, 100.00, 100.00, 100.00, 100.00, '2025-11-26 02:51:50', '2025-11-26 02:51:50');
+(20, 50, 100.00, 100.00, 100.00, 100.00, 100.00, '2025-11-26 02:51:50', '2025-11-26 02:51:50'),
+(21, 17, 80.00, 80.00, NULL, NULL, NULL, '2025-11-27 23:49:35', '2025-11-27 23:49:35'),
+(22, 52, 90.00, 80.00, NULL, NULL, NULL, '2025-11-28 00:13:41', '2025-11-28 00:13:41'),
+(23, 54, 90.00, 90.00, 90.00, 90.00, 90.00, '2025-11-28 00:32:06', '2025-11-28 00:32:06'),
+(24, 58, 90.00, 100.00, 90.00, 90.00, 92.50, '2025-11-28 00:46:15', '2025-11-28 00:46:15'),
+(25, 23, 70.00, 70.00, 70.00, 90.00, 75.00, '2025-11-28 00:46:29', '2025-11-28 00:46:29'),
+(26, 59, 70.00, 70.00, 70.00, 70.00, 70.00, '2025-11-28 00:50:31', '2025-11-28 00:50:31');
 
 -- --------------------------------------------------------
 
@@ -450,13 +460,12 @@ CREATE TABLE `grupos` (
 --
 
 INSERT INTO `grupos` (`id_grupo`, `cod_materia`, `n_trabajador`, `semestre`, `periodo_id`, `patron`, `hora_inicio`, `created_at`, `updated_at`) VALUES
-(1, 'TICS101', 'CAMOTO1', 3, 12, 'L-M', '07:00:00', NULL, '2025-11-19 03:31:45'),
-(2, 'TICS102', 'CAMOTO1', 3, 12, NULL, NULL, NULL, '2025-11-12 13:29:58'),
+(1, 'TICS101', 'CAMOTO1', 3, 12, 'L-M', '09:00:00', NULL, '2025-11-26 03:32:31'),
+(2, 'TICS102', 'CAMOTO1', 3, 10, 'M-J', '11:00:00', NULL, '2025-11-28 00:50:08'),
 (3, 'AE101', 'PROF003', 2, 11, 'L-M', '07:00:00', NULL, '2025-11-19 03:30:28'),
-(4, 'TICS104', 'PROF004', 2, 11, NULL, NULL, NULL, '2025-11-12 12:34:51'),
 (5, 'TICS101', 'PROF005', 3, 12, NULL, NULL, NULL, NULL),
 (6, 'TICS102', 'PROF006', 3, 12, NULL, NULL, NULL, NULL),
-(7, 'TICS103', 'PROF007', 4, 12, NULL, NULL, NULL, NULL),
+(7, 'TICS103', 'PROF010', 4, 12, 'M-J', '11:00:00', NULL, '2025-11-28 00:57:21'),
 (8, 'TICS104', 'PROF008', 10, 12, NULL, NULL, NULL, '2025-10-31 03:03:09'),
 (9, 'TICS101', 'PROF009', 5, 11, NULL, NULL, NULL, NULL),
 (10, 'AE101', 'PROF009', 10, 12, NULL, NULL, '2025-10-24 23:44:23', '2025-10-31 03:02:22'),
@@ -465,7 +474,10 @@ INSERT INTO `grupos` (`id_grupo`, `cod_materia`, `n_trabajador`, `semestre`, `pe
 (1245, 'AE101', 'CAMOTO1', 10, 11, NULL, NULL, '2025-11-12 07:00:25', '2025-11-12 12:08:16'),
 (1246, 'ETRO104', 'PROF002', 8, 12, NULL, NULL, '2025-11-12 11:50:55', '2025-11-18 23:48:40'),
 (1247, 'TICS204', 'ERDELO1', 7, 11, 'M-J', '11:00:00', '2025-11-19 03:45:14', '2025-11-26 03:15:07'),
-(1248, 'TICS210', 'CAMOTO1', 2, 12, NULL, NULL, '2025-11-26 02:18:58', '2025-11-26 02:18:58');
+(1248, 'TICS210', 'CAMOTO1', 2, 12, NULL, NULL, '2025-11-26 02:18:58', '2025-11-26 02:18:58'),
+(1249, 'AE101', 'JINAJU1', 1, 11, NULL, NULL, '2025-11-28 00:31:03', '2025-11-28 00:31:03'),
+(1250, 'TICS251', 'PROF007', 9, 12, 'M-J', '11:00:00', '2025-11-28 00:53:18', '2025-11-28 00:55:32'),
+(1251, 'TICS222', 'PROF005', 4, 8, 'L-M', '13:00:00', '2025-11-28 01:30:38', '2025-11-28 01:30:56');
 
 -- --------------------------------------------------------
 
@@ -586,11 +598,24 @@ CREATE TABLE `horarios` (
 --
 
 INSERT INTO `horarios` (`id`, `grupo_id`, `materia_id`, `profesore_id`, `aula_id`, `dia_semana`, `hora_inicio`, `hora_fin`, `created_at`, `updated_at`) VALUES
-(3, 1, 'TICS101', 'CAMOTO1', 3, 1, '07:00:00', '09:00:00', '2025-11-19 03:34:17', '2025-11-19 03:34:17'),
-(4, 1, 'TICS101', 'CAMOTO1', 3, 3, '07:00:00', '09:00:00', '2025-11-19 03:34:17', '2025-11-19 03:34:17'),
 (8, 1247, 'TICS666', 'ERDELO1', 5, 2, '11:00:00', '13:00:00', '2025-11-19 03:50:00', '2025-11-19 03:50:00'),
 (9, 1247, 'TICS666', 'ERDELO1', 5, 4, '11:00:00', '13:00:00', '2025-11-19 03:50:00', '2025-11-19 03:50:00'),
-(10, 1247, 'TICS666', 'ERDELO1', 5, 5, '12:00:00', '13:00:00', '2025-11-19 03:50:00', '2025-11-19 03:50:00');
+(10, 1247, 'TICS666', 'ERDELO1', 5, 5, '12:00:00', '13:00:00', '2025-11-19 03:50:00', '2025-11-19 03:50:00'),
+(11, 1, 'TICS101', 'CAMOTO1', 3, 1, '09:00:00', '11:00:00', '2025-11-26 03:32:36', '2025-11-26 03:32:36'),
+(12, 1, 'TICS101', 'CAMOTO1', 3, 3, '09:00:00', '11:00:00', '2025-11-26 03:32:36', '2025-11-26 03:32:36'),
+(13, 1, 'TICS101', 'CAMOTO1', 3, 5, '09:00:00', '10:00:00', '2025-11-26 03:32:36', '2025-11-26 03:32:36'),
+(14, 2, 'TICS102', 'CAMOTO1', 3, 2, '11:00:00', '13:00:00', '2025-11-28 00:19:00', '2025-11-28 00:19:00'),
+(15, 2, 'TICS102', 'CAMOTO1', 3, 4, '11:00:00', '13:00:00', '2025-11-28 00:19:00', '2025-11-28 00:19:00'),
+(16, 2, 'TICS102', 'CAMOTO1', 3, 5, '12:00:00', '13:00:00', '2025-11-28 00:19:00', '2025-11-28 00:19:00'),
+(23, 7, 'TICS103', 'PROF010', 9, 2, '11:00:00', '13:00:00', '2025-11-28 00:57:26', '2025-11-28 00:57:26'),
+(24, 7, 'TICS103', 'PROF010', 9, 4, '11:00:00', '13:00:00', '2025-11-28 00:57:26', '2025-11-28 00:57:26'),
+(25, 7, 'TICS103', 'PROF010', 9, 5, '12:00:00', '13:00:00', '2025-11-28 00:57:26', '2025-11-28 00:57:26'),
+(26, 1250, 'TICS251', 'PROF007', 6, 2, '11:00:00', '13:00:00', '2025-11-28 01:19:51', '2025-11-28 01:19:51'),
+(27, 1250, 'TICS251', 'PROF007', 6, 4, '11:00:00', '13:00:00', '2025-11-28 01:19:51', '2025-11-28 01:19:51'),
+(28, 1250, 'TICS251', 'PROF007', 6, 5, '12:00:00', '13:00:00', '2025-11-28 01:19:51', '2025-11-28 01:19:51'),
+(29, 1251, 'TICS222', 'PROF005', 7, 1, '13:00:00', '15:00:00', '2025-11-28 01:31:01', '2025-11-28 01:31:01'),
+(30, 1251, 'TICS222', 'PROF005', 7, 3, '13:00:00', '15:00:00', '2025-11-28 01:31:01', '2025-11-28 01:31:01'),
+(31, 1251, 'TICS222', 'PROF005', 7, 5, '13:00:00', '14:00:00', '2025-11-28 01:31:01', '2025-11-28 01:31:01');
 
 -- --------------------------------------------------------
 
@@ -809,10 +834,10 @@ INSERT INTO `periodos` (`id`, `periodo_nombre`, `anio`, `codigo_periodo`, `activ
 (4, 'Agosto-Diciembre', 2021, 'AGODIC21', 0, '2025-10-30 18:04:07', '2025-10-30 18:04:07'),
 (5, 'Enero-Junio', 2022, 'ENEJUN22', 0, '2025-10-30 18:04:07', '2025-10-30 18:04:07'),
 (6, 'Agosto-Diciembre', 2022, 'AGODIC22', 0, '2025-10-30 18:04:07', '2025-10-30 18:04:07'),
-(7, 'Enero-Junio', 2023, 'ENEJUN23', 0, '2025-10-30 18:04:07', '2025-10-30 18:04:07'),
-(8, 'Agosto-Diciembre', 2023, 'AGODIC23', 0, '2025-10-30 18:04:07', '2025-10-31 00:25:05'),
-(9, 'Enero-Junio', 2024, 'ENEJUN24', 0, '2025-10-30 18:04:07', '2025-10-31 00:24:53'),
-(10, 'Agosto-Diciembre', 2024, 'AGODIC24', 0, '2025-10-30 18:04:07', '2025-10-31 00:24:59'),
+(7, 'Enero-Junio', 2023, 'ENEJUN23', 1, '2025-10-30 18:04:07', '2025-11-28 00:35:22'),
+(8, 'Agosto-Diciembre', 2023, 'AGODIC23', 1, '2025-10-30 18:04:07', '2025-11-28 00:35:53'),
+(9, 'Enero-Junio', 2024, 'ENEJUN24', 1, '2025-10-30 18:04:07', '2025-11-28 00:35:05'),
+(10, 'Agosto-Diciembre', 2024, 'AGODIC24', 1, '2025-10-30 18:04:07', '2025-11-28 00:35:13'),
 (11, 'Enero-Junio', 2025, 'ENEJUN25', 1, '2025-10-30 18:04:07', '2025-11-12 01:23:44'),
 (12, 'Agosto-Diciembre', 2025, 'AGODIC25', 1, '2025-10-30 18:04:07', '2025-10-30 18:04:07'),
 (13, 'Enero-Junio', 2026, 'ENEJUN26', 0, '2025-11-19 03:44:16', '2025-11-19 03:44:16');
@@ -825,6 +850,7 @@ INSERT INTO `periodos` (`id`, `periodo_nombre`, `anio`, `codigo_periodo`, `activ
 
 CREATE TABLE `profesores` (
   `n_trabajador` varchar(30) NOT NULL,
+  `contraseña` varchar(255) DEFAULT NULL,
   `nombre` varchar(30) DEFAULT NULL,
   `s_nombre` varchar(30) DEFAULT NULL,
   `ap_materno` varchar(30) DEFAULT NULL,
@@ -840,21 +866,21 @@ CREATE TABLE `profesores` (
 -- Volcado de datos para la tabla `profesores`
 --
 
-INSERT INTO `profesores` (`n_trabajador`, `nombre`, `s_nombre`, `ap_materno`, `ap_paterno`, `correo_institucional`, `FKcod_area`, `situacion`, `created_at`, `updated_at`) VALUES
-('CAMOTO1', 'Carlos', NULL, 'Torres', 'Moran', 'Torres@carlos', 15, 'Vigente', '2025-10-17 01:57:25', '2025-11-05 10:54:45'),
-('ERDELO1', 'Erick', 'Alberto', 'Lopez', 'De La Barrera', 'erick@ehhe', 12, 'Vigente', '2025-10-17 02:41:54', '2025-10-17 02:42:14'),
-('JINAJU1', 'Jimmy', 'Baraquiel', 'Juarez', 'Navarrete', 'jimmy@jimmy.com', 2, 'Vigente', '2025-11-05 07:02:23', '2025-11-05 07:02:23'),
-('PROF001', 'Juan', NULL, 'Gómez', 'Pérez', 'jc.perez@itp.edu', 4, 'Vigente', NULL, '2025-10-24 01:26:04'),
-('PROF002', 'María', 'Elena', 'Sánchez', 'López', 'me.lopez@escuela.edu', 1, 'Vigente', NULL, NULL),
-('PROF003', 'José', 'Antonio', 'Torres', 'Ramírez', 'ja.ramirez@escuela.edu', 2, 'Vigente', NULL, NULL),
-('PROF004', 'Marta', 'Patricia', 'Díaz', 'García', 'mp.garcia@escuela.edu', 2, 'Vigente', NULL, NULL),
-('PROF005', 'Fernando', 'Luis', 'Morales', 'Hernández', 'fl.hernandez@escuela.edu', 3, 'Vigente', NULL, NULL),
-('PROF006', 'Laura', 'María', 'Jiménez', 'Vargas', 'lm.vargas@escuela.edu', 3, 'En Asignación', NULL, '2025-10-17 01:33:16'),
-('PROF007', 'Ricardo', 'Eduardo', 'Pérez', 'Soto', 're.soto@escuela.edu', 1, 'Vigente', NULL, '2025-10-29 01:09:36'),
-('PROF008', 'Elena', 'Isabel', 'Mendoza', 'Ortiz', 'ei.ortiz@escuela.edu', 4, 'Vigente', NULL, NULL),
-('PROF009', 'Diego', '', 'Gómez', 'Martínez', 'd.martinez@escuela.edu', 5, 'Vigente', NULL, NULL),
-('PROF010', 'Andrea', 'Carolina', 'García', 'Romero', 'ac.romero@escuela.edu', 2, 'Vigente', NULL, '2025-10-29 01:09:56'),
-('ERDELO2', 'Erick', 'Alberto', 'Lopez', 'De La Barrera', 'erickdelab@gmail.com', 1, 'Vigente', '2025-11-19 03:38:31', '2025-11-19 03:38:31');
+INSERT INTO `profesores` (`n_trabajador`, `contraseña`, `nombre`, `s_nombre`, `ap_materno`, `ap_paterno`, `correo_institucional`, `FKcod_area`, `situacion`, `created_at`, `updated_at`) VALUES
+('CAMOTO1', 'CAMOTO1', 'Carlos', NULL, 'Torres', 'Moran', 'Torres@carlos', 15, 'Vigente', '2025-10-17 01:57:25', '2025-11-05 10:54:45'),
+('ERDELO1', 'ERDELO1', 'Erick', 'Alberto', 'Lopez', 'De La Barrera', 'erick@ehhe', 12, 'Vigente', '2025-10-17 02:41:54', '2025-10-17 02:42:14'),
+('JINAJU1', 'JINAJU1', 'Jimmy', 'Baraquiel', 'Juarez', 'Navarrete', 'jimmy@jimmy.com', 2, 'Vigente', '2025-11-05 07:02:23', '2025-11-05 07:02:23'),
+('PROF001', 'PROF001', 'Juan', NULL, 'Gómez', 'Pérez', 'jc.perez@itp.edu', 4, 'Vigente', NULL, '2025-10-24 01:26:04'),
+('PROF002', 'PROF002', 'María', 'Elena', 'Sánchez', 'López', 'me.lopez@escuela.edu', 1, 'Vigente', NULL, NULL),
+('PROF003', 'PROF003', 'José', 'Antonio', 'Torres', 'Ramírez', 'ja.ramirez@escuela.edu', 2, 'Vigente', NULL, NULL),
+('PROF004', 'PROF004', 'Marta', 'Patricia', 'Díaz', 'García', 'mp.garcia@escuela.edu', 2, 'Vigente', NULL, NULL),
+('PROF005', 'PROF005', 'Fernando', 'Luis', 'Morales', 'Hernández', 'fl.hernandez@escuela.edu', 3, 'Vigente', NULL, NULL),
+('PROF006', 'PROF006', 'Laura', 'María', 'Jiménez', 'Vargas', 'lm.vargas@escuela.edu', 3, 'En Asignación', NULL, '2025-10-17 01:33:16'),
+('PROF007', 'PROF007', 'Ricardo', 'Eduardo', 'Pérez', 'Soto', 're.soto@escuela.edu', 1, 'Vigente', NULL, '2025-10-29 01:09:36'),
+('PROF008', 'PROF008', 'Elena', 'Isabel', 'Mendoza', 'Ortiz', 'ei.ortiz@escuela.edu', 4, 'Vigente', NULL, NULL),
+('PROF009', 'PROF009', 'Diego', '', 'Gómez', 'Martínez', 'd.martinez@escuela.edu', 5, 'Vigente', NULL, NULL),
+('PROF010', 'PROF010', 'Andrea', 'Carolina', 'García', 'Romero', 'ac.romero@escuela.edu', 2, 'Vigente', NULL, '2025-10-29 01:09:56'),
+('ERDELO2', 'ERDELO2', 'Erick', 'Alberto', 'Lopez', 'De La Barrera', 'erickdelab@gmail.com', 1, 'Vigente', '2025-11-19 03:38:31', '2025-11-19 03:38:31');
 
 -- --------------------------------------------------------
 
@@ -876,12 +902,7 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('3eEvg3gp3CCsbImr8r1A9y8sxYniQtqgus9Y98G3', NULL, '10.58.0.242', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:145.0) Gecko/20100101 Firefox/145.0', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoieDFwY1pCOVByWDI3aG5NZDlXNFBwRmw3WEpZUklzb2VoVHU0RVdXWiI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MjQ6Imh0dHA6Ly8xMC41OC4wLjEyNC9sb2dpbiI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1763677853),
-('aVQWPmpGtdRtDlfeIzzmVKi5cN00VlzzH4TdnlEg', NULL, '10.58.1.12', '', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoicXNRV2FQSENhc2poU0JtdGJuZXo5b0E3QTdGdzlkemM3YnVkNXZKWSI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MjI6Imh0dHA6Ly9lc2N1ZWxpdGEubG9jYWwiO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1764097799),
-('FFZwiuYiUNgIvZG0Iq2atfhE5s787gabZKAUQsAx', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:145.0) Gecko/20100101 Firefox/145.0', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiSmhwdEQxN0wwUDhXMjFIa043OG1VWlZ2RWt6OU9YRWVidzVpaVhaeCI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MTY6Imh0dHA6Ly9sb2NhbGhvc3QiO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1764094134),
-('MKBFcsMx8qWOIR89UTXjLsl3UDUiAHAncOik4mV7', 4, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:145.0) Gecko/20100101 Firefox/145.0', 'YTo1OntzOjY6Il90b2tlbiI7czo0MDoiYXpaMGx3QURFelZNVWFBTG5KeFdsQWZubWhCUVdnZnNFdVlaeVZPNSI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MzU6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9rYXJkZXgvMDkxMjM0Ijt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6NDtzOjQ6ImF1dGgiO2E6MTp7czoyMToicGFzc3dvcmRfY29uZmlybWVkX2F0IjtpOjE3NjQwOTQyNDY7fX0=', 1764105342),
-('qSUPsikUhBVJJygjCitMw6MV9sm5cfiPNyFBj3f5', NULL, '10.58.0.186', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:145.0) Gecko/20100101 Firefox/145.0', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoid09TUWNKVWV3TjRvb3ZkTXFxS2JzeFV2R2FYWm8zTmtacUFnRE1SSSI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MTc6Imh0dHA6Ly8xMC41OC4wLjc4Ijt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1764095005),
-('xniCFS3cOyljsQoYZZZ9NcryubIhWNHntpUCXs6m', 4, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:145.0) Gecko/20100101 Firefox/145.0', 'YTo2OntzOjY6Il90b2tlbiI7czo0MDoiWU8wak9kNmh5eFVnZXAzSHAyWVVETkRFVVcxcGQ1d29WQUxnbVNzTCI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MzU6Imh0dHA6Ly9sb2NhbGhvc3QvZ3J1cG9zLzIvY2FsaWZpY2FyIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czozOiJ1cmwiO2E6MDp7fXM6NTA6ImxvZ2luX3dlYl81OWJhMzZhZGRjMmIyZjk0MDE1ODBmMDE0YzdmNThlYTRlMzA5ODlkIjtpOjQ7czo0OiJhdXRoIjthOjE6e3M6MjE6InBhc3N3b3JkX2NvbmZpcm1lZF9hdCI7aToxNzYzNjgwMjY5O319', 1763684984);
+('J1aa4D83m2zutxBKDJeSBpeRreCuDxQYSF411Xa7', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:145.0) Gecko/20100101 Firefox/145.0', 'YTo1OntzOjY6Il90b2tlbiI7czo0MDoiTFlvZEU5b09SUWVBSjNFeDhYV3dVU3VkNVFGRzZvYTU4ZHZBMDZEaiI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6Mjk6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9hbHVtbm9zIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6MTtzOjQ6ImF1dGgiO2E6MTp7czoyMToicGFzc3dvcmRfY29uZmlybWVkX2F0IjtpOjE3NjQyNjU1MTc7fX0=', 1764273251);
 
 -- --------------------------------------------------------
 
@@ -1056,7 +1077,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT de la tabla `alumno_grupo`
 --
 ALTER TABLE `alumno_grupo`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=63;
 
 --
 -- AUTO_INCREMENT de la tabla `areas`
@@ -1068,13 +1089,13 @@ ALTER TABLE `areas`
 -- AUTO_INCREMENT de la tabla `boletas`
 --
 ALTER TABLE `boletas`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT de la tabla `calificaciones_grupo`
 --
 ALTER TABLE `calificaciones_grupo`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT de la tabla `carreras`
@@ -1092,13 +1113,13 @@ ALTER TABLE `failed_jobs`
 -- AUTO_INCREMENT de la tabla `grupos`
 --
 ALTER TABLE `grupos`
-  MODIFY `id_grupo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1249;
+  MODIFY `id_grupo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1252;
 
 --
 -- AUTO_INCREMENT de la tabla `horarios`
 --
 ALTER TABLE `horarios`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- AUTO_INCREMENT de la tabla `jobs`
