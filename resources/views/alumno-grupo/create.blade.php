@@ -8,6 +8,23 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-sm-12">
+            
+            {{-- 🔥 1. BLOQUE DE ALERTAS (Para mostrar el choque de horarios) --}}
+            @if(session('success'))
+                <div class="alert alert-success alert-dismissible fade show shadow-sm border-0 mb-4" role="alert">
+                    <i class="fas fa-check-circle me-2"></i> {{ session('success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+
+            @if(session('error'))
+                <div class="alert alert-danger alert-dismissible fade show shadow-sm border-0 mb-4" role="alert">
+                    <i class="fas fa-exclamation-triangle me-2"></i> {!! session('error') !!}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+            {{-- FIN BLOQUE DE ALERTAS --}}
+
             <div class="card shadow-lg border-0">
                 <div class="card-header text-white" style="background-color: #002D72;">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -19,6 +36,7 @@
                 </div>
 
                 <div class="card-body bg-white">
+                    {{-- Encabezado Alumno --}}
                     <div class="row mb-4">
                         <div class="col-md-12">
                             <div class="alert alert-info border-0 shadow-sm" style="background-color: rgba(0, 45, 114, 0.1); color: #002D72;">
@@ -32,6 +50,7 @@
                     </div>
 
                     <div class="row">
+                        {{-- COLUMNA IZQUIERDA: FORMULARIO --}}
                         <div class="col-md-6">
                             <div class="card mb-4 border shadow-sm">
                                 <div class="card-header text-white fw-bold" style="background-color: #002D72;">
@@ -42,7 +61,7 @@
                                         <form method="POST" action="{{ route('alumnos.grupos.store', $alumno->n_control) }}" id="inscripcionForm">
                                             @csrf
                                             
-                                            {{-- 1. SELECT DE GRUPO --}}
+                                            {{-- SELECT DE GRUPO --}}
                                             <div class="form-group mb-4">
                                                 <label for="id_grupo" class="form-label fw-bold text-dark">Selecciona un grupo:</label>
                                                 <select name="id_grupo" class="form-select form-select-lg" id="id_grupo" required>
@@ -54,16 +73,10 @@
                                                                 $grupo->load('materia');
                                                             }
                                                             $nombreMateria = $grupo->materia->nombre ?? 'Materia no encontrada';
-                                                            
-                                                            // Datos para mostrar
                                                             $profesor = $grupo->profesore ? ($grupo->profesore->nombre . ' ' . $grupo->profesore->ap_paterno) : 'Sin Prof.';
                                                             $horario = $grupo->patron ? ($grupo->patron . ' ' . \Carbon\Carbon::parse($grupo->hora_inicio)->format('H:i')) : 'Sin Horario';
                                                         @endphp
 
-                                                        {{-- 
-                                                            🔥 CLAVE: Pasamos la oportunidad calculada en atributos data- 
-                                                            Si la materia está bloqueada (aprobada/baja), deshabilitamos la opción.
-                                                        --}}
                                                         <option value="{{ $grupo->id_grupo }}" 
                                                                 data-oportunidad="{{ $grupo->oportunidad_calc }}"
                                                                 data-materia="{{ $nombreMateria }}"
@@ -78,17 +91,13 @@
                                                 </select>
                                             </div>
 
-                                            {{-- 2. VISUALIZACIÓN AUTOMÁTICA DE OPORTUNIDAD --}}
+                                            {{-- VISUALIZACIÓN AUTOMÁTICA DE OPORTUNIDAD --}}
                                             <div class="card bg-light border-0 mb-4" id="infoOportunidadBox" style="display: none;">
                                                 <div class="card-body text-center">
                                                     <h6 class="text-muted mb-2">El alumno cursará esta materia en:</h6>
-                                                    
-                                                    {{-- Aquí se mostrará el badge dinámicamente --}}
                                                     <span id="badgeOportunidad" class="badge fs-5 px-4 py-2 bg-secondary">
                                                         Seleccione grupo...
                                                     </span>
-
-                                                    {{-- Input oculto que se enviará al backend --}}
                                                     <input type="hidden" name="oportunidad" id="inputOportunidad">
                                                 </div>
                                             </div>
@@ -107,6 +116,7 @@
                             </div>
                         </div>
 
+                        {{-- COLUMNA DERECHA: CARGA ACTUAL (MODIFICADA CON HORARIOS) --}}
                         <div class="col-md-6">
                             <div class="card border shadow-sm">
                                 <div class="card-header text-white fw-bold" style="background-color: #6c757d;">
@@ -118,22 +128,50 @@
                                             @foreach($alumno->grupos as $grupo)
                                                 @php
                                                     $nombreMat = $grupo->materia->nombre ?? 'Materia';
+                                                    // Mapeo de días para mostrar bonito
+                                                    $diasSemana = [1=>'Lun', 2=>'Mar', 3=>'Mié', 4=>'Jue', 5=>'Vie', 6=>'Sáb'];
                                                 @endphp
-                                                <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent">
-                                                    <div>
-                                                        <strong style="color: #002D72;">{{ $nombreMat }}</strong>
-                                                        <br>
-                                                        <small class="text-muted">
-                                                            {{ $grupo->pivot->oportunidad }} | Gpo {{ $grupo->id_grupo }}
-                                                        </small>
+                                                <li class="list-group-item d-flex justify-content-between align-items-start bg-transparent py-3">
+                                                    <div class="w-100">
+                                                        {{-- Título Materia --}}
+                                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                                            <strong style="color: #002D72;">{{ $nombreMat }}</strong>
+                                                            <small class="badge bg-secondary text-white">{{ $grupo->pivot->oportunidad }}</small>
+                                                        </div>
+                                                        
+                                                        {{-- Subtítulo Grupo --}}
+                                                        <div class="text-muted small mb-2">
+                                                            Grupo {{ $grupo->id_grupo }} | Sem. {{ $grupo->semestre }}
+                                                        </div>
+
+                                                        {{-- 🔥 AQUÍ MOSTRAMOS EL HORARIO DETALLADO --}}
+                                                        <div class="bg-white p-2 rounded border small">
+                                                            @forelse($grupo->horarios as $h)
+                                                                <div class="text-dark">
+                                                                    <i class="far fa-clock text-primary me-1"></i>
+                                                                    <strong>{{ $diasSemana[$h->dia_semana] ?? 'Dia '.$h->dia_semana }}</strong>: 
+                                                                    {{ \Carbon\Carbon::parse($h->hora_inicio)->format('H:i') }} - 
+                                                                    {{ \Carbon\Carbon::parse($h->hora_fin)->format('H:i') }}
+                                                                    @if($h->aula)
+                                                                        <span class="text-muted fst-italic ms-1">({{ $h->aula->nombre }})</span>
+                                                                    @endif
+                                                                </div>
+                                                            @empty
+                                                                <span class="text-danger fst-italic">Sin horario asignado</span>
+                                                            @endforelse
+                                                        </div>
                                                     </div>
-                                                    <form method="POST" action="{{ route('alumnos.grupos.destroy', [$alumno->n_control, $grupo->id_grupo]) }}">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="btn btn-outline-danger btn-sm" title="Desinscribir">
-                                                            <i class="fa fa-times"></i>
-                                                        </button>
-                                                    </form>
+
+                                                    {{-- Botón Eliminar --}}
+                                                    <div class="ms-3 pt-1">
+                                                        <form method="POST" action="{{ route('alumnos.grupos.destroy', [$alumno->n_control, $grupo->id_grupo]) }}">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit" class="btn btn-outline-danger btn-sm" title="Desinscribir" onclick="return confirm('¿Seguro que deseas dar de baja esta materia?')">
+                                                                <i class="fa fa-times"></i>
+                                                            </button>
+                                                        </form>
+                                                    </div>
                                                 </li>
                                             @endforeach
                                         </ul>
@@ -153,7 +191,7 @@
     </div>
 </div>
 
-{{-- SCRIPT PARA AUTOMATIZACIÓN --}}
+{{-- SCRIPT PARA AUTOMATIZACIÓN (Igual que antes) --}}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const selectGrupo = document.getElementById('id_grupo');
@@ -163,32 +201,20 @@
         const btnSubmit = document.getElementById('btnInscribir');
 
         selectGrupo.addEventListener('change', function() {
-            // 1. Obtener la opción seleccionada
             const selectedOption = this.options[this.selectedIndex];
-            
-            // 2. Leer el atributo data-oportunidad
             const oportunidad = selectedOption.getAttribute('data-oportunidad');
 
             if (oportunidad) {
-                // Mostrar la caja
                 boxInfo.style.display = 'block';
                 btnSubmit.disabled = false;
-
-                // Actualizar Texto y Color del Badge
                 badge.textContent = oportunidad;
-                badge.className = 'badge fs-5 px-4 py-2'; // Reset clases base
+                badge.className = 'badge fs-5 px-4 py-2';
 
-                if (oportunidad === 'Primera') {
-                    badge.classList.add('bg-success');
-                } else if (oportunidad === 'Repite') {
-                    badge.classList.add('bg-warning', 'text-dark');
-                } else if (oportunidad === 'Especial') {
-                    badge.classList.add('bg-danger');
-                } else {
-                    badge.classList.add('bg-secondary');
-                }
+                if (oportunidad === 'Primera') badge.classList.add('bg-success');
+                else if (oportunidad === 'Repite') badge.classList.add('bg-warning', 'text-dark');
+                else if (oportunidad === 'Especial') badge.classList.add('bg-danger');
+                else badge.classList.add('bg-secondary');
 
-                // 3. Actualizar el input oculto para enviar al backend
                 inputHidden.value = oportunidad;
             } else {
                 boxInfo.style.display = 'none';

@@ -19,13 +19,18 @@ class Boleta extends Model
         'id_grupo'
     ];
 
-    // Relación opcional para ver datos del alumno desde la boleta
+    // Relación con alumno
     public function alumno() {
         return $this->belongsTo(Alumno::class, 'n_control', 'n_control');
     }
     
-    // Relación opcional con materia
+    // Relación con materia
     public function materia() {
         return $this->belongsTo(Materia::class, 'cod_materia', 'cod_materia');
+    }
+
+    // ✅ Relación con profesor (Esta es la que faltaba)
+    public function profesor() {
+        return $this->belongsTo(Profesore::class, 'n_trabajador', 'n_trabajador');
     }
 }

@@ -322,4 +322,56 @@ class AlumnoController extends Controller
                !empty($request->genero_filter) || 
                !empty($request->promedio_filter);
     }
+    /**
+     * Muestra la vista detallada de calificaciones actuales e historial por periodo.
+     */
+    public function calificaciones(Request $request, $n_control): View
+    {
+        $alumno = Alumno::findOrFail($n_control);
+
+        // 1. CARGA ACADÉMICA ACTUAL
+        // Obtenemos los grupos donde está inscrito actualmente
+        // Cargamos relaciones profundas para mostrar Horarios, Profesores y Calificaciones Parciales
+        $cargaActual = \App\Models\AlumnoGrupo::with([
+            'grupo.materia',
+            'grupo.profesore',
+            'grupo.horarios.aula', // Para pintar el horario tipo la imagen
+            'calificacion'         // Para obtener U1, U2, U3, U4
+        ])
+        ->where('n_control', $n_control)
+        ->get();
+
+        // 2. HISTORIAL DE PERIODOS PASADOS (BOLETA)
+        // Obtener lista de periodos únicos donde el alumno tenga registros en boletas
+        $periodosDisponibles = \App\Models\Boleta::where('n_control', $n_control)
+            ->select('periodo')
+            ->distinct()
+            ->orderBy('periodo', 'desc') // Los más recientes primero
+            ->pluck('periodo');
+
+        $boletasHistorial = collect(); // Colección vacía por defecto
+        $mensajeHistorial = null;
+        $periodoSeleccionado = $request->input('periodo_select');
+
+        // Si el usuario seleccionó un periodo y presionó "Ver"
+        if ($periodoSeleccionado) {
+            $boletasHistorial = \App\Models\Boleta::with(['materia', 'profesor']) // Cargar nombre de materia
+                ->where('n_control', $n_control)
+                ->where('periodo', $periodoSeleccionado)
+                ->get();
+
+            if ($boletasHistorial->isEmpty()) {
+                $mensajeHistorial = "No cuenta con carga en el periodo seleccionado.";
+            }
+        }
+
+        return view('alumno.calificaciones', compact(
+            'alumno', 
+            'cargaActual', 
+            'periodosDisponibles', 
+            'boletasHistorial', 
+            'mensajeHistorial',
+            'periodoSeleccionado'
+        ));
+    }
 }

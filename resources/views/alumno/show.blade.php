@@ -14,14 +14,21 @@
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <h4 class="mb-0">🎓 {{ __('Detalle del Alumno') }}</h4>
                         <div class="float-right">
-                            {{-- ✅ NUEVO BOTÓN: VER KARDEX --}}
-            <a href="{{ route('kardex.show', $alumno->n_control) }}" class="btn btn-warning btn-sm fw-bold text-dark me-2">
-                <i class="fas fa-th me-1"></i> Ver Retícula / Kardex
-            </a>
-                            <a href="{{ route('alumnos.index') }}" class="btn btn-light btn-sm fw-bold">
-                                ← {{ __('Regresar') }}
-                            </a>
-                        </div>
+    {{-- ✅ NUEVO BOTÓN: VER KARDEX --}}
+    <a href="{{ route('kardex.show', $alumno->n_control) }}" class="btn btn-warning btn-sm fw-bold text-dark me-2">
+        <i class="fas fa-th me-1"></i> Ver Retícula / Kardex
+    </a>
+    
+    {{-- AQUÍ AGREGAMOS EL NUEVO BOTÓN --}}
+    <a href="{{ route('alumnos.calificaciones', $alumno->n_control) }}" class="btn btn-info btn-sm fw-bold text-white me-2">
+        <i class="fas fa-clipboard-check me-1"></i> Calificaciones
+    </a>
+    {{-- FIN NUEVO BOTÓN --}}
+
+    <a href="{{ route('alumnos.index') }}" class="btn btn-light btn-sm fw-bold">
+        ← {{ __('Regresar') }}
+    </a>
+</div>
                     </div>
                 </div>
 
