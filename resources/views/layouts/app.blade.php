@@ -189,8 +189,8 @@
                     <ul class="navbar-nav ms-auto">
 
                         @guest
-                            <li class="nav-item"><a class="nav-link" href="{{ route('login') }}">Ingresar</a></li>
-                            <li class="nav-item"><a class="nav-link" href="{{ route('register') }}">Registrarse</a></li>
+                           {{--  <li class="nav-item"><a class="nav-link" href="{{ route('login') }}">Ingresar</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{{ route('register') }}">Registrarse</a></li> --}}
                         @else
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">

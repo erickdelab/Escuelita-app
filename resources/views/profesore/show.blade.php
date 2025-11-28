@@ -13,7 +13,14 @@
                 <div class="card-header text-white" style="background-color: #002D72;">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <h4 class="mb-0">👨‍🏫 {{ __('Detalle del Profesor') }}</h4>
+                        
+                        {{-- BOTONES DE ACCIÓN --}}
                         <div class="float-right">
+                            {{-- ✅ NUEVO BOTÓN: HORARIO --}}
+                            <a href="{{ route('profesores.horario', $profesore->n_trabajador) }}" class="btn btn-primary btn-sm fw-bold me-2" style="background-color: #6f42c1; border-color: #6f42c1;">
+                                <i class="fas fa-calendar-alt me-1"></i> Ver Horario
+                            </a>
+
                             <a href="{{ route('profesores.index') }}" class="btn btn-light btn-sm fw-bold">
                                 ← {{ __('Regresar') }}
                             </a>
@@ -63,9 +70,9 @@
                                             <th>Situación:</th>
                                             <td>
                                                 <span class="badge 
-                                                    @if($profesore->situacion == 'Activo') bg-success
-                                                    @elseif($profesore->situacion == 'Inactivo') bg-danger
-                                                    @elseif($profesore->situacion == 'Jubilado') bg-info
+                                                    @if($profesore->situacion == 'Vigente') bg-success
+                                                    @elseif($profesore->situacion == 'Inactivo/Baja') bg-danger
+                                                    @elseif($profesore->situacion == 'En Asignación') bg-warning text-dark
                                                     @else bg-secondary @endif">
                                                     {{ $profesore->situacion }}
                                                 </span>
@@ -90,12 +97,9 @@
                                     @if($profesore->grupos && $profesore->grupos->count() > 0)
                                         @foreach($profesore->grupos as $grupo)
                                             @php
-                                                // ✅ Asegurar que la materia esté cargada
                                                 if (!$grupo->relationLoaded('materia') && $grupo->cod_materia) {
                                                     $grupo->load('materia');
                                                 }
-                                                
-                                                // ✅ Obtener el nombre de la materia
                                                 $nombreMateria = $grupo->materia->nombre ?? $grupo->nombre_materia ?? 'Materia no encontrada';
                                             @endphp
                                             <div class="d-flex justify-content-between align-items-center mb-3 p-2 border rounded">
@@ -112,9 +116,9 @@
                                                         </span>
                                                     </small>
                                                 </div>
-                                                <a href="{{ route('grupos.show', $grupo) }}" class="btn btn-outline-primary btn-sm">
-    Ver Grupo
-</a>
+                                                <a href="{{ route('grupos.show', $grupo->id_grupo) }}" class="btn btn-outline-primary btn-sm">
+                                                    Ver Grupo
+                                                </a>
                                             </div>
                                         @endforeach
                                     @else

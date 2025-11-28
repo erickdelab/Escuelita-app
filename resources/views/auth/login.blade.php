@@ -117,10 +117,7 @@
 
         <button type="submit" class="btn btn-primary">Ingresar</button>
 
-        <p class="footer-text">
-            ¿No tienes una cuenta?
-            <a href="{{ route('register') }}">Regístrate aquí</a>
-        </p>
+        
     </form>
 </div>
 @endsection

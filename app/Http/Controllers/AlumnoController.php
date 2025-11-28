@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Alumno;
 use App\Models\Carrera;
 use App\Models\Materia;
+use App\Models\User;
 use App\Models\Grupo;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -13,6 +14,7 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Hash;
 
 class AlumnoController extends Controller
 {
@@ -92,8 +94,27 @@ class AlumnoController extends Controller
 
     public function store(AlumnoRequest $request): RedirectResponse
     {
-        Alumno::create($request->validated());
-        return Redirect::route('alumnos.index')->with('success', 'Alumno creado exitosamente.');
+        // 1. Crear el Alumno en la tabla de datos académicos
+        $alumno = Alumno::create($request->validated());
+
+        // 2. Crear AUTOMÁTICAMENTE el Usuario para Login
+        // Verificamos si ya existe un usuario con ese correo para no duplicar
+        if (!User::where('email', $request->email)->exists()) {
+            $user = User::create([
+                'name' => $alumno->nombre . ' ' . $alumno->ap_pat,
+                // Generamos un correo institucional dummy si no tienes campo email en alumno
+                // O usa el del request si lo tienes. Aquí asumo formato:
+                'email' => $alumno->n_control . '@tecnm.mx', 
+                'password' => Hash::make($alumno->n_control), // La contraseña es su N° Control
+                'n_control_link' => $alumno->n_control,
+            ]);
+
+            // 3. Asignar el Rol de Alumno
+            $user->assignRole('alumno');
+        }
+
+        return Redirect::route('alumnos.index')
+            ->with('success', 'Alumno creado y acceso de usuario generado (Pass: N° Control).');
     }
 
     public function show($n_control): View

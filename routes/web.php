@@ -23,7 +23,16 @@ use App\Http\Controllers\{
     StudentPortalController
 };
 
-use App\Http\Controllers\Auth\ChangePasswordController; // <--- IMPORT NECESARIO
+use App\Http\Controllers\Auth\ChangePasswordController; // Import necesario
+
+
+/*
+|--------------------------------------------------------------------------
+| API: Horario Ocupado del Profesor
+|--------------------------------------------------------------------------
+*/
+Route::get('/api/profesores/{id}/horario-ocupado', [GrupoController::class, 'getHorarioOcupado']);
+
 
 
 /*
@@ -35,10 +44,11 @@ use App\Http\Controllers\Auth\ChangePasswordController; // <--- IMPORT NECESARIO
 Route::get('/', fn() => File::get(public_path('index.html')));
 
 // Autenticación Laravel
-Auth::routes();
+Auth::routes(['register' => false]);
 
 // Home después del login
 Route::get('/home', [HomeController::class, 'index'])->name('home');
+
 
 
 /*
@@ -47,6 +57,12 @@ Route::get('/home', [HomeController::class, 'index'])->name('home');
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth'])->group(function () {
+
+    // Horario profesor en portal
+    Route::get('/profesores/{n_trabajador}/horario', 
+        [ProfesoreController::class, 'horario']
+    )->name('profesores.horario');
+
 
     /*
     |--------------------------------------------------------------------------
@@ -64,7 +80,7 @@ Route::middleware(['auth'])->group(function () {
     */
     Route::middleware(['role:admin'])->group(function () {
 
-        // CRUD principales
+        // CRUDs
         Route::resources([
             'profesores' => ProfesoreController::class,
             'materias'   => MateriaController::class,
@@ -137,8 +153,6 @@ Route::middleware(['auth'])->group(function () {
     | ALUMNOS
     |--------------------------------------------------------------------------
     */
-
-    // Inscripción a grupos
     Route::prefix('alumnos/{n_control}/grupos')->name('alumnos.grupos.')->group(function () {
         Route::get('/create', [AlumnoGrupoController::class, 'create'])->name('create');
         Route::post('/', [AlumnoGrupoController::class, 'store'])->name('store');
@@ -188,7 +202,7 @@ Route::middleware(['auth'])->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | CAMBIAR CONTRASEÑA (cualquier usuario autenticado)
+    | CAMBIAR CONTRASEÑA
     |--------------------------------------------------------------------------
     */
     Route::get('/cambiar-password', [ChangePasswordController::class, 'show'])->name('password.change.form');

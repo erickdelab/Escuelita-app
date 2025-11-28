@@ -22,7 +22,9 @@ class AlumnoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'n_control' => 'required|string|max:20',
+           // Cambiamos a max:9 para coincidir con tu base de datos
+            
+            'n_control' => 'required|string|max:9',
             'nombre' => 'required|string|max:50',
             's_nombre' => 'nullable|string|max:50',
             'ap_pat' => 'required|string|max:50',
@@ -45,6 +47,7 @@ class AlumnoRequest extends FormRequest
     {
         return [
             'n_control.required' => 'El número de control es obligatorio.',
+            'n_control.max' => 'El número de control no puede tener más de 9 caracteres.',
             'nombre.required' => 'El primer nombre es obligatorio.',
             'ap_pat.required' => 'El apellido paterno es obligatorio.',
             'ap_mat.required' => 'El apellido materno es obligatorio.',

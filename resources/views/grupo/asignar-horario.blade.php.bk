@@ -37,13 +37,11 @@
                         <div class="col-md-4">
                             <strong>Materia:</strong>
                             <p class="fs-5">{{ $grupo->materia->nombre ?? 'N/A' }} 
-                                <!-- ✅ CORRECCIÓN 1: 'credito' en singular -->
                                 <span class="text-muted">({{ $grupo->materia->credito ?? 'N/A' }} créd.)</span>
                             </p>
                         </div>
                         <div class="col-md-4">
                             <strong>Profesor:</strong>
-                            <!-- ✅ CORRECCIÓN 2: Añadido ap_materno -->
                             <p class="fs-5">{{ $grupo->profesore->nombre ?? 'N/A' }} {{ $grupo->profesore->ap_paterno ?? '' }} {{ $grupo->profesore->ap_materno ?? '' }}</p>
                         </div>
                         <div class="col-md-4">
@@ -55,23 +53,25 @@
 
                 <div class="card-body">
                     <div class="row">
-                        <!-- Columna de Asignación -->
+                        
+                        <!-- Columna Asignación -->
                         <div class="col-md-6">
                             <h5 class="text-primary">Asignar Nuevo Horario</h5>
-                            <p class="text-muted">
-                                Asignar un horario nuevo reemplazará el existente.
-                            </p>
+                            <p class="text-muted">Asignar un horario nuevo reemplazará el existente.</p>
                             
                             <form method="POST" action="{{ route('grupos.horario.store', $grupo->id_grupo) }}">
                                 @csrf
                                 
                                 <div class="alert alert-info py-2">
-                                    <!-- ✅ CORRECCIÓN 1 (aquí también): 'credito' en singular -->
-                                    <small><i class="bi bi-info-circle-fill"></i> La materia tiene <strong>{{ $grupo->materia->credito ?? 'N/A' }} créditos</strong>. El sistema asignará los bloques correspondientes (L-M + V o M-J + V) automáticamente si son 5 créditos.</small>
+                                    <small>
+                                        <i class="bi bi-info-circle-fill"></i> 
+                                        La materia tiene <strong>{{ $grupo->materia->credito ?? 'N/A' }} créditos</strong>. 
+                                        El sistema asignará automáticamente los bloques correspondientes.
+                                    </small>
                                 </div>
                                 
                                 <div class="form-group mb-3">
-                                    <label for="patron" class="form-label fw-bold">Patrón de Horario</label>
+                                    <label class="form-label fw-bold">Patrón de Horario</label>
                                     <select name="patron" id="patron" class="form-select @error('patron') is-invalid @enderror" required>
                                         <option value="">-- Seleccione un patrón --</option>
                                         <option value="L-M" {{ old('patron') == 'L-M' ? 'selected' : '' }}>Lunes y Miércoles</option>
@@ -82,8 +82,9 @@
                                     @enderror
                                 </div>
                                 
+                                <!-- SELECT ANTERIOR DE BLOQUES -->
                                 <div class="form-group mb-3">
-                                    <label for="hora_inicio" class="form-label fw-bold">Hora de Inicio (Bloque)</label>
+                                    <label class="form-label fw-bold">Hora de Inicio (Bloque)</label>
                                     <select name="hora_inicio" id="hora_inicio" class="form-select @error('hora_inicio') is-invalid @enderror" required>
                                         <option value="">-- Seleccione un bloque --</option>
                                         @foreach($allowedStartTimes as $time)
@@ -96,9 +97,30 @@
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
+
+                                <!-- 🚀 NUEVA GRID DE BOTONES (INTEGRADA AQUÍ) -->
+                                <div class="horario-grid mb-3">
+                                    @foreach($allowedStartTimes as $hora)
+                                        @php
+                                            $ocupado = in_array($hora, $horasOcupadasDelProfesor);
+                                            $clase = $ocupado ? 'btn-secondary disabled' : 'btn-outline-success';
+                                        @endphp
+                                        
+                                        <button type="button" 
+                                                class="btn {{ $clase }} m-1 block-selector" 
+                                                data-hora="{{ $hora }}"
+                                                onclick="selectBlock(this)">
+                                            {{ \Carbon\Carbon::parse($hora)->format('H:i') }}
+                                            @if($ocupado) <small>(Ocupado)</small> @endif
+                                        </button>
+                                    @endforeach
+                                </div>
+
+                                <input type="hidden" name="hora_inicio" id="hora_inicio_input">
+
                                 
                                 <div class="form-group mb-3">
-                                    <label for="aula_id" class="form-label fw-bold">Aula</label>
+                                    <label class="form-label fw-bold">Aula</label>
                                     <select name="aula_id" class="form-select @error('aula_id') is-invalid @enderror" id="aula_id" required>
                                         <option value="">-- Seleccione patrón y hora para ver aulas --</option>
                                     </select>
@@ -106,19 +128,20 @@
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
-                                
+
                                 <div class="d-grid">
                                     <button type="submit" class="btn btn-primary btn-lg">
                                         <i class="bi bi-save"></i> Guardar Horario
                                     </button>
                                 </div>
+
                             </form>
                         </div>
 
-                        <!-- Columna de Horario Actual -->
+                        <!-- Columna Horario Actual -->
                         <div class="col-md-6 border-start">
                             <h5 class="text-primary">Horario Actual Asignado</h5>
-                            
+
                             @if($grupo->horarios->isEmpty())
                                 <div class="alert alert-warning text-center">
                                     <i class="bi bi-calendar-x fs-1"></i>
@@ -149,28 +172,30 @@
                                 <form method="POST" action="{{ route('grupos.horario.destroy', $grupo->id_grupo) }}" class="d-grid mt-3">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-outline-danger"
-                                        onclick="return confirm('¿Estás seguro de que deseas ELIMINAR el horario actual de este grupo?')">
+                                    <button type="submit" class="btn btn-outline-danger" onclick="return confirm('¿Eliminar todo el horario?')">
                                         <i class="bi bi-trash"></i> Eliminar Horario Actual
                                     </button>
                                 </form>
                             @endif
+
                         </div>
+
                     </div>
                 </div>
+
             </div>
+
         </div>
     </div>
 </div>
 @endsection
 
+
 @push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         
-        // La materia es fija para este grupo, la obtenemos de Blade
         const materiaId = "{{ $grupo->cod_materia }}";
-        
         const patronSelect = document.getElementById('patron');
         const horaSelect = document.getElementById('hora_inicio');
         const aulaSelect = document.getElementById('aula_id');
@@ -180,7 +205,6 @@
             const patron = patronSelect.value;
             const horaInicio = horaSelect.value;
 
-            // materiaId ya la tenemos, solo validamos patron y hora
             if (!patron || !horaInicio) {
                 resetAulaSelect('Seleccione patrón y hora...');
                 return;
@@ -197,7 +221,7 @@
                         'Accept': 'application/json'
                     },
                     body: JSON.stringify({
-                        materia_id: materiaId, // Usamos la variable fija
+                        materia_id: materiaId,
                         patron: patron,
                         hora_inicio: horaInicio
                     })
@@ -209,18 +233,18 @@
                 populateAulaSelect(data.disponibles, data.ocupadas);
 
             } catch (error) {
-                console.error('Error en fetchAulasDisponibles:', error);
+                console.error('Error:', error);
                 resetAulaSelect('Error al cargar aulas', true);
             }
         }
         
         function resetAulaSelect(message, isError = false) {
             aulaSelect.innerHTML = '';
-            const defaultOption = document.createElement('option');
-            defaultOption.value = '';
-            defaultOption.textContent = message;
-            if (isError) defaultOption.style.color = 'red';
-            aulaSelect.appendChild(defaultOption);
+            const opt = document.createElement('option');
+            opt.value = '';
+            opt.textContent = message;
+            if (isError) opt.style.color = 'red';
+            aulaSelect.appendChild(opt);
         }
 
         function populateAulaSelect(disponibles, ocupadas) {
@@ -231,7 +255,6 @@
             defaultOption.textContent = '-- Seleccione un Aula --';
             aulaSelect.appendChild(defaultOption);
 
-            // Disponibles
             disponibles.forEach(aula => {
                 const option = document.createElement('option');
                 option.value = aula.id;
@@ -239,26 +262,52 @@
                 aulaSelect.appendChild(option);
             });
 
-            // Ocupadas (Deshabilitadas)
             if (ocupadas.length > 0) {
-                 const optGroup = document.createElement('optgroup');
-                 optGroup.label = 'Aulas Ocupadas';
-                 aulaSelect.appendChild(optGroup);
+                const optGroup = document.createElement('optgroup');
+                optGroup.label = 'Aulas Ocupadas';
+                aulaSelect.appendChild(optGroup);
 
                 ocupadas.forEach(aula => {
                     const option = document.createElement('option');
                     option.value = aula.id;
-                    option.textContent = `${aula.nombre} (Cap: ${aula.capacidad})`;
                     option.disabled = true;
                     option.style.color = '#999';
+                    option.textContent = `${aula.nombre} (Cap: ${aula.capacidad})`;
                     optGroup.appendChild(option);
                 });
             }
         }
 
-        // Escuchamos solo patrón y hora
         patronSelect.addEventListener('change', fetchAulasDisponibles);
         horaSelect.addEventListener('change', fetchAulasDisponibles);
     });
+
+
+    // ⭐ NUEVA FUNCIÓN PARA LOS BOTONES DE BLOQUES
+    function selectBlock(btn) {
+
+        // Reset visual
+        document.querySelectorAll('.block-selector').forEach(b => {
+            if(!b.classList.contains('disabled')) {
+                b.classList.remove('btn-success');
+                b.classList.add('btn-outline-success');
+            }
+        });
+
+        // Activar seleccionado
+        btn.classList.remove('btn-outline-success');
+        btn.classList.add('btn-success');
+
+        // Guardar valor en input oculto
+        document.getElementById('hora_inicio_input').value = btn.dataset.hora;
+
+        // Asignar al select original por compatibilidad
+        document.getElementById('hora_inicio').value = btn.dataset.hora;
+
+        // Buscar aulas
+        const event = new Event('change');
+        document.getElementById('hora_inicio').dispatchEvent(event);
+    }
+
 </script>
 @endpush
