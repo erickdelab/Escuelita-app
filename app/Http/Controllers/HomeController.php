@@ -11,6 +11,7 @@ use App\Models\Area;
 use App\Models\Historial;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Auth; // ✅ Importante
 
 class HomeController extends Controller
 {
@@ -25,11 +26,26 @@ class HomeController extends Controller
     }
 
     /**
-     * Muestra el panel de control, cargando el conteo de registros.
+     * Muestra el panel de control.
      */
-    public function index(Request $request): View
+    public function index(Request $request)
     {
-        // 1. Contamos los registros de cada tabla usando el método count() de Eloquent
+        $user = Auth::user();
+
+        // =========================================================
+        // 🚀 LÓGICA DE REDIRECCIÓN AUTOMÁTICA
+        // =========================================================
+        
+        // 1. Si es ALUMNO, redirigir a su portal exclusivo
+        if ($user->hasRole('alumno')) {
+            return redirect()->route('student.dashboard');
+        }
+
+        // =========================================================
+        // 🖥️ DASHBOARD ADMINISTRATIVO (Para Admins y Profesores)
+        // =========================================================
+        
+        // Si NO es alumno (es Admin o Profe), calculamos las estadísticas
         $counts = [
             'alumnos' => Alumno::count(),
             'carreras' => Carrera::count(),
@@ -40,7 +56,7 @@ class HomeController extends Controller
             'historials' => Historial::count(),
         ];
         
-        // 2. Pasamos los conteos a la vista 'home'
+        // Y mostramos la vista original del administrador
         return view('home', compact('counts'));
     }
 }

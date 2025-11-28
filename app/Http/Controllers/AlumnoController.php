@@ -204,6 +204,17 @@ class AlumnoController extends Controller
      */
     public function calificaciones(Request $request, $n_control): View
     {
+
+        $user = auth()->user();
+
+    // 🔒 SEGURIDAD: Solo restringe si es alumno Y NO es admin
+    if ($user->hasRole('alumno') && !$user->hasRole('admin')) {
+        if ($user->n_control_link !== $n_control) {
+            abort(403, 'No tienes permiso para ver las calificaciones de otro alumno.');
+        }
+    }
+
+    // 🔒 SEGURIDAD: Si es profesor, verificar que el alumno esté en uno de sus grupos (Opcional, más avanzado)
         $alumno = Alumno::with('carrera')->findOrFail($n_control);
 
         // 1. CARGA ACADÉMICA ACTUAL

@@ -8,6 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
+        if (!Schema::hasTable('aulas')) { 
         Schema::create('aulas', function (Blueprint $table) {
             $table->id();
             $table->string('nombre'); // E.g., "Edificio A - 101"
@@ -15,6 +16,9 @@ return new class extends Migration
             $table->timestamps();
         });
     }
+    }
+
+    
 
     public function down(): void
     {

@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Auth;
+
 use App\Http\Controllers\{
     TablaController,
     AreaController,
@@ -18,36 +19,38 @@ use App\Http\Controllers\{
     PeriodoController,
     AulaController,
     KardexController,
-    CalificacionController
+    CalificacionController,
+    StudentPortalController
 };
+
+use App\Http\Controllers\Auth\ChangePasswordController; // <--- IMPORT NECESARIO
+
 
 /*
 |--------------------------------------------------------------------------
-| Rutas Públicas
+| RUTAS PÚBLICAS
 |--------------------------------------------------------------------------
 */
 
-// 🏠 Página principal pública
 Route::get('/', fn() => File::get(public_path('index.html')));
 
-// 🔐 Rutas de autenticación
+// Autenticación Laravel
 Auth::routes();
 
-// 🏡 Home después de iniciar sesión
+// Home después del login
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 
 
 /*
 |--------------------------------------------------------------------------
-| Rutas Protegidas (Requieren Login)
+| RUTAS PROTEGIDAS (requieren login)
 |--------------------------------------------------------------------------
 */
-
 Route::middleware(['auth'])->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | ADMINISTRACIÓN GENERAL Y TABLAS
+    | TABLAS
     |--------------------------------------------------------------------------
     */
     Route::view('/tablas', 'tablas.index')->name('tablas.index');
@@ -56,40 +59,55 @@ Route::middleware(['auth'])->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | CRUD PRINCIPALES
+    | ADMIN (solo admin)
     |--------------------------------------------------------------------------
     */
-    Route::resources([
-        'profesores' => ProfesoreController::class,
-        'materias'   => MateriaController::class,
-        'historials' => HistorialController::class,
-        'alumnos'    => AlumnoController::class,
-        'carreras'   => CarreraController::class,
-        'areas'      => AreaController::class,
-        'periodos'   => PeriodoController::class,
-        'aulas'      => AulaController::class,
-        'grupos'     => GrupoController::class,
-    ]);
+    Route::middleware(['role:admin'])->group(function () {
+
+        // CRUD principales
+        Route::resources([
+            'profesores' => ProfesoreController::class,
+            'materias'   => MateriaController::class,
+            'historials' => HistorialController::class,
+            'alumnos'    => AlumnoController::class,
+            'carreras'   => CarreraController::class,
+            'areas'      => AreaController::class,
+            'periodos'   => PeriodoController::class,
+            'aulas'      => AulaController::class,
+            'grupos'     => GrupoController::class,
+        ]);
+    });
 
 
     /*
     |--------------------------------------------------------------------------
-    | MÓDULO DE GRUPOS (Horarios y Calificaciones)
+    | ACCESO COMPARTIDO: Admin + Profesor
+    |--------------------------------------------------------------------------
+    */
+    Route::get('/alumnos', [AlumnoController::class, 'index'])
+        ->middleware('role:admin|profesor')
+        ->name('alumnos.index');
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | GRUPOS (Horario y Calificaciones)
     |--------------------------------------------------------------------------
     */
 
-    // --- Asignación de Horarios ---
+    // Horarios
     Route::get('/grupos/{grupo}/asignar-hora', [GrupoController::class, 'showHoraForm'])->name('grupos.hora.show');
     Route::post('/grupos/{grupo}/asignar-hora', [GrupoController::class, 'storeHora'])->name('grupos.hora.store');
 
+    // Aulas
     Route::get('/grupos/{grupo}/asignar-aula', [GrupoController::class, 'showAulaForm'])->name('grupos.aula.show');
     Route::post('/grupos/{grupo}/asignar-aula', [GrupoController::class, 'storeAula'])->name('grupos.aula.store');
 
-    // --- Utilidades de Horarios ---
+    // Utilidades
     Route::post('/grupos/verificar-aulas', [GrupoController::class, 'verificarAulas'])->name('grupos.verificarAulas');
     Route::delete('/grupos/{grupo}/eliminar-horario', [GrupoController::class, 'destroyHorario'])->name('grupos.horario.destroy');
 
-    // --- Calificaciones ---
+    // Calificaciones
     Route::prefix('grupos')->name('grupos.calificar.')->group(function () {
         Route::get('/{id}/calificar', [CalificacionController::class, 'index'])->name('index');
         Route::post('/calificar/guardar', [CalificacionController::class, 'store'])->name('store');
@@ -99,7 +117,7 @@ Route::middleware(['auth'])->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | MÓDULO DE KARDEX
+    | KARDEX
     |--------------------------------------------------------------------------
     */
     Route::get('/kardex/{n_control}', [KardexController::class, 'show'])->name('kardex.show');
@@ -107,7 +125,7 @@ Route::middleware(['auth'])->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | MÓDULO DE MATERIAS (Acciones Extra)
+    | MATERIAS - Acción especial
     |--------------------------------------------------------------------------
     */
     Route::post('materias/{cod_materia}/reactivar', [MateriaController::class, 'reactivar'])
@@ -116,11 +134,11 @@ Route::middleware(['auth'])->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | MÓDULO DE ALUMNOS (Inscripciones, Calificaciones, Horario)
+    | ALUMNOS
     |--------------------------------------------------------------------------
     */
 
-    // Inscripciones a grupos
+    // Inscripción a grupos
     Route::prefix('alumnos/{n_control}/grupos')->name('alumnos.grupos.')->group(function () {
         Route::get('/create', [AlumnoGrupoController::class, 'create'])->name('create');
         Route::post('/', [AlumnoGrupoController::class, 'store'])->name('store');
@@ -131,14 +149,14 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/alumnos/{n_control}/calificaciones', [AlumnoController::class, 'calificaciones'])
         ->name('alumnos.calificaciones');
 
-    // ⭐ NUEVA RUTA AGREGADA: Horario del alumno
+    // Horario del alumno
     Route::get('/alumnos/{n_control}/horario', [AlumnoController::class, 'horario'])
         ->name('alumnos.horario');
 
 
     /*
     |--------------------------------------------------------------------------
-    | MÓDULO DE REPORTES
+    | REPORTES
     |--------------------------------------------------------------------------
     */
     Route::prefix('reportes')->name('reportes.')->group(function () {
@@ -149,5 +167,31 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/estadisticas', [ReporteController::class, 'reporteEstadisticas'])->name('estadisticas');
         Route::get('/alumnos-especial-tics', [ReporteController::class, 'alumnosEspecialTICS'])->name('alumnos_especial_tics');
     });
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | PORTAL ESTUDIANTE (solo rol alumno)
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware(['role:alumno'])
+        ->prefix('student')
+        ->name('student.')
+        ->group(function () {
+            Route::get('/dashboard', [StudentPortalController::class, 'dashboard'])->name('dashboard');
+            Route::get('/horario', [StudentPortalController::class, 'horario'])->name('horario');
+            Route::get('/calificaciones', [StudentPortalController::class, 'calificaciones'])->name('calificaciones');
+            Route::get('/kardex', [StudentPortalController::class, 'kardex'])->name('kardex');
+            Route::get('/carga-materias', [StudentPortalController::class, 'carga'])->name('carga');
+        });
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | CAMBIAR CONTRASEÑA (cualquier usuario autenticado)
+    |--------------------------------------------------------------------------
+    */
+    Route::get('/cambiar-password', [ChangePasswordController::class, 'show'])->name('password.change.form');
+    Route::post('/cambiar-password', [ChangePasswordController::class, 'update'])->name('password.change.update');
 
 });

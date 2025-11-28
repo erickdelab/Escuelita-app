@@ -10,11 +10,12 @@ return new class extends Migration
      * Run the migrations.
      */
    public function up(): void
-{
+{   if (!Schema::hasTable('grupos')) { 
     Schema::table('grupos', function (Blueprint $table) {
         $table->string('patron')->nullable();
         $table->time('hora_inicio')->nullable();
     });
+}
 }
 
 public function down(): void

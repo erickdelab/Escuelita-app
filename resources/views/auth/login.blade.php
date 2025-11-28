@@ -79,24 +79,23 @@
 </style>
 
 <div class="login-container">
-    {{-- Si descargaste el logo en public/images --}}
-    <img src="{{ asset('images/tecnm-rosa.jpg') }}" alt="">
-    {{-- O usar directamente la URL externa --}}
-    {{-- <img src="https://www.tecnm.mx/assets/files/main/img/pleca_tecnm_rosa.jpg?img=33" alt="Logo TecNM Rosa"> --}}
+    {{-- Imagen del logo --}}
+    <img src="{{ asset('https://www.tecnm.mx/images/tecnm_virtual/tecnm.png') }}" alt="Logo TecNM">
 
-    <h4>Iniciar Sesión</h4>
+    <h4>Acceso al Sistema</h4>
 
     <form method="POST" action="{{ route('login') }}">
         @csrf
 
         <div class="mb-3 text-start">
-            <label for="email" class="form-label">Correo Institucional</label>
-            <input id="email" type="email"
-                   class="form-control @error('email') is-invalid @enderror"
-                   name="email" value="{{ old('email') }}" required autofocus
-                   placeholder="Tu correo institucional">
+            <label for="login_id" class="form-label">Usuario</label>
+            {{-- Cambiamos type="email" a type="text" y name="email" a name="login_id" --}}
+            <input id="login_id" type="text"
+                   class="form-control @error('login_id') is-invalid @enderror"
+                   name="login_id" value="{{ old('login_id') }}" required autofocus
+                   placeholder="Correo, No. Control o No. Trabajador">
 
-            @error('email')
+            @error('login_id')
                 <span class="invalid-feedback" role="alert">
                     <strong>{{ $message }}</strong>
                 </span>

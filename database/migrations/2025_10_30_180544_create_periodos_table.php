@@ -6,21 +6,19 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
-    {
+   public function up()
+{
+    if (!Schema::hasTable('periodos')) { // <--- Agrega esto
         Schema::create('periodos', function (Blueprint $table) {
             $table->id();
-            $table->string('periodo_nombre'); // Enero-Junio, Agosto-Diciembre
-            $table->integer('anio'); // 2020, 2021, 2022, etc.
-            $table->string('codigo_periodo')->unique(); // ENEJUN20, AGODIC20, etc.
+            $table->string('periodo_nombre');
+            $table->integer('anio');
+            $table->string('codigo_periodo');
             $table->boolean('activo')->default(true);
             $table->timestamps();
-
-            // Índices
-            $table->index('anio');
-            $table->index('activo');
         });
     }
+}
 
     public function down()
     {

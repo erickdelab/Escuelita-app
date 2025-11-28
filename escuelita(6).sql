@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 27-11-2025 a las 20:57:45
+-- Tiempo de generación: 28-11-2025 a las 01:52:04
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -50,6 +50,7 @@ CREATE TABLE `alumnos` (
 --
 
 INSERT INTO `alumnos` (`n_control`, `contraseña`, `id_carrera`, `nombre`, `s_nombre`, `ap_pat`, `ap_mat`, `fech_nac`, `genero`, `FKid_carrera`, `situacion`, `semestre`, `promedio_general`, `created_at`, `updated_at`) VALUES
+('000111', NULL, NULL, 'Hola', 'Soy', 'El', 'Mencho', '2000-02-01', 'M', 1, 'Vigente', 1, NULL, '2025-11-28 05:54:58', '2025-11-28 05:54:58'),
 ('091234', '091234', NULL, 'Jimmy', 'Baraquiel', 'Valenzuela', 'Álvarez', '2000-11-21', 'M', 1, 'Vigente', 1, 100.00, '2025-11-19 03:48:30', '2025-11-26 02:09:51'),
 ('123', '123', NULL, 'juan', 'Pablo', 'Escobar', 'Sultan', '2002-07-08', 'M', 8, 'Vigente', 2, 97.96, '2025-10-24 00:53:58', '2025-10-31 02:10:03'),
 ('19222128', '19222128', NULL, 'Andrés', 'Manuel', 'Pérez', 'Fernández', '2000-12-01', 'M', 1, 'Vigente', 3, 89.00, NULL, '2025-10-31 02:54:10'),
@@ -308,26 +309,6 @@ CREATE TABLE `cache` (
   `expiration` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Volcado de datos para la tabla `cache`
---
-
-INSERT INTO `cache` (`key`, `value`, `expiration`) VALUES
-('adknd@ssa.com|10.58.0.242', 'i:1;', 1763669259),
-('adknd@ssa.com|10.58.0.242:timer', 'i:1763669259;', 1763669259),
-('admin1@admin.com|127.0.0.1', 'i:1;', 1764094296),
-('admin1@admin.com|127.0.0.1:timer', 'i:1764094296;', 1764094296),
-('carlos@carlos.com|127.0.0.1', 'i:1;', 1764265560),
-('carlos@carlos.com|127.0.0.1:timer', 'i:1764265560;', 1764265560),
-('carlosmoran0119@gmail.com|10.58.0.242', 'i:2;', 1763668396),
-('carlosmoran0119@gmail.com|10.58.0.242:timer', 'i:1763668396;', 1763668396),
-('jajuwquj@aja.com|10.58.0.242', 'i:2;', 1763668345),
-('jajuwquj@aja.com|10.58.0.242:timer', 'i:1763668345;', 1763668345),
-('user@user.com|10.58.0.242', 'i:1;', 1763665423),
-('user@user.com|10.58.0.242:timer', 'i:1763665423;', 1763665423),
-('werfe@defew.com|127.0.0.1', 'i:1;', 1763678126),
-('werfe@defew.com|127.0.0.1:timer', 'i:1763678126;', 1763678126);
-
 -- --------------------------------------------------------
 
 --
@@ -388,7 +369,8 @@ INSERT INTO `calificaciones_grupo` (`id`, `alumno_grupo_id`, `u1`, `u2`, `u3`, `
 (23, 54, 90.00, 90.00, 90.00, 90.00, 90.00, '2025-11-28 00:32:06', '2025-11-28 00:32:06'),
 (24, 58, 90.00, 100.00, 90.00, 90.00, 92.50, '2025-11-28 00:46:15', '2025-11-28 00:46:15'),
 (25, 23, 70.00, 70.00, 70.00, 90.00, 75.00, '2025-11-28 00:46:29', '2025-11-28 00:46:29'),
-(26, 59, 70.00, 70.00, 70.00, 70.00, 70.00, '2025-11-28 00:50:31', '2025-11-28 00:50:31');
+(26, 59, 70.00, 70.00, 70.00, 70.00, 70.00, '2025-11-28 00:50:31', '2025-11-28 00:50:31'),
+(27, 61, 80.00, 95.00, 70.00, 72.00, 79.25, '2025-11-28 05:35:15', '2025-11-28 05:35:53');
 
 -- --------------------------------------------------------
 
@@ -793,7 +775,126 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (2, '0001_01_01_000001_create_cache_table', 1),
 (3, '0001_01_01_000002_create_jobs_table', 1),
 (4, '2025_10_02_013114_create_areas_table', 1),
-(5, '2025_11_18_202902_create_boletas_table', 2);
+(5, '2025_11_18_202902_create_boletas_table', 2),
+(6, '2025_10_23_190826_add_id_carrera_to_alumnos_table', 3),
+(7, '2025_10_30_180544_create_periodos_table', 4),
+(8, '2025_11_06_171948_create_aulas_table', 5),
+(9, '2025_11_06_172121_create_horarios_table', 6),
+(10, '2025_11_11_220745_add_patron_and_hora_inicio_to_grupos_table', 7),
+(11, '2025_11_12_061528_remove_patron_from_horarios_table', 8),
+(12, '2025_11_27_221752_create_permission_tables', 8),
+(13, '2025_11_27_222440_add_profile_fields_to_users_table', 9),
+(14, '2025_11_27_224640_add_links_to_users_table', 10);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `model_has_permissions`
+--
+
+CREATE TABLE `model_has_permissions` (
+  `permission_id` bigint(20) UNSIGNED NOT NULL,
+  `model_type` varchar(255) NOT NULL,
+  `model_id` bigint(20) UNSIGNED NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `model_has_roles`
+--
+
+CREATE TABLE `model_has_roles` (
+  `role_id` bigint(20) UNSIGNED NOT NULL,
+  `model_type` varchar(255) NOT NULL,
+  `model_id` bigint(20) UNSIGNED NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `model_has_roles`
+--
+
+INSERT INTO `model_has_roles` (`role_id`, `model_type`, `model_id`) VALUES
+(1, 'App\\Models\\User', 4),
+(2, 'App\\Models\\User', 5),
+(3, 'App\\Models\\User', 6),
+(3, 'App\\Models\\User', 7),
+(3, 'App\\Models\\User', 8),
+(3, 'App\\Models\\User', 9),
+(3, 'App\\Models\\User', 10),
+(3, 'App\\Models\\User', 11),
+(3, 'App\\Models\\User', 12),
+(3, 'App\\Models\\User', 13),
+(3, 'App\\Models\\User', 14),
+(3, 'App\\Models\\User', 15),
+(3, 'App\\Models\\User', 16),
+(3, 'App\\Models\\User', 17),
+(3, 'App\\Models\\User', 18),
+(3, 'App\\Models\\User', 19),
+(3, 'App\\Models\\User', 20),
+(3, 'App\\Models\\User', 21),
+(3, 'App\\Models\\User', 22),
+(3, 'App\\Models\\User', 23),
+(3, 'App\\Models\\User', 24),
+(3, 'App\\Models\\User', 25),
+(3, 'App\\Models\\User', 26),
+(3, 'App\\Models\\User', 27),
+(3, 'App\\Models\\User', 28),
+(3, 'App\\Models\\User', 29),
+(3, 'App\\Models\\User', 30),
+(3, 'App\\Models\\User', 31),
+(3, 'App\\Models\\User', 32),
+(3, 'App\\Models\\User', 33),
+(3, 'App\\Models\\User', 34),
+(3, 'App\\Models\\User', 35),
+(3, 'App\\Models\\User', 36),
+(3, 'App\\Models\\User', 37),
+(3, 'App\\Models\\User', 38),
+(3, 'App\\Models\\User', 39),
+(3, 'App\\Models\\User', 40),
+(3, 'App\\Models\\User', 41),
+(3, 'App\\Models\\User', 42),
+(3, 'App\\Models\\User', 43),
+(3, 'App\\Models\\User', 44),
+(3, 'App\\Models\\User', 45),
+(3, 'App\\Models\\User', 46),
+(3, 'App\\Models\\User', 47),
+(3, 'App\\Models\\User', 48),
+(3, 'App\\Models\\User', 49),
+(3, 'App\\Models\\User', 50),
+(3, 'App\\Models\\User', 51),
+(3, 'App\\Models\\User', 52),
+(3, 'App\\Models\\User', 53),
+(3, 'App\\Models\\User', 54),
+(3, 'App\\Models\\User', 55),
+(3, 'App\\Models\\User', 56),
+(3, 'App\\Models\\User', 57),
+(3, 'App\\Models\\User', 58),
+(3, 'App\\Models\\User', 59),
+(3, 'App\\Models\\User', 60),
+(3, 'App\\Models\\User', 61),
+(3, 'App\\Models\\User', 62),
+(3, 'App\\Models\\User', 63),
+(3, 'App\\Models\\User', 64),
+(3, 'App\\Models\\User', 65),
+(3, 'App\\Models\\User', 66),
+(3, 'App\\Models\\User', 67),
+(3, 'App\\Models\\User', 68),
+(3, 'App\\Models\\User', 69),
+(3, 'App\\Models\\User', 70),
+(3, 'App\\Models\\User', 71),
+(3, 'App\\Models\\User', 72),
+(3, 'App\\Models\\User', 73),
+(3, 'App\\Models\\User', 74),
+(3, 'App\\Models\\User', 75),
+(3, 'App\\Models\\User', 76),
+(3, 'App\\Models\\User', 77),
+(3, 'App\\Models\\User', 78),
+(3, 'App\\Models\\User', 79),
+(3, 'App\\Models\\User', 80),
+(3, 'App\\Models\\User', 81),
+(3, 'App\\Models\\User', 82),
+(3, 'App\\Models\\User', 83);
 
 -- --------------------------------------------------------
 
@@ -845,6 +946,29 @@ INSERT INTO `periodos` (`id`, `periodo_nombre`, `anio`, `codigo_periodo`, `activ
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `permissions`
+--
+
+CREATE TABLE `permissions` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `guard_name` varchar(255) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `permissions`
+--
+
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES
+(1, 'ver todo', 'web', '2025-11-28 04:30:34', '2025-11-28 04:30:34'),
+(2, 'calificar', 'web', '2025-11-28 04:30:34', '2025-11-28 04:30:34'),
+(3, 'ver propias calificaciones', 'web', '2025-11-28 04:30:34', '2025-11-28 04:30:34');
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `profesores`
 --
 
@@ -885,6 +1009,51 @@ INSERT INTO `profesores` (`n_trabajador`, `contraseña`, `nombre`, `s_nombre`, `
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `roles`
+--
+
+CREATE TABLE `roles` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `guard_name` varchar(255) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `roles`
+--
+
+INSERT INTO `roles` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES
+(1, 'admin', 'web', '2025-11-28 04:30:34', '2025-11-28 04:30:34'),
+(2, 'profesor', 'web', '2025-11-28 04:30:34', '2025-11-28 04:30:34'),
+(3, 'alumno', 'web', '2025-11-28 04:30:34', '2025-11-28 04:30:34');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `role_has_permissions`
+--
+
+CREATE TABLE `role_has_permissions` (
+  `permission_id` bigint(20) UNSIGNED NOT NULL,
+  `role_id` bigint(20) UNSIGNED NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `role_has_permissions`
+--
+
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES
+(1, 1),
+(2, 1),
+(2, 2),
+(3, 1),
+(3, 3);
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `sessions`
 --
 
@@ -902,7 +1071,8 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('J1aa4D83m2zutxBKDJeSBpeRreCuDxQYSF411Xa7', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:145.0) Gecko/20100101 Firefox/145.0', 'YTo1OntzOjY6Il90b2tlbiI7czo0MDoiTFlvZEU5b09SUWVBSjNFeDhYV3dVU3VkNVFGRzZvYTU4ZHZBMDZEaiI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6Mjk6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9hbHVtbm9zIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6MTtzOjQ6ImF1dGgiO2E6MTp7czoyMToicGFzc3dvcmRfY29uZmlybWVkX2F0IjtpOjE3NjQyNjU1MTc7fX0=', 1764273251);
+('sjVb0JCRItkeDqLnxK2SpQ64AYDTYxAkx373APzx', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:145.0) Gecko/20100101 Firefox/145.0', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoid29WdlB1bGxpVGs1MXZPQ0tOZGZPa2xJTVdYWW9SY0JMQW8zMURPdiI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6Mjc6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9sb2dpbiI7fXM6MzoidXJsIjthOjE6e3M6ODoiaW50ZW5kZWQiO3M6MzI6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9wcm9mZXNvcmVzIjt9fQ==', 1764290891),
+('xsbFIkcfYU3r5NzfhfVK3odCOokaDfJKm9xihf7x', NULL, '10.55.0.7', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:145.0) Gecko/20100101 Firefox/145.0', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiUmJvUHE1ZnUzWWNWbTFEOTFvVFpER3pyMXBsbVFLTGhHNTMxcWVxOCI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MjQ6Imh0dHA6Ly8xMC41NS41LjExMi9sb2dpbiI7fX0=', 1764290425);
 
 -- --------------------------------------------------------
 
@@ -914,6 +1084,8 @@ CREATE TABLE `users` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `name` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
+  `n_control_link` varchar(255) DEFAULT NULL,
+  `n_trabajador_link` varchar(255) DEFAULT NULL,
   `email_verified_at` timestamp NULL DEFAULT NULL,
   `password` varchar(255) NOT NULL,
   `remember_token` varchar(100) DEFAULT NULL,
@@ -925,11 +1097,90 @@ CREATE TABLE `users` (
 -- Volcado de datos para la tabla `users`
 --
 
-INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
-(1, 'eric', 'erick@erick.com', NULL, '$2y$12$MqLiNKSb4KOIPyyX3rR14.W431KKi.uFtx286WOMUh5C70SSaMW.6', NULL, '2025-10-15 11:45:59', '2025-10-15 11:45:59'),
-(2, 'eric', 'eric@eric.com', NULL, '$2y$12$K2nLkcV6MSYICuauCapV7u1Fe5UalLZWC7WLgkvC3v92nSUDEIaa.', NULL, '2025-10-16 22:51:39', '2025-10-16 22:51:39'),
-(3, 'carlos', 'carlos@gmail.com', NULL, '$2y$12$r/7muLckfOikwQKsdfwUVeNkMAijJz.fHp1GNeq2DBjatHyMKibj6', NULL, '2025-10-24 00:24:04', '2025-10-24 00:24:04'),
-(4, 'admin', 'admin@admin.com', NULL, '$2y$12$OgYEnfRIfO65XEO9Oh0U8OFU.yGhUOEIz1eT2bcWwF8w7QfT5iGJq', NULL, '2025-11-21 01:03:39', '2025-11-21 01:03:39');
+INSERT INTO `users` (`id`, `name`, `email`, `n_control_link`, `n_trabajador_link`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
+(1, 'eric', 'erick@erick.com', NULL, NULL, NULL, '$2y$12$MqLiNKSb4KOIPyyX3rR14.W431KKi.uFtx286WOMUh5C70SSaMW.6', NULL, '2025-10-15 11:45:59', '2025-10-15 11:45:59'),
+(2, 'eric', 'eric@eric.com', NULL, NULL, NULL, '$2y$12$K2nLkcV6MSYICuauCapV7u1Fe5UalLZWC7WLgkvC3v92nSUDEIaa.', NULL, '2025-10-16 22:51:39', '2025-10-16 22:51:39'),
+(3, 'carlos', 'carlos@gmail.com', NULL, NULL, NULL, '$2y$12$r/7muLckfOikwQKsdfwUVeNkMAijJz.fHp1GNeq2DBjatHyMKibj6', NULL, '2025-10-24 00:24:04', '2025-10-24 00:24:04'),
+(4, 'admin', 'admin@admin.com', NULL, NULL, NULL, '$2y$12$ciCsW0rDIhZWksdwX1ILLeQXrYUa1ARw42hs05CTBx.XvjcDtwRXK', NULL, '2025-11-21 01:03:39', '2025-11-28 06:38:20'),
+(5, 'Carlos Torres Moran', 'Torres@carlos', NULL, 'CAMOTO1', NULL, '$2y$12$GZR3blFwxgBbP0twhjVqouGay.UPtPXOPGbPojrLj7tBxTHWPCB0W', NULL, '2025-11-28 04:47:59', '2025-11-28 04:47:59'),
+(6, 'Jimmy Valenzuela', '091234@tecnm.mx', '091234', NULL, NULL, '$2y$12$Io.rpFcfjETKnjs0nga4kuWPkStj8v27gLAVdFmy5luAZv/COgB46', NULL, '2025-11-28 04:48:00', '2025-11-28 06:38:22'),
+(7, 'Hola El', '000111@tecnm.mx', '000111', NULL, NULL, '$2y$12$F/M6QImvuXFmP.ycRcvPT.YL6FB78KSIzXowKsDl9VALumJ/aL6aG', NULL, '2025-11-28 06:24:39', '2025-11-28 06:38:21'),
+(8, 'juan Escobar', '123@tecnm.mx', '123', NULL, NULL, '$2y$12$mBJY8thCuDDSfqCVYhGj7eozVrl.fnz76Mvmhu4FtTc3U.REtvATq', NULL, '2025-11-28 06:24:39', '2025-11-28 06:38:22'),
+(9, 'Andrés Pérez', '19222128@tecnm.mx', '19222128', NULL, NULL, '$2y$12$rqo56DktFGrHBQyMGH33vO6LvHaae81o8oJ5xqPga8rxWuoR.VMPW', NULL, '2025-11-28 06:24:40', '2025-11-28 06:38:23'),
+(10, 'Juan Soria', '19222164@tecnm.mx', '19222164', NULL, NULL, '$2y$12$8Z2KZ8F2eDaj9LxFL1apteApu6Wrl4h4B59ZFAzMptJzOCH1dNeJO', NULL, '2025-11-28 06:24:40', '2025-11-28 06:38:23'),
+(11, 'José Hernández', '19222168@tecnm.mx', '19222168', NULL, NULL, '$2y$12$HfinuV1sSjPxO5ndNyHH/OTFxuPk7JfNTYz0pOk/kp72VI1qn7w9i', NULL, '2025-11-28 06:24:41', '2025-11-28 06:38:23'),
+(12, 'Ricardo Castillo', '19233245@tecnm.mx', '19233245', NULL, NULL, '$2y$12$Y/Z.fqxeIgUpPYj2p4urQ.BQw.ohaQGcsypUdv7bXshTQ/GlHj7E.', NULL, '2025-11-28 06:24:41', '2025-11-28 06:38:24'),
+(13, 'Elena Ramírez', '20212178@tecnm.mx', '20212178', NULL, NULL, '$2y$12$BW2zpffqaEXK6.eUJykplOmSop59DtAJJHF22rWjxHTuJZmpZ.v86', NULL, '2025-11-28 06:24:41', '2025-11-28 06:38:24'),
+(14, 'Pedro García', '20222165@tecnm.mx', '20222165', NULL, NULL, '$2y$12$9QQkjwpywXpmVy5HRT7nf.uWjyGLfyx53uVRfraS0j/MS5hO4spxi', NULL, '2025-11-28 06:24:42', '2025-11-28 06:38:25'),
+(15, 'Juan Perez', '20222166@tecnm.mx', '20222166', NULL, NULL, '$2y$12$mOuFeCe4GX/Bv9JJvy.IV.zjylz/96HW.OFaujPOvLMl9070.puVK', NULL, '2025-11-28 06:24:42', '2025-11-28 06:38:25'),
+(16, 'Lucía Rodríguez', '20222286@tecnm.mx', '20222286', NULL, NULL, '$2y$12$yh5o0SR6gjImhNaC7xYvQeysK1sJucTWs56He1JWyPv9dMcWk.Zm.', NULL, '2025-11-28 06:24:43', '2025-11-28 06:38:26'),
+(17, 'Laura Gómez', '20232012@tecnm.mx', '20232012', NULL, NULL, '$2y$12$DDhFSQi1Aw/Drxq3xULZ6uDwFyB3.EAJVFKFLYz9XOdcCAupDz2Le', NULL, '2025-11-28 06:24:43', '2025-11-28 06:38:26'),
+(18, 'Miguel Torres', '20242234@tecnm.mx', '20242234', NULL, NULL, '$2y$12$PKcUIclXcD5ifQ1hTyj7ZOsrayCIchH21/.fMQjqGjWTN7653Yqse', NULL, '2025-11-28 06:24:43', '2025-11-28 06:38:27'),
+(19, 'Valeria Jiménez', '20243321@tecnm.mx', '20243321', NULL, NULL, '$2y$12$rXJ5S4crHbx6qKATC3XwV./XEshbk7.LfdsItFyEsscwW3Sr5hwf6', NULL, '2025-11-28 06:24:44', '2025-11-28 06:38:27'),
+(20, 'Andrea Vargas', '20246678@tecnm.mx', '20246678', NULL, NULL, '$2y$12$qJHYydNgi6SDQ3duSUJaq.Jkekh5RZiGIH9T.Adc2ZlzeadWbPt1q', NULL, '2025-11-28 06:24:44', '2025-11-28 06:38:27'),
+(21, 'Mariana Romero', '20248890@tecnm.mx', '20248890', NULL, NULL, '$2y$12$dbE4XJZdDCT64IcRW83jkeHETc5nWqIdE2IMBneE8fbX3CzQeB0fm', NULL, '2025-11-28 06:24:44', '2025-11-28 06:38:28'),
+(22, 'Patricia Herrera', '20250012@tecnm.mx', '20250012', NULL, NULL, '$2y$12$x9NTg93F9iblWQ72T.1bXeCDw0CjNi0WcBuLkxHFq6MKXW7BRvHc2', NULL, '2025-11-28 06:24:45', '2025-11-28 06:38:28'),
+(23, 'Daniela Soto', '20254412@tecnm.mx', '20254412', NULL, NULL, '$2y$12$3dPKVS6eRvOExs8tW3YU4uM1QQo2MOjjpmIgo1huWk6r6MQWW/JoO', NULL, '2025-11-28 06:24:45', '2025-11-28 06:38:29'),
+(24, 'Sofía Ortiz', '21122177@tecnm.mx', '21122177', NULL, NULL, '$2y$12$Ii6sJ9rJhyxfA0IsLckG..hj1.4nEqTmf.494g6eA6H9XSi6.b7gO', NULL, '2025-11-28 06:24:46', '2025-11-28 06:38:29'),
+(25, 'Marta López', '21222198@tecnm.mx', '21222198', NULL, NULL, '$2y$12$Yhhslwsg/8ky2esg3.AJ/OmEUw7pP4KDgW1Z1kmAAyA9mfEYRvMCe', NULL, '2025-11-28 06:24:46', '2025-11-28 06:38:29'),
+(26, 'Juan Rivas', '21245567@tecnm.mx', '21245567', NULL, NULL, '$2y$12$zXTJKxoIKjCnKgoMlTQH0OptdFx9/yxzSqCsF0Var3KlHJ0QIt7Eq', NULL, '2025-11-28 06:24:47', '2025-11-28 06:38:30'),
+(27, 'Sergio Molina', '21249901@tecnm.mx', '21249901', NULL, NULL, '$2y$12$m5FxQXOnSzElNJNB9IfCn.kwrSQ4g9ldDXh9zjA5hiY77/TkL4q7C', NULL, '2025-11-28 06:24:47', '2025-11-28 06:38:30'),
+(28, 'Diego Martínez', '22143199@tecnm.mx', '22143199', NULL, NULL, '$2y$12$.iYF62lRlRKRiINFGUeXce1/8/2A.J8Wn4gJl.Ql5gEABrCI1uB5a', NULL, '2025-11-28 06:24:48', '2025-11-28 06:38:31'),
+(29, 'Fernando Delgado', '22147789@tecnm.mx', '22147789', NULL, NULL, '$2y$12$rogHHdTFm2Q9Jb8wFQZ38eUHII4hgqQwaCLF26LS.dZRIE9TYgu3e', NULL, '2025-11-28 06:24:49', '2025-11-28 06:38:31'),
+(30, 'Carla Hernández', '22153201@tecnm.mx', '22153201', NULL, NULL, '$2y$12$vEHnl9Sg0VfkEpMRuxrs9uIAd5HyuLj/qk0RG/BnhiblufJd58qUW', NULL, '2025-11-28 06:24:49', '2025-11-28 06:38:31'),
+(31, 'Alejandro García', '22160001@tecnm.mx', '22160001', NULL, NULL, '$2y$12$JI/5y20YyeOhEO2g4BY8JujpP78EFn4HjdR4llLeXkGc4K7UmG3Ma', NULL, '2025-11-28 06:24:50', '2025-11-28 06:38:32'),
+(32, 'Beatriz Ramírez', '22160002@tecnm.mx', '22160002', NULL, NULL, '$2y$12$VALfkL1dA32bbrAuekwK8.MA9E205UEtMEbQ6wTiSgdMvmD/535Q.', NULL, '2025-11-28 06:24:50', '2025-11-28 06:38:32'),
+(33, 'Javier Hernández', '22160003@tecnm.mx', '22160003', NULL, NULL, '$2y$12$B1I5IAJlhpMU3ejzUABqVeroS.IkJHrXn8TQDWb3tKrw8iBbyg5Km', NULL, '2025-11-28 06:24:51', '2025-11-28 06:38:32'),
+(34, 'Carolina Sánchez', '22160004@tecnm.mx', '22160004', NULL, NULL, '$2y$12$MRkRgyNsUhPKvHOB.AKQ.uvHX8hWrG2PW/xBWlkPU0rQMUHeUbnyq', NULL, '2025-11-28 06:24:51', '2025-11-28 06:38:33'),
+(35, 'Luis Cruz', '22160005@tecnm.mx', '22160005', NULL, NULL, '$2y$12$ITx3zQzIP/ItBlYYrEGJTu9rvC19Notk99MjNWJkum1b.JnRfmiay', NULL, '2025-11-28 06:24:51', '2025-11-28 06:38:33'),
+(36, 'Gabriela Jiménez', '22160006@tecnm.mx', '22160006', NULL, NULL, '$2y$12$RNVBjW5DEnc3k04mjFNmL.oZA6dogtSX2JVgyJmTCQDLPjbWmKa3.', NULL, '2025-11-28 06:24:52', '2025-11-28 06:38:34'),
+(37, 'Héctor Ortega', '22160007@tecnm.mx', '22160007', NULL, NULL, '$2y$12$jTYYJd/HhSXUMtlXN9UxOeTmkxFZVexrRkTROD1Zjetv4yWrYIsNa', NULL, '2025-11-28 06:24:52', '2025-11-28 06:38:34'),
+(38, 'Natalia Vega', '22160008@tecnm.mx', '22160008', NULL, NULL, '$2y$12$zoqYdoPjNuO1h4E1d2u9duEEx4sR6z2az14hWRK9PKeHK7cPjI8ke', NULL, '2025-11-28 06:24:53', '2025-11-28 06:38:34'),
+(39, 'Oscar Morales', '22160009@tecnm.mx', '22160009', NULL, NULL, '$2y$12$.HyD.5WU5cq1gjs5V6tO5uW7/SVYT5AZfjAt2FCqfnpZewADamyES', NULL, '2025-11-28 06:24:53', '2025-11-28 06:38:35'),
+(40, 'Patricia Castillo', '22160010@tecnm.mx', '22160010', NULL, NULL, '$2y$12$Q43Rp1ag9eYnZaMST2Zj.O0YbOtAtUBGznwqjEQaROReM.uZToQAi', NULL, '2025-11-28 06:24:53', '2025-11-28 06:38:35'),
+(41, 'Ricardo López', '22160011@tecnm.mx', '22160011', NULL, NULL, '$2y$12$MKdO2MosD5AD44ASUulX.u0IVrwqP5KxfqERz0plW4BGRBL7DMXZW', NULL, '2025-11-28 06:24:54', '2025-11-28 06:38:35'),
+(42, 'Sofía Fernández', '22160012@tecnm.mx', '22160012', NULL, NULL, '$2y$12$b5JUHpOF9978.xp0lTg1jucfygzjPIZHTz/Wm8dYde48pnXr8cQYm', NULL, '2025-11-28 06:24:54', '2025-11-28 06:38:36'),
+(43, 'Tomás Mendoza', '22160013@tecnm.mx', '22160013', NULL, NULL, '$2y$12$x9KnpMl8VjkxgCwHWgJ9YexTeBzpOts6Hy3Mc3sTOjqC7P3VhUQx2', NULL, '2025-11-28 06:24:55', '2025-11-28 06:38:36'),
+(44, 'Daniela Martínez', '22160014@tecnm.mx', '22160014', NULL, NULL, '$2y$12$gyrs.0C8..Il8iQ7HywPzO5YgMSSpVZvEy3oWZjjQNSdq9ly9ti2y', NULL, '2025-11-28 06:24:55', '2025-11-28 06:38:37'),
+(45, 'Ignacio Hernández', '22160015@tecnm.mx', '22160015', NULL, NULL, '$2y$12$t7e5YeUktvavxj2HzUr9yOeizwttiYs/M3cfh8z/vOeEdMJjiyyH2', NULL, '2025-11-28 06:24:56', '2025-11-28 06:38:37'),
+(46, 'Laura Pérez', '22160016@tecnm.mx', '22160016', NULL, NULL, '$2y$12$6im.K6Jj9ZTNZpGhi7Kj2u9sS9ZOZqCp2SVcRUm6ttm17d8sOWowe', NULL, '2025-11-28 06:24:56', '2025-11-28 06:38:38'),
+(47, 'Diego Gómez', '22160017@tecnm.mx', '22160017', NULL, NULL, '$2y$12$nJ7BLjkIgChb10y55Zgg7OOthJ/czjwlo2HOeCEiBm5kSEh7fHGiW', NULL, '2025-11-28 06:24:57', '2025-11-28 06:38:38'),
+(48, 'Mariana Vargas', '22160018@tecnm.mx', '22160018', NULL, NULL, '$2y$12$I8K3YXioyg.M64F2Xo6wFuDte/tiwj0u80W6uzZgtUWwIzpebGgUm', NULL, '2025-11-28 06:24:57', '2025-11-28 06:38:39'),
+(49, 'Andrés Flores', '22160019@tecnm.mx', '22160019', NULL, NULL, '$2y$12$zaDd5zAD11Cbo32ct62souIQFiNAGwy8dAAhBVPcrmxJ0U7q0iJWK', NULL, '2025-11-28 06:24:57', '2025-11-28 06:38:39'),
+(50, 'Elena Ramírez', '22160020@tecnm.mx', '22160020', NULL, NULL, '$2y$12$D7gR7xJn80CjXvZVBK2TeenKW590OfUlAxbcL8yeodVzGKH7GNIni', NULL, '2025-11-28 06:24:58', '2025-11-28 06:38:39'),
+(51, 'Mateo Sánchez', '22160021@tecnm.mx', '22160021', NULL, NULL, '$2y$12$6eMaQkfXbPDt3BmKtBv4HOG3fCSGy.E86xMyl1IS732NJA0/9dQKS', NULL, '2025-11-28 06:24:58', '2025-11-28 06:38:40'),
+(52, 'Camila Cruz', '22160022@tecnm.mx', '22160022', NULL, NULL, '$2y$12$cGWKCvcIU6a8xSg93188Suidf7h.0wJSUkFanM0pi9TxI.c6YW./W', NULL, '2025-11-28 06:24:59', '2025-11-28 06:38:40'),
+(53, 'Pablo Domínguez', '22160023@tecnm.mx', '22160023', NULL, NULL, '$2y$12$/et1.3qvLaQZPKrECAt2q.qdV7aoCxUmSng6/FUX.MjlP1S1UcSN.', NULL, '2025-11-28 06:24:59', '2025-11-28 06:38:41'),
+(54, 'Valeria López', '22160024@tecnm.mx', '22160024', NULL, NULL, '$2y$12$AkB034CYUPr.BPxXvXexlO4xlEcyaihHS4U9Kq6cj/LWXxjv3YP5K', NULL, '2025-11-28 06:24:59', '2025-11-28 06:38:41'),
+(55, 'Roberto Hernández', '22160025@tecnm.mx', '22160025', NULL, NULL, '$2y$12$3O/4YaPf9svZ2MZHjXefYO5QOdtJhq9oRE7J1tSGQ/hWlEY1BttjK', NULL, '2025-11-28 06:25:00', '2025-11-28 06:38:42'),
+(56, 'Daniel Mendoza', '22160026@tecnm.mx', '22160026', NULL, NULL, '$2y$12$t3UUnjnnpDQ2ncDhs44RJ.wMhkcPy3KwkVPr7YL6hR3C4Pn59u2eu', NULL, '2025-11-28 06:25:00', '2025-11-28 06:38:42'),
+(57, 'Lucía Gómez', '22160027@tecnm.mx', '22160027', NULL, NULL, '$2y$12$eZrW2zrpBVnsmtqRvt3p5.aDbQytDTkoHA1Jtx48ovFdyzsC9T8Ze', NULL, '2025-11-28 06:25:01', '2025-11-28 06:38:43'),
+(58, 'Felipe Rojas', '22160028@tecnm.mx', '22160028', NULL, NULL, '$2y$12$J2RNTNepmT2S9d9knvhc8ecDkqksAfqNsDrkA1VNP/Joy1JLtufUe', NULL, '2025-11-28 06:25:01', '2025-11-28 06:38:43'),
+(59, 'Carla Santos', '22160029@tecnm.mx', '22160029', NULL, NULL, '$2y$12$J7x3sd0/kxej3Ltgybm/ZO2LzVDlSR0joLRY60KWQrjT0uR23XPL.', NULL, '2025-11-28 06:25:01', '2025-11-28 06:38:44'),
+(60, 'Hugo Luna', '22160030@tecnm.mx', '22160030', NULL, NULL, '$2y$12$YeOCndjpJQvIKUfs/gxf0.RKWKYIL48YJZC5NPlEGuqTTDlswFyA6', NULL, '2025-11-28 06:25:02', '2025-11-28 06:38:44'),
+(61, 'Isabel Ramírez', '22160031@tecnm.mx', '22160031', NULL, NULL, '$2y$12$2xjoA7HAuGjnhFjHHpjQf.v0xbW0pCST2DpPsru1Xnm63Vs8v7NZK', NULL, '2025-11-28 06:25:02', '2025-11-28 06:38:44'),
+(62, 'Fernando Pérez', '22160032@tecnm.mx', '22160032', NULL, NULL, '$2y$12$1ZoKKXEzo1a7G5893IF10eMmBKV1EbtXG81vKPahupyncdUrxF65u', NULL, '2025-11-28 06:25:02', '2025-11-28 06:38:45'),
+(63, 'Mónica Ortega', '22160033@tecnm.mx', '22160033', NULL, NULL, '$2y$12$mWXc8m5m7OUYe96qB0vGxeqddFBLHOx55ednYyE6YQxzpJ3HjsUVK', NULL, '2025-11-28 06:25:03', '2025-11-28 06:38:45'),
+(64, 'Raúl Sánchez', '22160034@tecnm.mx', '22160034', NULL, NULL, '$2y$12$9c10YwyHrhTrDzqOadHL3uAMtAmVu/hdHEpMtRocUsNgluDMxp6PO', NULL, '2025-11-28 06:25:03', '2025-11-28 06:38:46'),
+(65, 'Ángela Gómez', '22160035@tecnm.mx', '22160035', NULL, NULL, '$2y$12$oHS3YX09Lagz8KNKCMR5/u1in3nzS4T4eSwcFXc.Ul.CL47ZBEMRW', NULL, '2025-11-28 06:25:04', '2025-11-28 06:38:46'),
+(66, 'Jorge Domínguez', '22160036@tecnm.mx', '22160036', NULL, NULL, '$2y$12$2rmB/OiJ5FiyhVJWdvayEOhal8r3Hv7uquHZsXcGKldbpO2tHl34K', NULL, '2025-11-28 06:25:04', '2025-11-28 06:38:46'),
+(67, 'Diana Flores', '22160037@tecnm.mx', '22160037', NULL, NULL, '$2y$12$Rtw2IrlnF./URL2V2HN5COb.yi6Q9NbBhAXYzqf5jQyGJTMHxVeZq', NULL, '2025-11-28 06:25:04', '2025-11-28 06:38:47'),
+(68, 'Santiago Torres', '22160038@tecnm.mx', '22160038', NULL, NULL, '$2y$12$FBmqkvbyPWh/7vLkn5maDeIH9SlMKaSOSGkkr57QuNq0DK8lNZM/i', NULL, '2025-11-28 06:25:05', '2025-11-28 06:38:47'),
+(69, 'Ana Martínez', '22160039@tecnm.mx', '22160039', NULL, NULL, '$2y$12$X8S4ZHC90gxQRFq0019gY.DwgqJKAzVHxRT/UKzQO4dMP9f3jP2jW', NULL, '2025-11-28 06:25:05', '2025-11-28 06:38:48'),
+(70, 'Cristian Pérez', '22160040@tecnm.mx', '22160040', NULL, NULL, '$2y$12$wiXnzO5NS4TKxh6x0WCN2.dzjx3DIrLpCJzMkU0vee6OlCTcixKJm', NULL, '2025-11-28 06:25:06', '2025-11-28 06:38:48'),
+(71, 'Marisol López', '22160041@tecnm.mx', '22160041', NULL, NULL, '$2y$12$nWFO.K99xbfD1F1ZKJ.gRuTRuHCrybtYvIvh489Mfapqo/VJhA97W', NULL, '2025-11-28 06:25:06', '2025-11-28 06:38:48'),
+(72, 'Álvaro Ramírez', '22160042@tecnm.mx', '22160042', NULL, NULL, '$2y$12$RYFENsV9eNySZo5QtzNEBeEceD1YI6lItF3bNB9zJD0CZ/ZVrw7bm', NULL, '2025-11-28 06:25:07', '2025-11-28 06:38:49'),
+(73, 'Estefanía Sánchez', '22160043@tecnm.mx', '22160043', NULL, NULL, '$2y$12$QuQopGeLmlr6EosXWo9Muuc9hrjmJ3YrulgT.j18m.rfSO7Xqh2U.', NULL, '2025-11-28 06:25:07', '2025-11-28 06:38:49'),
+(74, 'Rodrigo Cruz', '22160044@tecnm.mx', '22160044', NULL, NULL, '$2y$12$zQqH2nuabWY5oyP9qLfoE.FJJxg.0bn2pnW8RdNfmc03koSmTSKdC', NULL, '2025-11-28 06:25:07', '2025-11-28 06:38:50'),
+(75, 'Teresa Ortega', '22160045@tecnm.mx', '22160045', NULL, NULL, '$2y$12$784/hJItDc0WTyBOuAwNiOyCBkszJoF9M/BVySwX19FtJu1aHGQi6', NULL, '2025-11-28 06:25:08', '2025-11-28 06:38:50'),
+(76, 'Ángel Gómez', '22160046@tecnm.mx', '22160046', NULL, NULL, '$2y$12$6mZ9eeG6df3/D3tapioMyOE96bR/On5ro32A7lnaY2.FcN66FnVqy', NULL, '2025-11-28 06:25:08', '2025-11-28 06:38:50'),
+(77, 'Verónica Hernández', '22160047@tecnm.mx', '22160047', NULL, NULL, '$2y$12$rUevJtpH8RNsl7ZCMBiwbuak7ZIVJNzohLcHCodih2R2Pa5pnXud.', NULL, '2025-11-28 06:25:09', '2025-11-28 06:38:51'),
+(78, 'Adrián Morales', '22160048@tecnm.mx', '22160048', NULL, NULL, '$2y$12$50nmzI6b3amSmns1k9gHfuGQoKRZvTZJ.88X8OHlJtfaYn38UkFq.', NULL, '2025-11-28 06:25:09', '2025-11-28 06:38:51'),
+(79, 'Lorena Rivas', '22160049@tecnm.mx', '22160049', NULL, NULL, '$2y$12$ff3WUCS0obLbFt7Jk9gsNOhn1hlBJ7r71v9SSjUAF0fDa5k.FFikK', NULL, '2025-11-28 06:25:10', '2025-11-28 06:38:52'),
+(80, 'Emilio Martínez', '22160050@tecnm.mx', '22160050', NULL, NULL, '$2y$12$KeGR258rTdJfvlmTf2ZHW.eJY5FMPol.AKYiH37VpZEq769ezkNzK', NULL, '2025-11-28 06:25:10', '2025-11-28 06:38:52'),
+(81, 'Carlos Chat', '2221212@tecnm.mx', '2221212', NULL, NULL, '$2y$12$EXG.8X5hdGWptDfCSXQXcehDl8BRM3K0PDapL3DFZa0S0bJF7KKn2', NULL, '2025-11-28 06:25:10', '2025-11-28 06:38:52'),
+(82, 'Juan Perez', '9999999@tecnm.mx', '9999999', NULL, NULL, '$2y$12$fopoN4Un5H55UfSOMyXfg.knWQ5nJmAsZj4RbGoUIGG7yMtBLnHh6', NULL, '2025-11-28 06:25:11', '2025-11-28 06:38:53'),
+(83, 'Alumno Prueba', 'prueba@alumno.com', '1111', NULL, NULL, '$2y$12$nfky0sgp5jbJURe4JZmbPuQqAQuf.r.CvWpKuV5Y6abcvJcUjIcJm', NULL, '2025-11-28 06:32:50', '2025-11-28 06:32:50');
 
 --
 -- Índices para tablas volcadas
@@ -1043,6 +1294,20 @@ ALTER TABLE `migrations`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indices de la tabla `model_has_permissions`
+--
+ALTER TABLE `model_has_permissions`
+  ADD PRIMARY KEY (`permission_id`,`model_id`,`model_type`),
+  ADD KEY `model_has_permissions_model_id_model_type_index` (`model_id`,`model_type`);
+
+--
+-- Indices de la tabla `model_has_roles`
+--
+ALTER TABLE `model_has_roles`
+  ADD PRIMARY KEY (`role_id`,`model_id`,`model_type`),
+  ADD KEY `model_has_roles_model_id_model_type_index` (`model_id`,`model_type`);
+
+--
 -- Indices de la tabla `password_reset_tokens`
 --
 ALTER TABLE `password_reset_tokens`
@@ -1053,6 +1318,27 @@ ALTER TABLE `password_reset_tokens`
 --
 ALTER TABLE `periodos`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `permissions`
+--
+ALTER TABLE `permissions`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `permissions_name_guard_name_unique` (`name`,`guard_name`);
+
+--
+-- Indices de la tabla `roles`
+--
+ALTER TABLE `roles`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `roles_name_guard_name_unique` (`name`,`guard_name`);
+
+--
+-- Indices de la tabla `role_has_permissions`
+--
+ALTER TABLE `role_has_permissions`
+  ADD PRIMARY KEY (`permission_id`,`role_id`),
+  ADD KEY `role_has_permissions_role_id_foreign` (`role_id`);
 
 --
 -- Indices de la tabla `sessions`
@@ -1067,7 +1353,9 @@ ALTER TABLE `sessions`
 --
 ALTER TABLE `users`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `users_email_unique` (`email`);
+  ADD UNIQUE KEY `users_email_unique` (`email`),
+  ADD KEY `users_n_control_link_index` (`n_control_link`),
+  ADD KEY `users_n_trabajador_link_index` (`n_trabajador_link`);
 
 --
 -- AUTO_INCREMENT de las tablas volcadas
@@ -1095,7 +1383,7 @@ ALTER TABLE `boletas`
 -- AUTO_INCREMENT de la tabla `calificaciones_grupo`
 --
 ALTER TABLE `calificaciones_grupo`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- AUTO_INCREMENT de la tabla `carreras`
@@ -1131,7 +1419,7 @@ ALTER TABLE `jobs`
 -- AUTO_INCREMENT de la tabla `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT de la tabla `periodos`
@@ -1140,10 +1428,22 @@ ALTER TABLE `periodos`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
+-- AUTO_INCREMENT de la tabla `permissions`
+--
+ALTER TABLE `permissions`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT de la tabla `roles`
+--
+ALTER TABLE `roles`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
 -- AUTO_INCREMENT de la tabla `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=84;
 
 --
 -- Restricciones para tablas volcadas
@@ -1154,6 +1454,25 @@ ALTER TABLE `users`
 --
 ALTER TABLE `boletas`
   ADD CONSTRAINT `boletas_n_control_foreign` FOREIGN KEY (`n_control`) REFERENCES `alumnos` (`n_control`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `model_has_permissions`
+--
+ALTER TABLE `model_has_permissions`
+  ADD CONSTRAINT `model_has_permissions_permission_id_foreign` FOREIGN KEY (`permission_id`) REFERENCES `permissions` (`id`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `model_has_roles`
+--
+ALTER TABLE `model_has_roles`
+  ADD CONSTRAINT `model_has_roles_role_id_foreign` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `role_has_permissions`
+--
+ALTER TABLE `role_has_permissions`
+  ADD CONSTRAINT `role_has_permissions_permission_id_foreign` FOREIGN KEY (`permission_id`) REFERENCES `permissions` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `role_has_permissions_role_id_foreign` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -32,20 +32,31 @@ class GrupoController extends Controller
 
     /**
      * Muestra la lista de grupos.
-     */
-    public function index(Request $request): View
-    {
-        $grupos = Grupo::with(['materia', 'profesore', 'periodo'])
-            ->withCount('horarios')
-            ->paginate(30);
+    
 
-        return view('grupo.index', compact('grupos'))
-            ->with('i', ($request->input('page', 1) - 1) * $grupos->perPage());
-    }
-
-    /**
+    
      * Muestra el formulario para crear un nuevo grupo.
      */
+
+    public function index(Request $request): View
+{
+    $user = auth()->user();
+
+    $query = Grupo::with(['materia', 'profesore', 'periodo'])->withCount('horarios');
+
+    // 🔒 FILTRO: Si es profesor, solo ve SUS grupos
+    if ($user->hasRole('profesor') && !$user->hasRole('admin')) {
+        $query->where('n_trabajador', $user->n_trabajador_link);
+    }
+
+    // Si es admin, ve todo (no aplicamos filtro where)
+
+    $grupos = $query->paginate(30);
+    
+    return view('grupo.index', compact('grupos'))
+        ->with('i', ($request->input('page', 1) - 1) * $grupos->perPage());
+}
+
     public function create(): View
     {
         $grupo = new Grupo();

@@ -9,21 +9,15 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
+    
     public function up()
-    {
+{
+    if (!Schema::hasColumn('alumnos', 'id_carrera')) { // <--- Agrega esta condición
         Schema::table('alumnos', function (Blueprint $table) {
-            
-            // --- LÍNEA CORREGIDA ---
-            // Se cambió 'id_alumno' por 'n_control', que es la llave primaria.
             $table->unsignedBigInteger('id_carrera')->nullable()->after('n_control');
-
-            // --- RELACIÓN ---
-            $table->foreign('id_carrera')
-                  ->references('id_carrera')
-                  ->on('carreras')
-                  ->onDelete('restrict'); // evita eliminar carrera si hay alumnos
         });
     }
+}
 
 
     /**

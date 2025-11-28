@@ -11,10 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (!Schema::hasTable('horarios')) { 
         Schema::table('horarios', function (Blueprint $table) {
             // Elimina la columna redundante
             $table->dropColumn('patron');
         });
+    }
     }
 
     /**

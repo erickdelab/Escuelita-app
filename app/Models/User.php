@@ -2,30 +2,28 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasRoles;
 
     /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
+     * Mass assignable attributes.
      */
     protected $fillable = [
         'name',
         'email',
         'password',
+        'n_control_link',
+        'n_trabajador_link',
     ];
 
     /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
+     * Hidden attributes.
      */
     protected $hidden = [
         'password',
@@ -33,9 +31,7 @@ class User extends Authenticatable
     ];
 
     /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
+     * Cast definitions.
      */
     protected function casts(): array
     {
@@ -43,5 +39,22 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Relación: Usuario → Alumno
+     * Une n_control_link (users) con n_control (alumnos)
+     */
+    public function alumnoData()
+    {
+        return $this->belongsTo(Alumno::class, 'n_control_link', 'n_control');
+    }
+
+    /**
+     * Relación: Usuario → Profesor
+     */
+    public function profesorData()
+    {
+        return $this->belongsTo(Profesore::class, 'n_trabajador_link', 'n_trabajador');
     }
 }

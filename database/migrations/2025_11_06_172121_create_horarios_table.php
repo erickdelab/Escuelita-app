@@ -11,6 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (!Schema::hasTable('horarios')) { 
         Schema::create('horarios', function (Blueprint $table) {
             $table->id();
 
@@ -60,6 +61,7 @@ return new class extends Migration
             $table->index(['profesore_id', 'dia_semana']);
             $table->index(['aula_id', 'dia_semana']);
         });
+    }
     }
 
     /**
