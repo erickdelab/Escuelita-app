@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Models\Horario;
 use App\Models\Materia;
-use App\Models\Aula;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -13,48 +12,42 @@ class ScheduleService
 {
     /**
      * Intenta asignar un horario complejo a un grupo.
-     * Lanza una excepción si hay colisión.
+     * Lanza una excepción con mensaje detallado si hay colisión.
      */
     public function assignSchedule(
         int $grupoId,
-        string $materiaId,    // cod_materia
-        string $profesorId,   // n_trabajador
+        string $materiaId,    
+        string $profesorId,   
         int $aulaId,
-        string $patron,       // 'L-M' o 'M-J'
-        string $horaInicioBloque // '07:00:00', etc.
+        string $patron,       
+        string $horaInicioBloque 
     ): void {
-        // 1. Obtenemos la materia (usa el PK cod_materia)
+        
         $materia = Materia::findOrFail($materiaId);
-
-        // ✅ CORREGIDO: 'credito' en singular
         $creditos = $materia->credito ?? 5;
 
-        // 2. Generar los bloques tentativos según reglas de créditos y patrón
+        // Generar bloques
         $bloques = $this->generateBlocks($creditos, $patron, $horaInicioBloque);
 
-        // 3. Comprobar colisiones
+        // Comprobar colisiones DETALLADAS
         $this->checkCollisions($grupoId, $profesorId, $aulaId, $bloques);
 
-        // 4. Guardar dentro de una transacción
-        DB::transaction(function () use ($bloques, $grupoId, $materiaId, $profesorId, $aulaId) {
-            foreach ($bloques as $bloque) {
-                Horario::create([
-                    'grupo_id' => $grupoId,
-                    'materia_id' => $materiaId,
-                    'profesore_id' => $profesorId,
-                    'aula_id' => $aulaId,
-                    'dia_semana' => $bloque['dia'],
-                    'hora_inicio' => $bloque['inicio'],
-                    'hora_fin' => $bloque['fin'],
-                ]);
-            }
-        });
-
-        Log::info("✅ Horario asignado correctamente a grupo {$grupoId} con materia {$materiaId}");
+        // Guardar
+        foreach ($bloques as $bloque) {
+            Horario::create([
+                'grupo_id' => $grupoId,
+                'materia_id' => $materiaId,
+                'profesore_id' => $profesorId,
+                'aula_id' => $aulaId,
+                'dia_semana' => $bloque['dia'],
+                'hora_inicio' => $bloque['inicio'],
+                'hora_fin' => $bloque['fin'],
+            ]);
+        }
     }
 
     /**
-     * Genera los bloques de horario según créditos y patrón.
+     * Genera los bloques de horario.
      */
     public function generateBlocks(int $creditos, string $patron, string $horaInicioStr): array
     {
@@ -74,6 +67,7 @@ class ScheduleService
         }
 
         if ($creditos == 5) {
+            // La hora extra del viernes (o tercer día)
             if ($patron === 'L-M') {
                 $bloques[] = [
                     'dia' => 5,
@@ -84,7 +78,7 @@ class ScheduleService
                 $bloques[] = [
                     'dia' => 5,
                     'inicio' => $horaInicio->copy()->addHour()->format('H:i:s'),
-                    'fin' => $horaFinBloque,
+                    'fin' => $horaFinBloque, // Ojo: a veces M-J tiene viernes de 2h o 1h según regla escolar
                 ];
             }
         }
@@ -93,67 +87,74 @@ class ScheduleService
     }
 
     /**
-     * Verifica colisiones para grupo, profesor y aula.
+     * Verifica colisiones específicas y lanza mensajes claros.
      */
     private function checkCollisions(int $grupoId, string $profesorId, int $aulaId, array $bloques): void
     {
         foreach ($bloques as $bloque) {
-            $collision = Horario::query()
+            
+            // 1. VERIFICAR AULA (Prioridad alta)
+            // Buscamos si existe un horario en ese día/hora y en esa aula
+            // (Nota: Como ya borramos el horario del grupo actual en el Controller, no choca consigo mismo)
+            $colisionAula = Horario::with(['grupo.materia', 'aula'])
                 ->where('dia_semana', $bloque['dia'])
-                ->where('hora_inicio', '<', $bloque['fin'])
-                ->where('hora_fin', '>', $bloque['inicio'])
-                ->where(function ($query) use ($grupoId, $profesorId, $aulaId) {
-                    $query->where('grupo_id', $grupoId)
-                        ->orWhere('profesore_id', $profesorId)
-                        ->orWhere('aula_id', $aulaId);
+                ->where('aula_id', $aulaId)
+                ->where(function($q) use ($bloque) {
+                    $q->where('hora_inicio', '<', $bloque['fin'])
+                      ->where('hora_fin', '>', $bloque['inicio']);
                 })
-                ->exists();
+                ->first();
 
-            if ($collision) {
-                $diaNombre = match ($bloque['dia']) {
-                    1 => 'Lunes',
-                    2 => 'Martes',
-                    3 => 'Miércoles',
-                    4 => 'Jueves',
-                    5 => 'Viernes',
-                    default => 'Día ' . $bloque['dia'],
-                };
+            if ($colisionAula) {
+                $dia = $this->getDiaNombre($bloque['dia']);
+                $aulaNombre = $colisionAula->aula->nombre ?? 'N/A';
+                $materiaChocona = $colisionAula->grupo->materia->nombre ?? 'Desconocida';
+                $grupoChocon = $colisionAula->grupo_id;
 
                 throw new \Exception(
-                    "⚠️ Colisión detectada el {$diaNombre} entre {$bloque['inicio']} y {$bloque['fin']}."
+                    "🚫 CHOQUE DE AULA: El aula '{$aulaNombre}' ya está ocupada el {$dia} ({$colisionAula->hora_inicio} - {$colisionAula->hora_fin}) por la materia '{$materiaChocona}' (Grupo {$grupoChocon})."
+                );
+            }
+
+            // 2. VERIFICAR PROFESOR
+            $colisionProf = Horario::with('grupo.materia')
+                ->where('dia_semana', $bloque['dia'])
+                ->where('profesore_id', $profesorId)
+                ->where(function($q) use ($bloque) {
+                    $q->where('hora_inicio', '<', $bloque['fin'])
+                      ->where('hora_fin', '>', $bloque['inicio']);
+                })
+                ->first();
+
+            if ($colisionProf) {
+                $dia = $this->getDiaNombre($bloque['dia']);
+                $materiaChocona = $colisionProf->grupo->materia->nombre ?? 'Otra materia';
+                
+                throw new \Exception(
+                    "👨‍🏫 CHOQUE DE PROFESOR: El docente ya tiene clase el {$dia} ({$colisionProf->hora_inicio} - {$colisionProf->hora_fin}) impartiendo '{$materiaChocona}'."
                 );
             }
         }
     }
 
+    private function getDiaNombre($diaNum) {
+        return match ($diaNum) {
+            1 => 'Lunes', 2 => 'Martes', 3 => 'Miércoles', 4 => 'Jueves', 5 => 'Viernes', 6 => 'Sábado', default => 'Día'
+        };
+    }
+
     /**
-     * 🔹 MÉTODO CORREGIDO:
-     * Verifica la disponibilidad de aulas según patrón y hora seleccionada.
-     * Devuelve dos listas: disponibles y ocupadas.
+     * Utilidad para verificar disponibilidad visual (usado en el Controller)
      */
-   public function verificarDisponibilidad(string $cod_materia, string $patron, string $hora_inicio): array
-{
-    // 1️⃣ Obtener todas las aulas
-    $aulas = \App\Models\Aula::all();
-
-    // 2️⃣ CORRECCIÓN: Buscar las aulas ocupadas
-    // Buscamos en 'horarios' aquellos que TENGAN UN GRUPO ('whereHas')
-    // que coincida con el patrón y la hora.
-    $aulasOcupadasIds = \App\Models\Horario::whereHas('grupo', function ($query) use ($patron, $hora_inicio) {
-            $query->where('patron', $patron)
-                  ->where('hora_inicio', $hora_inicio);
-        })
-        ->distinct() // Solo necesitamos el ID del aula una vez
-        ->pluck('aula_id') // Obtenemos solo los IDs de las aulas
-        ->toArray();
-
-    // 3️⃣ Clasificar (usa 'id' porque así se llama el campo en tu tabla)
-    $disponibles = $aulas->whereNotIn('id', $aulasOcupadasIds)->values();
-    $ocupadas = $aulas->whereIn('id', $aulasOcupadasIds)->values();
-
-    return [
-        'disponibles' => $disponibles,
-        'ocupadas' => $ocupadas,
-    ];
-}
-}
+    public function verificarDisponibilidad(string $cod_materia, string $patron, string $hora_inicio): array
+    {
+        $aulas = \App\Models\Aula::all();
+        
+        // Simplemente devolvemos todas para que la validación fuerte se haga al guardar
+        // O implementa lógica extra aquí si deseas filtrar pre-visualización.
+        return [
+            'disponibles' => $aulas,
+            'ocupadas' => collect([])
+        ];
+    }
+}   

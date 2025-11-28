@@ -130,6 +130,10 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/grupos/{grupo}/eliminar-horario', [GrupoController::class, 'destroyHorario'])
         ->name('grupos.horario.destroy');
 
+    // ✅ NUEVA RUTA: Gestión completa de horario
+    Route::get('/grupos/{grupo}/gestion-horario', [GrupoController::class, 'editHorario'])
+        ->name('grupos.horario.edit');
+
     // Calificaciones
     Route::prefix('grupos')->name('grupos.calificar.')->group(function () {
         Route::get('/{id}/calificar', [CalificacionController::class, 'index'])->name('index');
@@ -227,7 +231,7 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/grupos',          [TeacherPortalController::class, 'grupos'])->name('grupos');
             Route::get('/grupos/{id}',     [TeacherPortalController::class, 'grupoShow'])->name('grupos.show');
 
-            // ✅ NUEVA RUTA: Calificar directo desde portal docente
+            // Calificar desde portal docente
             Route::get('/grupos/{id}/calificar', 
                 [TeacherPortalController::class, 'calificar']
             )->name('grupos.calificar');

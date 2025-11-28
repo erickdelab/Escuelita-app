@@ -29,7 +29,7 @@
                             <small class="opacity-75">Información completa del grupo, materia, profesor y alumnos inscritos</small>
                         </div>
                         <div class="text-end">
-                            {{-- ✅ BOTÓN NUEVO: CALIFICAR GRUPO --}}
+                            {{-- BOTÓN: CALIFICAR GRUPO --}}
                             <a href="{{ route('grupos.calificar.index', $grupo->id_grupo) }}" class="btn btn-success fw-bold me-2 shadow-sm border-white">
                                 <i class="fas fa-clipboard-check me-2"></i>Calificar Grupo
                             </a>
@@ -43,6 +43,7 @@
                 </div>
 
                 <div class="card-body bg-light">
+                    {{-- SECCIÓN DE TARJETAS INFORMATIVAS (Igual que antes) --}}
                     <div class="row mb-4">
                         <div class="col-md-3 mb-3">
                             <div class="card h-100 border-0 shadow-sm">
@@ -174,6 +175,7 @@
                         </div>
                     </div>
 
+                    {{-- SECCIÓN DE HORARIO (MODIFICADA) --}}
                     <div class="row mb-4">
                         <div class="col-12">
                             <div class="card border-0 shadow-sm">
@@ -181,127 +183,48 @@
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div>
                                             <i class="fas fa-calendar-alt me-2"></i>
-                                            Gestión de Horario
+                                            Horario Asignado
                                         </div>
-                                        @if($grupo->horarios->count() > 0 || $grupo->patron)
-                                            <form method="POST" action="{{ route('grupos.horario.destroy', $grupo->id_grupo) }}" class="d-inline" onsubmit="return confirm('¿Estás seguro de que deseas ELIMINAR el horario actual de este grupo?')">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-danger btn-sm">
-                                                    <i class="fas fa-trash me-1"></i> Eliminar Horario
-                                                </button>
-                                            </form>
-                                        @endif
+                                        
+                                        {{-- ✅ NUEVO BOTÓN: GESTIONAR HORARIO --}}
+                                        <a href="{{ route('grupos.horario.edit', $grupo->id_grupo) }}" class="btn btn-warning btn-sm fw-bold text-dark">
+                                            <i class="fas fa-edit me-1"></i> Gestionar Horario
+                                        </a>
                                     </div>
                                 </div>
                                 <div class="card-body">
+                                    {{-- Solo mostramos la lista, ocupando todo el ancho --}}
                                     <div class="row">
-                                        <div class="col-md-4 border-end">
-                                            <h6 class="text-dark fw-bold">Horario Actual</h6>
+                                        <div class="col-12">
                                             @if($grupo->horarios->isEmpty())
                                                 <div class="alert alert-warning text-center mt-3">
                                                     <i class="fas fa-calendar-times fa-lg mb-2"></i>
                                                     <p class="mb-0">Sin horario asignado.</p>
                                                 </div>
                                             @else
-                                                @foreach($diasSemana as $diaNum => $diaNombre)
-                                                    @if($horariosAgrupados->has($diaNum))
-                                                        <strong class="text-primary">{{ $diaNombre }}</strong>
-                                                        <ul class="list-group list-group-flush mb-2">
-                                                            @foreach($horariosAgrupados[$diaNum] as $horario)
-                                                                <li class="list-group-item d-flex justify-content-between align-items-center ps-0">
-                                                                    <span>
-                                                                        <i class="fas fa-clock me-2 text-muted"></i>
-                                                                        {{ \Carbon\Carbon::parse($horario->hora_inicio)->format('h:i A') }} -
-                                                                        {{ \Carbon\Carbon::parse($horario->hora_fin)->format('h:i A') }}
-                                                                    </span>
-                                                                    <span class="badge bg-primary rounded-pill">
-                                                                        <i class="fas fa-door-open me-1"></i>
-                                                                        {{ $horario->aula->nombre ?? 'N/A' }}
-                                                                    </span>
-                                                                </li>
-                                                            @endforeach
-                                                        </ul>
-                                                    @endif
-                                                @endforeach
-                                            @endif
-                                        </div>
-
-                                        <div class="col-md-8">
-                                            <h6 class="text-dark fw-bold">Modificar Horario</h6>
-                                            <div class="row">
-                                                
-                                                {{-- ESTE ES EL BLOQUE DEL PASO 1 ACTUALIZADO --}}
-                                                <div class="col-lg-6">
-                                                    <form method="POST" action="{{ route('grupos.hora.store', $grupo->id_grupo) }}">
-                                                        @csrf
-                                                        <label class="form-label fw-bold">Paso 1: Patrón y Hora</label>
-                                                        <div class="input-group mb-2">
-                                                            <select name="patron" class="form-select" required id="patronSelect">
-                                                                <option value="">Patrón...</option>
-                                                                <option value="L-M" {{ $grupo->patron == 'L-M' ? 'selected' : '' }}>Lunes y Miérc.</option>
-                                                                <option value="M-J" {{ $grupo->patron == 'M-J' ? 'selected' : '' }}>Martes y Juev.</option>
-                                                            </select>
-                                                            
-                                                            {{-- INICIO DE SELECT MODIFICADO --}}
-                                                            <select name="hora_inicio" class="form-select" required id="horaSelect">
-                                                                <option value="">Hora...</option>
-                                                                @foreach ($allowedStartTimes as $hora)
-                                                                    @php
-                                                                        // Asumimos que $horasOcupadasDelProfesor es un array de strings ['HH:MM:SS', ...]
-                                                                        // que viene del controlador (Paso 1 de esta guía).
-                                                                        $isOcupado = in_array($hora, $horasOcupadasDelProfesor ?? []);
-                                                                    @endphp
-                                                                    <option 
-                                                                        value="{{ $hora }}" 
-                                                                        {{ $grupo->hora_inicio == $hora ? 'selected' : '' }} 
-                                                                        {{ $isOcupado ? 'disabled' : '' }}
-                                                                    >
-                                                                        {{ \Carbon\Carbon::parse($hora)->format('h:i A') }}
-                                                                        {{ $isOcupado ? '(Ocupado)' : '' }}
-                                                                    </option>
-                                                                @endforeach
-                                                            </select>
-                                                            {{-- FIN DE SELECT MODIFICADO --}}
-                                                            
-                                                        </div>
-                                                        <button type="submit" class="btn btn-warning btn-sm w-100">
-                                                            <i class="fas fa-save me-1"></i> Guardar Patrón/Hora
-                                                        </button>
-                                                    </form>
-                                                </div>
-                                                {{-- FIN DEL BLOQUE DEL PASO 1 --}}
-
-                                                <div class="col-lg-6">
-                                                    <form method="POST" action="{{ route('grupos.aula.store', $grupo->id_grupo) }}">
-                                                        @csrf
-                                                        <label class="form-label fw-bold">Paso 2: Aula</label>
-                                                        @if (!$grupo->patron || !$grupo->hora_inicio)
-                                                            <div class="alert alert-info p-2 text-center">
-                                                                <small>Complete el Paso 1 para ver aulas.</small>
+                                                <div class="row">
+                                                    @foreach($diasSemana as $diaNum => $diaNombre)
+                                                        @if($horariosAgrupados->has($diaNum))
+                                                            <div class="col-md-2 mb-3">
+                                                                <strong class="text-primary d-block border-bottom mb-2">{{ $diaNombre }}</strong>
+                                                                <ul class="list-group list-group-flush">
+                                                                    @foreach($horariosAgrupados[$diaNum] as $horario)
+                                                                        <li class="list-group-item px-0 py-1 d-flex flex-column">
+                                                                            <span class="fw-bold text-dark">
+                                                                                {{ \Carbon\Carbon::parse($horario->hora_inicio)->format('H:i') }} -
+                                                                                {{ \Carbon\Carbon::parse($horario->hora_fin)->format('H:i') }}
+                                                                            </span>
+                                                                            <span class="badge bg-primary rounded-pill align-self-start mt-1">
+                                                                                <i class="fas fa-door-open me-1"></i> {{ $horario->aula->nombre ?? 'N/A' }}
+                                                                            </span>
+                                                                        </li>
+                                                                    @endforeach
+                                                                </ul>
                                                             </div>
-                                                        @else
-                                                            <select name="aula_id" class="form-select mb-2" required>
-                                                                <option value="">-- Selecciona un aula --</option>
-                                                                @foreach ($aulasDisponibles as $aula)
-                                                                    <option value="{{ $aula->id }}">{{ $aula->nombre }} (Cap: {{ $aula->capacidad }})</option>
-                                                                @endforeach
-                                                                
-                                                                @if(count($aulasOcupadas) > 0)
-                                                                    <optgroup label="Ocupadas">
-                                                                        @foreach ($aulasOcupadas as $aula)
-                                                                            <option value="{{ $aula->id }}" disabled>{{ $aula->nombre }} (Ocupada)</option>
-                                                                        @endforeach
-                                                                    </optgroup>
-                                                                @endif
-                                                            </select>
-                                                            <button type="submit" class="btn btn-success btn-sm w-100">
-                                                                <i class="fas fa-check-circle me-1"></i> Asignar Aula
-                                                            </button>
                                                         @endif
-                                                    </form>
+                                                    @endforeach
                                                 </div>
-                                            </div>
+                                            @endif
                                         </div>
                                     </div>
                                 </div>
@@ -309,6 +232,7 @@
                         </div>
                     </div>
 
+                    {{-- SECCIÓN DE ALUMNOS INSCRITOS (Igual que antes) --}}
                     <div class="row">
                         <div class="col-md-12">
                             <div class="card border-0 shadow-sm">
@@ -318,7 +242,6 @@
                                             <i class="fas fa-user-graduate me-2"></i>
                                             Alumnos Inscritos
                                         </div>
-                                        
                                         <span class="badge bg-light text-dark fs-6">
                                             {{ $grupo->alumnos->count() }} alumno(s)
                                         </span>
@@ -341,25 +264,15 @@
                                                 <tbody>
                                                     @foreach($grupo->alumnos as $index => $alumno)
                                                         <tr class="border-bottom">
-                                                            <td class="text-center fw-bold text-primary">
-                                                                {{ $index + 1 }}
-                                                            </td>
-                                                            <td>
-                                                                <strong class="text-primary">{{ $alumno->n_control }}</strong>
-                                                            </td>
+                                                            <td class="text-center fw-bold text-primary">{{ $index + 1 }}</td>
+                                                            <td><strong class="text-primary">{{ $alumno->n_control }}</strong></td>
                                                             <td>
                                                                 <div class="fw-bold text-primary">
                                                                     {{ $alumno->nombre }} {{ $alumno->s_nombre ?? '' }} {{ $alumno->ap_pat }} {{ $alumno->ap_mat }}
                                                                 </div>
                                                             </td>
-                                                            <td>
-                                                                <span class="badge bg-primary">
-                                                                    {{ $alumno->semestre }}
-                                                                </span>
-                                                            </td>
-                                                            <td class="text-primary">
-                                                                {{ $alumno->carrera->nombre_carrera ?? 'N/A' }}
-                                                            </td>
+                                                            <td><span class="badge bg-primary">{{ $alumno->semestre }}</span></td>
+                                                            <td class="text-primary">{{ $alumno->carrera->nombre_carrera ?? 'N/A' }}</td>
                                                             <td>
                                                                 <span class="badge {{ $alumno->situacion == 'Vigente' ? 'bg-success' : 'bg-danger' }}">
                                                                     {{ $alumno->situacion }}
@@ -455,14 +368,6 @@
     }
     .list-group-flush .list-group-item {
         background-color: transparent;
-    }
-
-    /* --- NUEVA REGLA AÑADIDA --- */
-    /* Estilo para las opciones deshabilitadas (horarios ocupados) */
-    select option[disabled] {
-        background-color: #e9ecef; /* Un gris claro */
-        color: #6c757d;           /* Un color de texto apagado */
-        font-style: italic;
     }
 </style>
 @endpush

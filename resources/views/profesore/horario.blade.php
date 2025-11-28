@@ -119,17 +119,3 @@
     }
 </style>
 @endsection
-```
-
----
-
-### 3. Registrar la Ruta (`routes/web.php`)
-
-Agrega la nueva ruta dentro del grupo de rutas protegidas o de admin, cerca de donde tienes las rutas de recursos de profesores.
-
-```php
-// En routes/web.php, dentro del middleware auth
-
-// Ruta específica para el horario del profesor
-Route::get('/profesores/{n_trabajador}/horario', [App\Http\Controllers\ProfesoreController::class, 'horario'])
-    ->name('profesores.horario');

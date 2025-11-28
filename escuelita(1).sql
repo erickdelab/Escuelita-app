@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 28-11-2025 a las 01:52:04
+-- Tiempo de generación: 28-11-2025 a las 19:30:18
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -50,7 +50,7 @@ CREATE TABLE `alumnos` (
 --
 
 INSERT INTO `alumnos` (`n_control`, `contraseña`, `id_carrera`, `nombre`, `s_nombre`, `ap_pat`, `ap_mat`, `fech_nac`, `genero`, `FKid_carrera`, `situacion`, `semestre`, `promedio_general`, `created_at`, `updated_at`) VALUES
-('000111', NULL, NULL, 'Hola', 'Soy', 'El', 'Mencho', '2000-02-01', 'M', 1, 'Vigente', 1, NULL, '2025-11-28 05:54:58', '2025-11-28 05:54:58'),
+('012345678', NULL, NULL, 'Melisa', 'Lian', 'Sanchez', 'Sanchez', '2000-01-01', 'M', 1, 'Vigente', 1, NULL, '2025-11-28 11:12:29', '2025-11-28 11:12:29'),
 ('091234', '091234', NULL, 'Jimmy', 'Baraquiel', 'Valenzuela', 'Álvarez', '2000-11-21', 'M', 1, 'Vigente', 1, 100.00, '2025-11-19 03:48:30', '2025-11-26 02:09:51'),
 ('123', '123', NULL, 'juan', 'Pablo', 'Escobar', 'Sultan', '2002-07-08', 'M', 8, 'Vigente', 2, 97.96, '2025-10-24 00:53:58', '2025-10-31 02:10:03'),
 ('19222128', '19222128', NULL, 'Andrés', 'Manuel', 'Pérez', 'Fernández', '2000-12-01', 'M', 1, 'Vigente', 3, 89.00, NULL, '2025-10-31 02:54:10'),
@@ -155,7 +155,8 @@ INSERT INTO `alumno_grupo` (`id`, `n_control`, `id_grupo`, `oportunidad`, `creat
 (27, '123', 5, 'Primera', '2025-11-07 04:15:10', '2025-11-07 04:15:10'),
 (29, '22160007', 1237, 'Primera', '2025-11-12 02:35:10', '2025-11-12 02:35:10'),
 (61, '091234', 1250, 'Primera', '2025-11-28 00:55:48', '2025-11-28 00:55:48'),
-(62, '091234', 1251, 'Primera', '2025-11-28 01:31:26', '2025-11-28 01:31:26');
+(62, '091234', 1251, 'Primera', '2025-11-28 01:31:26', '2025-11-28 01:31:26'),
+(66, '012345678', 1, 'Primera', '2025-11-28 11:53:34', '2025-11-28 11:53:34');
 
 -- --------------------------------------------------------
 
@@ -370,7 +371,8 @@ INSERT INTO `calificaciones_grupo` (`id`, `alumno_grupo_id`, `u1`, `u2`, `u3`, `
 (24, 58, 90.00, 100.00, 90.00, 90.00, 92.50, '2025-11-28 00:46:15', '2025-11-28 00:46:15'),
 (25, 23, 70.00, 70.00, 70.00, 90.00, 75.00, '2025-11-28 00:46:29', '2025-11-28 00:46:29'),
 (26, 59, 70.00, 70.00, 70.00, 70.00, 70.00, '2025-11-28 00:50:31', '2025-11-28 00:50:31'),
-(27, 61, 80.00, 95.00, 70.00, 72.00, 79.25, '2025-11-28 05:35:15', '2025-11-28 05:35:53');
+(27, 61, 80.00, 95.00, 70.00, 72.00, 79.25, '2025-11-28 05:35:15', '2025-11-28 05:35:53'),
+(28, 66, 70.00, 70.00, NULL, NULL, NULL, '2025-11-28 23:19:40', '2025-11-29 00:13:15');
 
 -- --------------------------------------------------------
 
@@ -442,8 +444,8 @@ CREATE TABLE `grupos` (
 --
 
 INSERT INTO `grupos` (`id_grupo`, `cod_materia`, `n_trabajador`, `semestre`, `periodo_id`, `patron`, `hora_inicio`, `created_at`, `updated_at`) VALUES
-(1, 'TICS101', 'CAMOTO1', 3, 12, 'L-M', '09:00:00', NULL, '2025-11-26 03:32:31'),
-(2, 'TICS102', 'CAMOTO1', 3, 10, 'M-J', '11:00:00', NULL, '2025-11-28 00:50:08'),
+(1, 'TICS101', 'CAMOTO1', 3, 12, 'L-M', '09:00:00', NULL, '2025-11-29 00:13:30'),
+(2, 'TICS102', 'CAMOTO1', 3, 10, 'L-M', '07:00:00', NULL, '2025-11-29 00:08:40'),
 (3, 'AE101', 'PROF003', 2, 11, 'L-M', '07:00:00', NULL, '2025-11-19 03:30:28'),
 (5, 'TICS101', 'PROF005', 3, 12, NULL, NULL, NULL, NULL),
 (6, 'TICS102', 'PROF006', 3, 12, NULL, NULL, NULL, NULL),
@@ -457,7 +459,7 @@ INSERT INTO `grupos` (`id_grupo`, `cod_materia`, `n_trabajador`, `semestre`, `pe
 (1246, 'ETRO104', 'PROF002', 8, 12, NULL, NULL, '2025-11-12 11:50:55', '2025-11-18 23:48:40'),
 (1247, 'TICS204', 'ERDELO1', 7, 11, 'M-J', '11:00:00', '2025-11-19 03:45:14', '2025-11-26 03:15:07'),
 (1248, 'TICS210', 'CAMOTO1', 2, 12, NULL, NULL, '2025-11-26 02:18:58', '2025-11-26 02:18:58'),
-(1249, 'AE101', 'JINAJU1', 1, 11, NULL, NULL, '2025-11-28 00:31:03', '2025-11-28 00:31:03'),
+(1249, 'AE101', 'JINAJU1', 1, 11, 'L-M', '07:00:00', '2025-11-28 00:31:03', '2025-11-29 00:17:58'),
 (1250, 'TICS251', 'PROF007', 9, 12, 'M-J', '11:00:00', '2025-11-28 00:53:18', '2025-11-28 00:55:32'),
 (1251, 'TICS222', 'PROF005', 4, 8, 'L-M', '13:00:00', '2025-11-28 01:30:38', '2025-11-28 01:30:56');
 
@@ -583,12 +585,6 @@ INSERT INTO `horarios` (`id`, `grupo_id`, `materia_id`, `profesore_id`, `aula_id
 (8, 1247, 'TICS666', 'ERDELO1', 5, 2, '11:00:00', '13:00:00', '2025-11-19 03:50:00', '2025-11-19 03:50:00'),
 (9, 1247, 'TICS666', 'ERDELO1', 5, 4, '11:00:00', '13:00:00', '2025-11-19 03:50:00', '2025-11-19 03:50:00'),
 (10, 1247, 'TICS666', 'ERDELO1', 5, 5, '12:00:00', '13:00:00', '2025-11-19 03:50:00', '2025-11-19 03:50:00'),
-(11, 1, 'TICS101', 'CAMOTO1', 3, 1, '09:00:00', '11:00:00', '2025-11-26 03:32:36', '2025-11-26 03:32:36'),
-(12, 1, 'TICS101', 'CAMOTO1', 3, 3, '09:00:00', '11:00:00', '2025-11-26 03:32:36', '2025-11-26 03:32:36'),
-(13, 1, 'TICS101', 'CAMOTO1', 3, 5, '09:00:00', '10:00:00', '2025-11-26 03:32:36', '2025-11-26 03:32:36'),
-(14, 2, 'TICS102', 'CAMOTO1', 3, 2, '11:00:00', '13:00:00', '2025-11-28 00:19:00', '2025-11-28 00:19:00'),
-(15, 2, 'TICS102', 'CAMOTO1', 3, 4, '11:00:00', '13:00:00', '2025-11-28 00:19:00', '2025-11-28 00:19:00'),
-(16, 2, 'TICS102', 'CAMOTO1', 3, 5, '12:00:00', '13:00:00', '2025-11-28 00:19:00', '2025-11-28 00:19:00'),
 (23, 7, 'TICS103', 'PROF010', 9, 2, '11:00:00', '13:00:00', '2025-11-28 00:57:26', '2025-11-28 00:57:26'),
 (24, 7, 'TICS103', 'PROF010', 9, 4, '11:00:00', '13:00:00', '2025-11-28 00:57:26', '2025-11-28 00:57:26'),
 (25, 7, 'TICS103', 'PROF010', 9, 5, '12:00:00', '13:00:00', '2025-11-28 00:57:26', '2025-11-28 00:57:26'),
@@ -597,7 +593,16 @@ INSERT INTO `horarios` (`id`, `grupo_id`, `materia_id`, `profesore_id`, `aula_id
 (28, 1250, 'TICS251', 'PROF007', 6, 5, '12:00:00', '13:00:00', '2025-11-28 01:19:51', '2025-11-28 01:19:51'),
 (29, 1251, 'TICS222', 'PROF005', 7, 1, '13:00:00', '15:00:00', '2025-11-28 01:31:01', '2025-11-28 01:31:01'),
 (30, 1251, 'TICS222', 'PROF005', 7, 3, '13:00:00', '15:00:00', '2025-11-28 01:31:01', '2025-11-28 01:31:01'),
-(31, 1251, 'TICS222', 'PROF005', 7, 5, '13:00:00', '14:00:00', '2025-11-28 01:31:01', '2025-11-28 01:31:01');
+(31, 1251, 'TICS222', 'PROF005', 7, 5, '13:00:00', '14:00:00', '2025-11-28 01:31:01', '2025-11-28 01:31:01'),
+(86, 2, 'TICS102', 'CAMOTO1', 31, 1, '07:00:00', '09:00:00', '2025-11-29 00:08:40', '2025-11-29 00:08:40'),
+(87, 2, 'TICS102', 'CAMOTO1', 31, 3, '07:00:00', '09:00:00', '2025-11-29 00:08:40', '2025-11-29 00:08:40'),
+(88, 2, 'TICS102', 'CAMOTO1', 31, 5, '07:00:00', '08:00:00', '2025-11-29 00:08:40', '2025-11-29 00:08:40'),
+(89, 1, 'TICS101', 'CAMOTO1', 31, 1, '09:00:00', '11:00:00', '2025-11-29 00:13:30', '2025-11-29 00:13:30'),
+(90, 1, 'TICS101', 'CAMOTO1', 31, 3, '09:00:00', '11:00:00', '2025-11-29 00:13:30', '2025-11-29 00:13:30'),
+(91, 1, 'TICS101', 'CAMOTO1', 31, 5, '09:00:00', '10:00:00', '2025-11-29 00:13:30', '2025-11-29 00:13:30'),
+(92, 1249, 'AE101', 'JINAJU1', 32, 1, '07:00:00', '09:00:00', '2025-11-29 00:17:58', '2025-11-29 00:17:58'),
+(93, 1249, 'AE101', 'JINAJU1', 32, 3, '07:00:00', '09:00:00', '2025-11-29 00:17:58', '2025-11-29 00:17:58'),
+(94, 1249, 'AE101', 'JINAJU1', 32, 5, '07:00:00', '08:00:00', '2025-11-29 00:17:58', '2025-11-29 00:17:58');
 
 -- --------------------------------------------------------
 
@@ -894,7 +899,8 @@ INSERT INTO `model_has_roles` (`role_id`, `model_type`, `model_id`) VALUES
 (3, 'App\\Models\\User', 80),
 (3, 'App\\Models\\User', 81),
 (3, 'App\\Models\\User', 82),
-(3, 'App\\Models\\User', 83);
+(3, 'App\\Models\\User', 83),
+(3, 'App\\Models\\User', 84);
 
 -- --------------------------------------------------------
 
@@ -991,7 +997,7 @@ CREATE TABLE `profesores` (
 --
 
 INSERT INTO `profesores` (`n_trabajador`, `contraseña`, `nombre`, `s_nombre`, `ap_materno`, `ap_paterno`, `correo_institucional`, `FKcod_area`, `situacion`, `created_at`, `updated_at`) VALUES
-('CAMOTO1', 'CAMOTO1', 'Carlos', NULL, 'Torres', 'Moran', 'Torres@carlos', 15, 'Vigente', '2025-10-17 01:57:25', '2025-11-05 10:54:45'),
+('CAMOTO1', 'CAMOTO1', 'Carlos', NULL, 'Torres', 'Moran', 'Torres@carlos', 1, 'Vigente', '2025-10-17 01:57:25', '2025-11-28 11:16:29'),
 ('ERDELO1', 'ERDELO1', 'Erick', 'Alberto', 'Lopez', 'De La Barrera', 'erick@ehhe', 12, 'Vigente', '2025-10-17 02:41:54', '2025-10-17 02:42:14'),
 ('JINAJU1', 'JINAJU1', 'Jimmy', 'Baraquiel', 'Juarez', 'Navarrete', 'jimmy@jimmy.com', 2, 'Vigente', '2025-11-05 07:02:23', '2025-11-05 07:02:23'),
 ('PROF001', 'PROF001', 'Juan', NULL, 'Gómez', 'Pérez', 'jc.perez@itp.edu', 4, 'Vigente', NULL, '2025-10-24 01:26:04'),
@@ -1071,8 +1077,10 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('sjVb0JCRItkeDqLnxK2SpQ64AYDTYxAkx373APzx', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:145.0) Gecko/20100101 Firefox/145.0', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoid29WdlB1bGxpVGs1MXZPQ0tOZGZPa2xJTVdYWW9SY0JMQW8zMURPdiI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6Mjc6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9sb2dpbiI7fXM6MzoidXJsIjthOjE6e3M6ODoiaW50ZW5kZWQiO3M6MzI6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9wcm9mZXNvcmVzIjt9fQ==', 1764290891),
-('xsbFIkcfYU3r5NzfhfVK3odCOokaDfJKm9xihf7x', NULL, '10.55.0.7', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:145.0) Gecko/20100101 Firefox/145.0', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiUmJvUHE1ZnUzWWNWbTFEOTFvVFpER3pyMXBsbVFLTGhHNTMxcWVxOCI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MjQ6Imh0dHA6Ly8xMC41NS41LjExMi9sb2dpbiI7fX0=', 1764290425);
+('CWbp6C21P5BSAZ8a1FvY0BASdosTZTOxF1YHwQo8', 4, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:145.0) Gecko/20100101 Firefox/145.0', 'YTo1OntzOjY6Il90b2tlbiI7czo0MDoiSFoxaGRLTWVLSXNDUDlXWFFWVHJqRzZ0VFpUYWJ4SGZOY1lsQmdPdyI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NDk6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9ncnVwb3MvMTI0OS9nZXN0aW9uLWhvcmFyaW8iO31zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aTo0O3M6NDoiYXV0aCI7YToxOntzOjIxOiJwYXNzd29yZF9jb25maXJtZWRfYXQiO2k6MTc2NDM1MDkzNTt9fQ==', 1764354436),
+('ehmdXW2pehiAEi7djDnYHCLptfTcUHHp4BPfJv0Q', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:145.0) Gecko/20100101 Firefox/145.0', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiWXMxOGdMRmZlV3E5WUFpdmczakZlNXJyZWs5U0d4SnVuY3RYeGpreiI7czozOiJ1cmwiO2E6MTp7czo4OiJpbnRlbmRlZCI7czoyODoiaHR0cDovLzEyNy4wLjAuMTo4MDAwL2dydXBvcyI7fXM6OToiX3ByZXZpb3VzIjthOjE6e3M6MzoidXJsIjtzOjI4OiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvZ3J1cG9zIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1764349418),
+('R0s1ZAcJXNioNWqAIbIxZSGEvuHMbTkM9kOAs2GC', 84, '192.168.100.15', 'Mozilla/5.0 (Android 12; Mobile; rv:145.0) Gecko/145.0 Firefox/145.0', 'YTo1OntzOjY6Il90b2tlbiI7czo0MDoiM2Rjd1FNdmtxT0Nid1BjSEFzWXBDWmVuUDBsQ2k5VVRDSlZXV0xRZyI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MzY6Imh0dHA6Ly8xOTIuMTY4LjEwMC4xMS9zdHVkZW50L2thcmRleCI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fXM6NTA6ImxvZ2luX3dlYl81OWJhMzZhZGRjMmIyZjk0MDE1ODBmMDE0YzdmNThlYTRlMzA5ODlkIjtpOjg0O3M6NDoiYXV0aCI7YToxOntzOjIxOiJwYXNzd29yZF9jb25maXJtZWRfYXQiO2k6MTc2NDM0Njk1MTt9fQ==', 1764354162),
+('th1m6Xi0GbMsxTSQYGfBpkhswmGqOa50AStm0bkG', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:145.0) Gecko/20100101 Firefox/145.0', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoib0VkRENaT2MwdHJRa1FuZm15bENkeVlQMmNNbEJVemlSWnQzNVNndyI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6Mjc6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9sb2dpbiI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1764349419);
 
 -- --------------------------------------------------------
 
@@ -1103,7 +1111,7 @@ INSERT INTO `users` (`id`, `name`, `email`, `n_control_link`, `n_trabajador_link
 (3, 'carlos', 'carlos@gmail.com', NULL, NULL, NULL, '$2y$12$r/7muLckfOikwQKsdfwUVeNkMAijJz.fHp1GNeq2DBjatHyMKibj6', NULL, '2025-10-24 00:24:04', '2025-10-24 00:24:04'),
 (4, 'admin', 'admin@admin.com', NULL, NULL, NULL, '$2y$12$ciCsW0rDIhZWksdwX1ILLeQXrYUa1ARw42hs05CTBx.XvjcDtwRXK', NULL, '2025-11-21 01:03:39', '2025-11-28 06:38:20'),
 (5, 'Carlos Torres Moran', 'Torres@carlos', NULL, 'CAMOTO1', NULL, '$2y$12$GZR3blFwxgBbP0twhjVqouGay.UPtPXOPGbPojrLj7tBxTHWPCB0W', NULL, '2025-11-28 04:47:59', '2025-11-28 04:47:59'),
-(6, 'Jimmy Valenzuela', '091234@tecnm.mx', '091234', NULL, NULL, '$2y$12$Io.rpFcfjETKnjs0nga4kuWPkStj8v27gLAVdFmy5luAZv/COgB46', NULL, '2025-11-28 04:48:00', '2025-11-28 06:38:22'),
+(6, 'Jimmy Valenzuela', '091234@tecnm.mx', '091234', NULL, NULL, '$2y$12$GIrgl6j5RvgF6VTcaZhs9uxq.QzU0uMisQmU0C7ioXXcxULUiuJZq', NULL, '2025-11-28 04:48:00', '2025-11-28 07:06:33'),
 (7, 'Hola El', '000111@tecnm.mx', '000111', NULL, NULL, '$2y$12$F/M6QImvuXFmP.ycRcvPT.YL6FB78KSIzXowKsDl9VALumJ/aL6aG', NULL, '2025-11-28 06:24:39', '2025-11-28 06:38:21'),
 (8, 'juan Escobar', '123@tecnm.mx', '123', NULL, NULL, '$2y$12$mBJY8thCuDDSfqCVYhGj7eozVrl.fnz76Mvmhu4FtTc3U.REtvATq', NULL, '2025-11-28 06:24:39', '2025-11-28 06:38:22'),
 (9, 'Andrés Pérez', '19222128@tecnm.mx', '19222128', NULL, NULL, '$2y$12$rqo56DktFGrHBQyMGH33vO6LvHaae81o8oJ5xqPga8rxWuoR.VMPW', NULL, '2025-11-28 06:24:40', '2025-11-28 06:38:23'),
@@ -1180,7 +1188,8 @@ INSERT INTO `users` (`id`, `name`, `email`, `n_control_link`, `n_trabajador_link
 (80, 'Emilio Martínez', '22160050@tecnm.mx', '22160050', NULL, NULL, '$2y$12$KeGR258rTdJfvlmTf2ZHW.eJY5FMPol.AKYiH37VpZEq769ezkNzK', NULL, '2025-11-28 06:25:10', '2025-11-28 06:38:52'),
 (81, 'Carlos Chat', '2221212@tecnm.mx', '2221212', NULL, NULL, '$2y$12$EXG.8X5hdGWptDfCSXQXcehDl8BRM3K0PDapL3DFZa0S0bJF7KKn2', NULL, '2025-11-28 06:25:10', '2025-11-28 06:38:52'),
 (82, 'Juan Perez', '9999999@tecnm.mx', '9999999', NULL, NULL, '$2y$12$fopoN4Un5H55UfSOMyXfg.knWQ5nJmAsZj4RbGoUIGG7yMtBLnHh6', NULL, '2025-11-28 06:25:11', '2025-11-28 06:38:53'),
-(83, 'Alumno Prueba', 'prueba@alumno.com', '1111', NULL, NULL, '$2y$12$nfky0sgp5jbJURe4JZmbPuQqAQuf.r.CvWpKuV5Y6abcvJcUjIcJm', NULL, '2025-11-28 06:32:50', '2025-11-28 06:32:50');
+(83, 'Alumno Prueba', 'prueba@alumno.com', '1111', NULL, NULL, '$2y$12$nfky0sgp5jbJURe4JZmbPuQqAQuf.r.CvWpKuV5Y6abcvJcUjIcJm', NULL, '2025-11-28 06:32:50', '2025-11-28 06:32:50'),
+(84, 'Melisa Sanchez', '012345678@tecnm.mx', '012345678', NULL, NULL, '$2y$12$9xMO1jhZd74OZrdkRqPY7OQ.osf7KpNA1tPCA583zjJuWDu8DyPCu', NULL, '2025-11-28 11:12:29', '2025-11-28 11:12:29');
 
 --
 -- Índices para tablas volcadas
@@ -1365,7 +1374,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT de la tabla `alumno_grupo`
 --
 ALTER TABLE `alumno_grupo`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=63;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=67;
 
 --
 -- AUTO_INCREMENT de la tabla `areas`
@@ -1383,7 +1392,7 @@ ALTER TABLE `boletas`
 -- AUTO_INCREMENT de la tabla `calificaciones_grupo`
 --
 ALTER TABLE `calificaciones_grupo`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- AUTO_INCREMENT de la tabla `carreras`
@@ -1407,7 +1416,7 @@ ALTER TABLE `grupos`
 -- AUTO_INCREMENT de la tabla `horarios`
 --
 ALTER TABLE `horarios`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=95;
 
 --
 -- AUTO_INCREMENT de la tabla `jobs`
@@ -1443,7 +1452,7 @@ ALTER TABLE `roles`
 -- AUTO_INCREMENT de la tabla `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=84;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=85;
 
 --
 -- Restricciones para tablas volcadas
