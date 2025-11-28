@@ -14,6 +14,9 @@
             </p>
         </div>
         <div>
+            <a href="{{ route('teacher.grupos.lista', $grupo->id_grupo) }}" target="_blank" class="btn btn-primary text-white me-2">
+                <i class="bi bi-printer me-1"></i> Imprimir Lista
+            </a>
             <a href="{{ route('teacher.grupos.calificar', $grupo->id_grupo) }}" class="btn btn-success text-white me-2">
     <i class="bi bi-pencil-square me-1"></i> Calificar
 </a>

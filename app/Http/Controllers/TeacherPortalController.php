@@ -139,4 +139,21 @@ class TeacherPortalController extends Controller
 
         return view('teacher.calificar', compact('grupo', 'inscripciones'));
     }
+    /**
+     * Genera la vista para imprimir la lista de asistencia.
+     */
+    public function imprimirLista($id_grupo)
+    {
+        $profesor = $this->getProfesor();
+
+        // Validamos que el grupo sea del profesor
+        $grupo = Grupo::with(['materia', 'periodo', 'alumnos' => function($q) {
+            $q->orderBy('ap_pat', 'asc')->orderBy('ap_mat', 'asc'); // Orden alfabético
+        }])
+        ->where('id_grupo', $id_grupo)
+        ->where('n_trabajador', $profesor->n_trabajador)
+        ->firstOrFail();
+
+        return view('teacher.lista-asistencia', compact('grupo'));
+    }
 }

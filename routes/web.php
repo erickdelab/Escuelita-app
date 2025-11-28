@@ -221,6 +221,7 @@ Route::middleware(['auth'])->group(function () {
         ->prefix('teacher')
         ->name('teacher.')
         ->group(function () {
+            Route::get('/grupos/{id}/lista', [TeacherPortalController::class, 'imprimirLista'])->name('grupos.lista');
             Route::get('/dashboard',       [TeacherPortalController::class, 'dashboard'])->name('dashboard');
             Route::get('/horario',         [TeacherPortalController::class, 'horario'])->name('horario');
             Route::get('/grupos',          [TeacherPortalController::class, 'grupos'])->name('grupos');
