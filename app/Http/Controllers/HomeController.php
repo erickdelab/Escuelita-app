@@ -32,20 +32,20 @@ class HomeController extends Controller
     {
         $user = Auth::user();
 
-        // =========================================================
-        // 🚀 LÓGICA DE REDIRECCIÓN AUTOMÁTICA
-        // =========================================================
-        
-        // 1. Si es ALUMNO, redirigir a su portal exclusivo
+        // 1. Si es ALUMNO, redirigir a su portal
         if ($user->hasRole('alumno')) {
             return redirect()->route('student.dashboard');
         }
 
+        // 2. ✅ AGREGA ESTO: Si es PROFESOR (y no es Admin), redirigir a su portal
+        if ($user->hasRole('profesor') && !$user->hasRole('admin')) {
+            return redirect()->route('teacher.dashboard');
+        }
+
         // =========================================================
-        // 🖥️ DASHBOARD ADMINISTRATIVO (Para Admins y Profesores)
+        // 🖥️ DASHBOARD ADMINISTRATIVO (Solo llega aquí si es Admin)
         // =========================================================
         
-        // Si NO es alumno (es Admin o Profe), calculamos las estadísticas
         $counts = [
             'alumnos' => Alumno::count(),
             'carreras' => Carrera::count(),
@@ -55,8 +55,7 @@ class HomeController extends Controller
             'areas' => Area::count(),
             'historials' => Historial::count(),
         ];
-        
-        // Y mostramos la vista original del administrador
+
         return view('home', compact('counts'));
     }
 }

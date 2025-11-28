@@ -20,10 +20,11 @@ use App\Http\Controllers\{
     AulaController,
     KardexController,
     CalificacionController,
-    StudentPortalController
+    StudentPortalController,
+    TeacherPortalController
 };
 
-use App\Http\Controllers\Auth\ChangePasswordController; // Import necesario
+use App\Http\Controllers\Auth\ChangePasswordController;
 
 
 /*
@@ -34,19 +35,17 @@ use App\Http\Controllers\Auth\ChangePasswordController; // Import necesario
 Route::get('/api/profesores/{id}/horario-ocupado', [GrupoController::class, 'getHorarioOcupado']);
 
 
-
 /*
 |--------------------------------------------------------------------------
 | RUTAS PÚBLICAS
 |--------------------------------------------------------------------------
 */
-
 Route::get('/', fn() => File::get(public_path('index.html')));
 
 // Autenticación Laravel
 Auth::routes(['register' => false]);
 
-// Home después del login
+// Home
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 
 
@@ -58,7 +57,11 @@ Route::get('/home', [HomeController::class, 'index'])->name('home');
 */
 Route::middleware(['auth'])->group(function () {
 
-    // Horario profesor en portal
+    /*
+    |--------------------------------------------------------------------------
+    | HORARIO PROFESOR (General)
+    |--------------------------------------------------------------------------
+    */
     Route::get('/profesores/{n_trabajador}/horario', 
         [ProfesoreController::class, 'horario']
     )->name('profesores.horario');
@@ -79,8 +82,6 @@ Route::middleware(['auth'])->group(function () {
     |--------------------------------------------------------------------------
     */
     Route::middleware(['role:admin'])->group(function () {
-
-        // CRUDs
         Route::resources([
             'profesores' => ProfesoreController::class,
             'materias'   => MateriaController::class,
@@ -97,7 +98,7 @@ Route::middleware(['auth'])->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | ACCESO COMPARTIDO: Admin + Profesor
+    | ACCESO COMPARTIDO (Admin + Profesor)
     |--------------------------------------------------------------------------
     */
     Route::get('/alumnos', [AlumnoController::class, 'index'])
@@ -107,21 +108,27 @@ Route::middleware(['auth'])->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | GRUPOS (Horario y Calificaciones)
+    | GRUPOS (Horario, Aula, Calificaciones)
     |--------------------------------------------------------------------------
     */
 
     // Horarios
-    Route::get('/grupos/{grupo}/asignar-hora', [GrupoController::class, 'showHoraForm'])->name('grupos.hora.show');
-    Route::post('/grupos/{grupo}/asignar-hora', [GrupoController::class, 'storeHora'])->name('grupos.hora.store');
+    Route::get('/grupos/{grupo}/asignar-hora', [GrupoController::class, 'showHoraForm'])
+        ->name('grupos.hora.show');
+    Route::post('/grupos/{grupo}/asignar-hora', [GrupoController::class, 'storeHora'])
+        ->name('grupos.hora.store');
 
     // Aulas
-    Route::get('/grupos/{grupo}/asignar-aula', [GrupoController::class, 'showAulaForm'])->name('grupos.aula.show');
-    Route::post('/grupos/{grupo}/asignar-aula', [GrupoController::class, 'storeAula'])->name('grupos.aula.store');
+    Route::get('/grupos/{grupo}/asignar-aula', [GrupoController::class, 'showAulaForm'])
+        ->name('grupos.aula.show');
+    Route::post('/grupos/{grupo}/asignar-aula', [GrupoController::class, 'storeAula'])
+        ->name('grupos.aula.store');
 
     // Utilidades
-    Route::post('/grupos/verificar-aulas', [GrupoController::class, 'verificarAulas'])->name('grupos.verificarAulas');
-    Route::delete('/grupos/{grupo}/eliminar-horario', [GrupoController::class, 'destroyHorario'])->name('grupos.horario.destroy');
+    Route::post('/grupos/verificar-aulas', [GrupoController::class, 'verificarAulas'])
+        ->name('grupos.verificarAulas');
+    Route::delete('/grupos/{grupo}/eliminar-horario', [GrupoController::class, 'destroyHorario'])
+        ->name('grupos.horario.destroy');
 
     // Calificaciones
     Route::prefix('grupos')->name('grupos.calificar.')->group(function () {
@@ -136,7 +143,8 @@ Route::middleware(['auth'])->group(function () {
     | KARDEX
     |--------------------------------------------------------------------------
     */
-    Route::get('/kardex/{n_control}', [KardexController::class, 'show'])->name('kardex.show');
+    Route::get('/kardex/{n_control}', [KardexController::class, 'show'])
+        ->name('kardex.show');
 
 
     /*
@@ -150,9 +158,11 @@ Route::middleware(['auth'])->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | ALUMNOS
+    | ALUMNOS: grupos, calificaciones y horario
     |--------------------------------------------------------------------------
     */
+
+    // Grupos del alumno
     Route::prefix('alumnos/{n_control}/grupos')->name('alumnos.grupos.')->group(function () {
         Route::get('/create', [AlumnoGrupoController::class, 'create'])->name('create');
         Route::post('/', [AlumnoGrupoController::class, 'store'])->name('store');
@@ -160,12 +170,14 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // Calificaciones del alumno
-    Route::get('/alumnos/{n_control}/calificaciones', [AlumnoController::class, 'calificaciones'])
-        ->name('alumnos.calificaciones');
+    Route::get('/alumnos/{n_control}/calificaciones', 
+        [AlumnoController::class, 'calificaciones']
+    )->name('alumnos.calificaciones');
 
     // Horario del alumno
-    Route::get('/alumnos/{n_control}/horario', [AlumnoController::class, 'horario'])
-        ->name('alumnos.horario');
+    Route::get('/alumnos/{n_control}/horario', 
+        [AlumnoController::class, 'horario']
+    )->name('alumnos.horario');
 
 
     /*
@@ -185,18 +197,39 @@ Route::middleware(['auth'])->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | PORTAL ESTUDIANTE (solo rol alumno)
+    | PORTAL ESTUDIANTE (solo alumno)
     |--------------------------------------------------------------------------
     */
     Route::middleware(['role:alumno'])
         ->prefix('student')
         ->name('student.')
         ->group(function () {
-            Route::get('/dashboard', [StudentPortalController::class, 'dashboard'])->name('dashboard');
-            Route::get('/horario', [StudentPortalController::class, 'horario'])->name('horario');
+            Route::get('/dashboard',      [StudentPortalController::class, 'dashboard'])->name('dashboard');
+            Route::get('/horario',        [StudentPortalController::class, 'horario'])->name('horario');
             Route::get('/calificaciones', [StudentPortalController::class, 'calificaciones'])->name('calificaciones');
-            Route::get('/kardex', [StudentPortalController::class, 'kardex'])->name('kardex');
+            Route::get('/kardex',         [StudentPortalController::class, 'kardex'])->name('kardex');
             Route::get('/carga-materias', [StudentPortalController::class, 'carga'])->name('carga');
+        });
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | PORTAL DOCENTE (solo profesor)
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware(['role:profesor'])
+        ->prefix('teacher')
+        ->name('teacher.')
+        ->group(function () {
+            Route::get('/dashboard',       [TeacherPortalController::class, 'dashboard'])->name('dashboard');
+            Route::get('/horario',         [TeacherPortalController::class, 'horario'])->name('horario');
+            Route::get('/grupos',          [TeacherPortalController::class, 'grupos'])->name('grupos');
+            Route::get('/grupos/{id}',     [TeacherPortalController::class, 'grupoShow'])->name('grupos.show');
+
+            // ✅ NUEVA RUTA: Calificar directo desde portal docente
+            Route::get('/grupos/{id}/calificar', 
+                [TeacherPortalController::class, 'calificar']
+            )->name('grupos.calificar');
         });
 
 
@@ -205,7 +238,9 @@ Route::middleware(['auth'])->group(function () {
     | CAMBIAR CONTRASEÑA
     |--------------------------------------------------------------------------
     */
-    Route::get('/cambiar-password', [ChangePasswordController::class, 'show'])->name('password.change.form');
-    Route::post('/cambiar-password', [ChangePasswordController::class, 'update'])->name('password.change.update');
+    Route::get('/cambiar-password',  [ChangePasswordController::class, 'show'])
+        ->name('password.change.form');
+    Route::post('/cambiar-password', [ChangePasswordController::class, 'update'])
+        ->name('password.change.update');
 
 });

@@ -18,34 +18,46 @@ class LoginController extends Controller
         $this->middleware('auth')->only('logout');
     }
 
-    /**
-     * Campo utilizado para login.
-     */
     public function username()
     {
         return 'login_id';
     }
 
-    /**
-     * Definimos las credenciales personalizadas
-     * Permite login por:
-     * - Email (Admins)
-     * - Número de Control (Alumnos)
-     */
-   protected function authenticated(Request $request, $user)
+    protected function credentials(Request $request)
     {
-        // 1. Si es ALUMNO, va directo a su dashboard
+        $login = $request->input($this->username());
+
+        if (filter_var($login, FILTER_VALIDATE_EMAIL)) {
+            $field = 'email';
+        } elseif (is_numeric($login)) {
+            $field = 'n_control_link';
+        } else {
+            $field = 'n_trabajador_link';
+        }
+
+        return [
+            $field => $login,
+            'password' => $request->input('password'),
+        ];
+    }
+
+    // ✅ LÓGICA DE REDIRECCIÓN CORREGIDA
+    protected function authenticated(Request $request, $user)
+    {
+        // 1. Si es ALUMNO -> Portal Estudiante
         if ($user->hasRole('alumno')) {
             return redirect()->route('student.dashboard');
         }
 
-        // 2. Si es ADMIN o PROFESOR, va al home administrativo
+        // 2. Si es PROFESOR (y no Admin) -> Portal Docente
+        if ($user->hasRole('profesor') && !$user->hasRole('admin')) {
+            return redirect()->route('teacher.dashboard');
+        }
+
+        // 3. Si es ADMIN o falla lo anterior -> Panel Admin
         return redirect()->route('home');
     }
 
-    /**
-     * Validación del request
-     */
     protected function validateLogin(Request $request)
     {
         $request->validate([
