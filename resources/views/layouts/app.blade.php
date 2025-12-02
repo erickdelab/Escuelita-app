@@ -33,9 +33,8 @@
             margin-right: 8px;
         }
         
-        /* Efecto hover para enlaces del navbar */
         .nav-link:hover {
-            color: #d1e7dd !important; /* Un tono claro para resaltar */
+            color: #d1e7dd !important;
             background-color: rgba(255, 255, 255, 0.1);
             border-radius: 5px;
         }
@@ -58,7 +57,6 @@
         table th { background-color: #002D72 !important; color: white !important; text-align: center; }
         table td { text-align: center; vertical-align: middle; }
         
-        /* Dropdown menu styling */
         .dropdown-menu {
             border: none;
             box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
@@ -169,17 +167,20 @@
 
                             {{-- ESTUDIANTE --}}
                             @role('alumno')
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('alumnos.calificaciones', Auth::user()->n_control_link) }}">
-                                        <i class="bi bi-clipboard-data me-1"></i>Mis Calificaciones
-                                    </a>
-                                </li>
+                                {{-- ✅ AGREGADO: Solo mostrar si el usuario tiene n_control vinculado --}}
+                                @if(Auth::user()->n_control_link) 
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{{ route('alumnos.calificaciones', Auth::user()->n_control_link) }}">
+                                            <i class="bi bi-clipboard-data me-1"></i>Mis Calificaciones
+                                        </a>
+                                    </li>
 
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('alumnos.horario', Auth::user()->n_control_link) }}">
-                                        <i class="bi bi-calendar-week me-1"></i>Mi Horario
-                                    </a>
-                                </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{{ route('alumnos.horario', Auth::user()->n_control_link) }}">
+                                            <i class="bi bi-calendar-week me-1"></i>Mi Horario
+                                        </a>
+                                    </li>
+                                @endif
                             @endrole
 
                         @endauth
@@ -189,8 +190,6 @@
                     <ul class="navbar-nav ms-auto">
 
                         @guest
-                           {{--  <li class="nav-item"><a class="nav-link" href="{{ route('login') }}">Ingresar</a></li>
-                            <li class="nav-item"><a class="nav-link" href="{{ route('register') }}">Registrarse</a></li> --}}
                         @else
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">

@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule; // ✅ IMPORTANTE para la regla unique
 
 class AlumnoRequest extends FormRequest
 {
@@ -16,15 +17,21 @@ class AlumnoRequest extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
+        // Obtenemos el alumno desde la ruta (si estamos editando)
+        $alumno = $this->route('alumno'); 
+
         return [
-           // Cambiamos a max:9 para coincidir con tu base de datos
-            
-            'n_control' => 'required|string|max:9',
+            'n_control' => [
+                'required',
+                'string',
+                'max:9',
+                // ✅ Valida que el número de control sea único
+                //    pero permite que el alumno conserve su mismo n_control al editar.
+                Rule::unique('alumnos', 'n_control')->ignore($alumno),
+            ],
             'nombre' => 'required|string|max:50',
             's_nombre' => 'nullable|string|max:50',
             'ap_pat' => 'required|string|max:50',
@@ -34,20 +41,20 @@ class AlumnoRequest extends FormRequest
             'FKid_carrera' => 'required|exists:carreras,id_carrera',
             'situacion' => 'required|in:Vigente,Baja,Egresado',
             'semestre' => 'nullable|integer|min:1|max:12',
-            'promedio_general' => 'nullable|numeric|min:0|max:100', // ✅ NUEVO
+            'promedio_general' => 'nullable|numeric|min:0|max:100',
         ];
     }
 
     /**
      * Get custom messages for validator errors.
-     *
-     * @return array<string, string>
      */
     public function messages(): array
     {
         return [
             'n_control.required' => 'El número de control es obligatorio.',
             'n_control.max' => 'El número de control no puede tener más de 9 caracteres.',
+            'n_control.unique' => 'Este número de control ya está registrado. Intente con otro.', // ✅
+
             'nombre.required' => 'El primer nombre es obligatorio.',
             'ap_pat.required' => 'El apellido paterno es obligatorio.',
             'ap_mat.required' => 'El apellido materno es obligatorio.',
